@@ -1,8 +1,10 @@
 package com.hcmdz.privnum.editor
 
 import androidx.activity.compose.BackHandler
+import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
@@ -15,6 +17,7 @@ import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
+import androidx.compose.material.icons.filled.ArrowDropDown
 import androidx.compose.material.icons.filled.Check
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.AssistChip
@@ -25,7 +28,6 @@ import androidx.compose.material3.IconButton
 import androidx.compose.material3.ListItem
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.ModalBottomSheet
-import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.SnackbarHost
@@ -42,14 +44,15 @@ import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.FocusDirection
+import androidx.compose.ui.focus.focusProperties
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.platform.testTag
+import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.semantics.contentDescription
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardCapitalization
 import androidx.compose.ui.text.input.KeyboardType
-import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
@@ -58,7 +61,7 @@ import com.hcmdz.privnum.data.PhoneNumberUtils
 import com.hcmdz.privnum.data.filterCountries
 import com.hcmdz.privnum.data.suggestCountryFor
 
-@OptIn(ExperimentalMaterial3Api::class)
+@OptIn(ExperimentalMaterial3Api::class, ExperimentalFoundationApi::class)
 @Composable
 fun EditorScreen(
     fullPhoneNumber: String?,
@@ -155,20 +158,37 @@ fun EditorScreen(
             item {
                 Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
                     val country = state.country
-                    OutlinedButton(
-                        onClick = { showCountries = true },
-                        modifier = Modifier
-                            .weight(0.42f)
-                            .testTag("editor_country")
-                            .semantics {
-                                contentDescription =
-                                    "Selected country: ${country?.name ?: "none"}"
-                            }
-                    ) {
-                        Text(
-                            country?.let { "${it.flag} ${it.name} +${it.dialCode}" } ?: "Country",
-                            maxLines = 1,
-                            overflow = TextOverflow.Ellipsis
+                    // Transparent overlay first in tap dispatch: the text field
+                    // consumes taps even when read-only and unfocusable.
+                    Box(modifier = Modifier.weight(0.42f)) {
+                        OutlinedTextField(
+                            value = country?.flag ?: "",
+                            onValueChange = {},
+                            label = { Text("Country *") },
+                            trailingIcon = {
+                                Icon(
+                                    Icons.Filled.ArrowDropDown,
+                                    contentDescription = null
+                                )
+                            },
+                            readOnly = true,
+                            singleLine = true,
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .focusProperties { canFocus = false }
+                        )
+                        Box(
+                            modifier = Modifier
+                                .matchParentSize()
+                                .testTag("editor_country")
+                                .semantics {
+                                    contentDescription =
+                                        "Selected country: ${country?.name ?: "none"}"
+                                }
+                                .clickable(
+                                    role = Role.DropdownList,
+                                    onClick = { showCountries = true }
+                                )
                         )
                     }
                     OutlinedTextField(
