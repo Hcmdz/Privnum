@@ -11,6 +11,7 @@ import androidx.navigation3.runtime.entryProvider
 import androidx.navigation3.runtime.rememberNavBackStack
 import androidx.navigation3.ui.NavDisplay
 import com.hcmdz.privnum.contacts.ContactsScreen
+import com.hcmdz.privnum.data.PasscodeStore
 import com.hcmdz.privnum.data.ThemeMode
 import com.hcmdz.privnum.editor.EditorScreen
 import com.hcmdz.privnum.lock.LockScreen
@@ -41,10 +42,14 @@ data class PreviewContact(val fullPhoneNumber: String) : NavKey
 @Serializable
 data object LockSetup : NavKey
 
+@Serializable
+data object LockVerify : NavKey
+
 @Composable
 fun AppNav(
     startLocked: Boolean,
     themeMode: ThemeMode,
+    passcode: PasscodeStore,
     onUnlocked: () -> Unit
 ) {
     val backStack = rememberNavBackStack(if (startLocked) LockSetup else Contacts)
@@ -68,7 +73,11 @@ fun AppNav(
                         },
                         onPreview = { backStack.add(PreviewContact(it.fullPhoneNumber)) },
                         onOpenSearch = { backStack.add(Search) },
-                        onOpenSettings = { backStack.add(Settings) }
+                        onOpenSettings = { backStack.add(Settings) },
+                        onLockNow = {
+                            passcode.lockNow()
+                            backStack.add(LockVerify)
+                        }
                     )
                 }
                 entry<NewContact> {
@@ -117,6 +126,15 @@ fun AppNav(
                                 backStack.clear()
                                 backStack.add(Contacts)
                             }
+                        }
+                    )
+                }
+                entry<LockVerify> {
+                    LockScreen(
+                        startSetup = false,
+                        onUnlocked = {
+                            onUnlocked()
+                            backStack.removeLastOrNull()
                         }
                     )
                 }

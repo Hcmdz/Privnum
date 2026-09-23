@@ -37,6 +37,7 @@ class MainActivity : ComponentActivity() {
                 AppNav(
                     startLocked = startLocked,
                     themeMode = themeMode,
+                    passcode = passcode,
                     onUnlocked = {}
                 )
             }

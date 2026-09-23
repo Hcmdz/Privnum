@@ -5,6 +5,7 @@ import androidx.lifecycle.viewModelScope
 import com.hcmdz.privnum.data.Contact
 import com.hcmdz.privnum.data.ContactPhotoStore
 import com.hcmdz.privnum.data.ContactRepository
+import com.hcmdz.privnum.data.PasscodeStore
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
@@ -28,7 +29,8 @@ data class ContactsUiState(
 @HiltViewModel
 class ContactsViewModel @Inject constructor(
     private val repository: ContactRepository,
-    private val photos: ContactPhotoStore
+    private val photos: ContactPhotoStore,
+    private val passcode: PasscodeStore
 ) : ViewModel() {
     private val selected = MutableStateFlow<Set<String>>(emptySet())
 
@@ -70,4 +72,26 @@ class ContactsViewModel @Inject constructor(
     }
 
     fun photoModel(photo: String): Any? = photos.photoModel(photo)
+
+    fun isPasscodeSet(): Boolean = passcode.passcodeEnabled && passcode.hasPin()
 }
+
+/** "Label - value" lines for non-empty fields, contacts separated by a blank line. */
+fun contactClipboardLines(contacts: List<Contact>): String =
+    contacts.joinToString("\n\n") { contact ->
+        listOf(
+            "Name" to contact.displayName(),
+            "Phone" to "+${contact.fullPhoneNumber}",
+            "Email" to contact.email,
+            "Appointment" to contact.appointment,
+            "Location" to contact.location,
+            "Notes" to contact.notes,
+            "Nickname" to contact.nickname,
+            "Website" to contact.website,
+            "Birthday" to contact.birthday,
+            "Labels" to contact.labels,
+            "Prefix" to contact.prefix,
+            "Suffix" to contact.suffix
+        ).filter { it.second.isNotBlank() }
+            .joinToString("\n") { (label, value) -> "$label - $value" }
+    }

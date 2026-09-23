@@ -57,6 +57,7 @@ fun LockScreen(
         if (state.unlocked) onUnlocked()
     }
     LaunchedEffect(Unit) {
+        viewModel.reenterVerify()
         (context as? FragmentActivity)?.let { viewModel.refreshBiometric(it) }
     }
 
