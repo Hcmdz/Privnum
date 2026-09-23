@@ -14,6 +14,7 @@ import com.hcmdz.privnum.contacts.ContactsScreen
 import com.hcmdz.privnum.data.ThemeMode
 import com.hcmdz.privnum.editor.EditorScreen
 import com.hcmdz.privnum.lock.LockScreen
+import com.hcmdz.privnum.preview.PreviewScreen
 import com.hcmdz.privnum.search.SearchScreen
 import com.hcmdz.privnum.settings.SettingsScreen
 import com.hcmdz.privnum.ui.PrivnumTheme
@@ -33,6 +34,9 @@ data object Search : NavKey
 
 @Serializable
 data object Settings : NavKey
+
+@Serializable
+data class PreviewContact(val fullPhoneNumber: String) : NavKey
 
 @Serializable
 data object LockSetup : NavKey
@@ -62,7 +66,7 @@ fun AppNav(
                             newContactNonce++
                             backStack.add(NewContact)
                         },
-                        onEdit = { backStack.add(EditContact(it.fullPhoneNumber)) },
+                        onPreview = { backStack.add(PreviewContact(it.fullPhoneNumber)) },
                         onOpenSearch = { backStack.add(Search) },
                         onOpenSettings = { backStack.add(Settings) }
                     )
@@ -85,6 +89,13 @@ fun AppNav(
                 }
                 entry<Search> {
                     SearchScreen()
+                }
+                entry<PreviewContact> { key ->
+                    PreviewScreen(
+                        fullPhoneNumber = key.fullPhoneNumber,
+                        onBack = { backStack.removeLastOrNull() },
+                        onEdit = { backStack.add(EditContact(it.fullPhoneNumber)) }
+                    )
                 }
                 entry<Settings> {
                     SettingsScreen(
