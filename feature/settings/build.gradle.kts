@@ -27,6 +27,8 @@ android {
 dependencies {
     implementation(project(":core:ui"))
     implementation(project(":core:data"))
+    implementation(project(":core:caller"))
+    implementation(libs.biometric)
 
     val composeBom = platform(libs.compose.bom)
     implementation(composeBom)

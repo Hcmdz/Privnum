@@ -78,6 +78,7 @@ fun AppNav(
                 }
                 entry<Settings> {
                     SettingsScreen(
+                        onBack = { backStack.removeLastOrNull() },
                         onOpenLock = { backStack.add(LockSetup) }
                     )
                 }
