@@ -96,10 +96,11 @@ class ContactRepository @Inject constructor(
     }
 
     suspend fun update(originalFullNumber: String, contact: Contact): Boolean {
+        val existing = dao.getByFullNumber(originalFullNumber) ?: return false
         if (originalFullNumber != contact.fullPhoneNumber) {
             dao.deleteByFullNumber(originalFullNumber)
         }
-        dao.insert(contact.copy(id = 0).toEntity())
+        dao.upsert(contact.toEntity().copy(id = existing.id))
         return true
     }
 
@@ -110,10 +111,12 @@ class ContactRepository @Inject constructor(
         dao.deleteByFullNumbers(fullPhoneNumbers) > 0
 }
 
-internal fun buildFtsQuery(rawQuery: String): String =
-    rawQuery.trim().split("\\s+".toRegex())
-        .filter { it.isNotEmpty() }
-        .joinToString(" ") { token ->
-            val safe = token.replace("\"", "\"\"")
-            "\"$safe\"*"
-        }
+internal fun buildFtsQuery(rawQuery: String): String {
+    val operators = setOf("AND", "OR", "NOT", "NEAR")
+    return rawQuery.trim()
+        .split("\\s+".toRegex())
+        .flatMap { chunk -> chunk.split(Regex("[^\\p{L}\\p{Nd}]+")) }
+        .map { it.trim() }
+        .filter { it.isNotEmpty() && it.uppercase() !in operators }
+        .joinToString(" ") { "$it*" }
+}

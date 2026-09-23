@@ -5,6 +5,7 @@ import androidx.room.Insert
 import androidx.room.OnConflictStrategy
 import androidx.room.Query
 import androidx.room.Update
+import androidx.room.Upsert
 import kotlinx.coroutines.flow.Flow
 
 @Dao
@@ -34,6 +35,9 @@ interface ContactDao {
 
     @Update
     suspend fun update(contact: ContactEntity)
+
+    @Upsert
+    suspend fun upsert(contact: ContactEntity)
 
     @Query("DELETE FROM contacts WHERE fullPhoneNumber = :fullPhoneNumber")
     suspend fun deleteByFullNumber(fullPhoneNumber: String): Int
