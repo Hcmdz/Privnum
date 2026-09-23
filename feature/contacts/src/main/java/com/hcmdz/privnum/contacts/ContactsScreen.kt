@@ -36,6 +36,7 @@ import com.hcmdz.privnum.data.Contact
 @Composable
 fun ContactsScreen(
     onAdd: () -> Unit,
+    onEdit: (Contact) -> Unit,
     onOpenSearch: () -> Unit,
     onOpenSettings: () -> Unit,
     viewModel: ContactsViewModel = hiltViewModel()
@@ -108,6 +109,8 @@ fun ContactsScreen(
                             onClick = {
                                 if (state.selectionMode) {
                                     viewModel.toggleSelection(item.contact.fullPhoneNumber)
+                                } else {
+                                    onEdit(item.contact)
                                 }
                             },
                             onLongClick = {

@@ -54,6 +54,7 @@ fun AppNav(
                 entry<Contacts> {
                     ContactsScreen(
                         onAdd = { backStack.add(NewContact) },
+                        onEdit = { backStack.add(EditContact(it.fullPhoneNumber)) },
                         onOpenSearch = { backStack.add(Search) },
                         onOpenSettings = { backStack.add(Settings) }
                     )
