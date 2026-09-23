@@ -102,10 +102,12 @@ class EditorViewModel @Inject constructor(
     /**
      * Called on screen entry: a null number means a new contact and must reset
      * any draft leaked by a shared ViewModelStoreOwner across backstack entries.
+     * originalNumber is always reset first: load() refuses to run twice, which
+     * would otherwise show the previous contact when editing another one.
      */
     fun enter(fullPhoneNumber: String?) {
+        originalNumber = null
         if (fullPhoneNumber == null) {
-            originalNumber = null
             countryTouched = false
             val fresh = EditorUiState(country = initialCountry)
             _state.value = fresh
