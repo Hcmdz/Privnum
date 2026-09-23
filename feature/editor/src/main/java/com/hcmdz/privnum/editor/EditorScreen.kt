@@ -9,12 +9,15 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
+import androidx.compose.material.icons.filled.Check
 import androidx.compose.material3.AlertDialog
+import androidx.compose.material3.AssistChip
 import androidx.compose.material3.Button
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
@@ -41,15 +44,19 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.FocusDirection
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.platform.testTag
+import androidx.compose.ui.semantics.contentDescription
+import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardCapitalization
 import androidx.compose.ui.text.input.KeyboardType
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import com.hcmdz.privnum.data.Countries
 import com.hcmdz.privnum.data.Country
 import com.hcmdz.privnum.data.PhoneNumberUtils
+import com.hcmdz.privnum.data.filterCountries
+import com.hcmdz.privnum.data.suggestCountryFor
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -61,6 +68,7 @@ fun EditorScreen(
     viewModel: EditorViewModel = hiltViewModel()
 ) {
     val state by viewModel.state.collectAsStateWithLifecycle()
+    val recents by viewModel.recentCountries.collectAsStateWithLifecycle()
     var showCountries by remember { mutableStateOf(false) }
     var countryQuery by rememberSaveable { mutableStateOf("") }
     var moreExpanded by rememberSaveable { mutableStateOf(false) }
@@ -86,6 +94,11 @@ fun EditorScreen(
 
     val preview = remember(state.nationalNumber, state.country) {
         state.country?.let { PhoneNumberUtils.previewNumber(state.nationalNumber, it.code) }
+    }
+    val suggestion = remember(state.nationalNumber, state.country) {
+        val current = state.country
+        suggestCountryFor(state.nationalNumber, current?.code ?: "")
+            ?.takeIf { it.code != current?.code }
     }
     val next = KeyboardActions(onNext = { focus.moveFocus(FocusDirection.Down) })
 
@@ -141,11 +154,22 @@ fun EditorScreen(
             }
             item {
                 Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
+                    val country = state.country
                     OutlinedButton(
                         onClick = { showCountries = true },
-                        modifier = Modifier.testTag("editor_country")
+                        modifier = Modifier
+                            .weight(0.42f)
+                            .testTag("editor_country")
+                            .semantics {
+                                contentDescription =
+                                    "Selected country: ${country?.name ?: "none"}"
+                            }
                     ) {
-                        Text(state.country?.let { "${it.flag} +${it.dialCode}" } ?: "Country")
+                        Text(
+                            country?.let { "${it.flag} ${it.name} +${it.dialCode}" } ?: "Country",
+                            maxLines = 1,
+                            overflow = TextOverflow.Ellipsis
+                        )
                     }
                     OutlinedTextField(
                         value = state.nationalNumber,
@@ -167,6 +191,16 @@ fun EditorScreen(
                         modifier = Modifier
                             .weight(1f)
                             .testTag("editor_number")
+                    )
+                }
+            }
+            if (suggestion != null) {
+                item {
+                    AssistChip(
+                        onClick = { viewModel.setCountry(suggestion) },
+                        label = {
+                            Text("Switch to +${suggestion.dialCode} (${suggestion.name})?")
+                        }
                     )
                 }
             }
@@ -263,7 +297,10 @@ fun EditorScreen(
 
     if (showCountries) {
         ModalBottomSheet(onDismissRequest = { showCountries = false }) {
-            Column(modifier = Modifier.padding(16.dp)) {
+            Column(
+                modifier = Modifier.padding(16.dp),
+                verticalArrangement = Arrangement.spacedBy(8.dp)
+            ) {
                 OutlinedTextField(
                     value = countryQuery,
                     onValueChange = { countryQuery = it },
@@ -271,15 +308,34 @@ fun EditorScreen(
                     singleLine = true,
                     modifier = Modifier.fillMaxWidth()
                 )
-                val filtered = Countries.all.filter {
-                    it.name.contains(countryQuery, ignoreCase = true) ||
-                        it.dialCode.contains(countryQuery)
+                if (recents.isNotEmpty()) {
+                    LazyRow(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
+                        items(recents, key = { it.code }) { country: Country ->
+                            AssistChip(
+                                onClick = {
+                                    viewModel.setCountry(country)
+                                    showCountries = false
+                                },
+                                label = { Text("${country.flag} ${country.name}") }
+                            )
+                        }
+                    }
                 }
+                val filtered = remember(countryQuery) { filterCountries(countryQuery) }
                 LazyColumn(modifier = Modifier.weight(1f, fill = false)) {
                     items(filtered, key = { it.code }) { country: Country ->
+                        val selected = country.code == state.country?.code
                         ListItem(
                             headlineContent = { Text("${country.flag} ${country.name}") },
                             supportingContent = { Text("+${country.dialCode}") },
+                            trailingContent = {
+                                if (selected) {
+                                    Icon(
+                                        Icons.Filled.Check,
+                                        contentDescription = "Selected"
+                                    )
+                                }
+                            },
                             modifier = Modifier.clickable {
                                 viewModel.setCountry(country)
                                 showCountries = false

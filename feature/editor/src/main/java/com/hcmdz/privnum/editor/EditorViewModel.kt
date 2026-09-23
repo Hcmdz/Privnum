@@ -12,9 +12,12 @@ import com.hcmdz.privnum.data.SettingsStore
 import dagger.hilt.android.lifecycle.HiltViewModel
 import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.first
+import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import javax.inject.Inject
@@ -80,6 +83,11 @@ class EditorViewModel @Inject constructor(
     private var pristine = _state.value
     private val initialCountry = _state.value.country
 
+    val recentCountries: StateFlow<List<Country>> =
+        settings.recentCountries
+            .map { codes -> codes.mapNotNull { Countries.getByCode(it) } }
+            .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), emptyList())
+
     init {
         viewModelScope.launch {
             val setting = settings.defaultRegion.first()
@@ -144,6 +152,7 @@ class EditorViewModel @Inject constructor(
     fun setCountry(country: Country) {
         countryTouched = true
         _state.update { it.copy(country = country, numberError = null) }
+        viewModelScope.launch { settings.pushRecentCountry(country.code) }
     }
 
     fun consumeMessage() {
