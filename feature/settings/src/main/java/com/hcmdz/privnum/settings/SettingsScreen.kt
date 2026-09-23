@@ -50,18 +50,14 @@ fun SettingsScreen(
         if (uri != null) {
             val region = (context.getSystemService(android.content.Context.TELEPHONY_SERVICE)
                 as android.telephony.TelephonyManager).simCountryIso?.uppercase() ?: "US"
-            context.contentResolver.openInputStream(uri)?.use { stream ->
-                viewModel.importVcf(stream, region) { message = it }
-            }
+            viewModel.importVcf(context.contentResolver, uri, region) { message = it }
         }
     }
     val exportLauncher = rememberLauncherForActivityResult(
         ActivityResultContracts.CreateDocument("text/vcard")
     ) { uri ->
         if (uri != null) {
-            context.contentResolver.openOutputStream(uri)?.use { stream ->
-                viewModel.exportVcf(stream) { message = it }
-            }
+            viewModel.exportVcf(context.contentResolver, uri) { message = it }
         }
     }
 

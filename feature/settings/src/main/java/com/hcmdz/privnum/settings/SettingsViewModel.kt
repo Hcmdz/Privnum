@@ -1,5 +1,7 @@
 package com.hcmdz.privnum.settings
 
+import android.content.ContentResolver
+import android.net.Uri
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.hcmdz.privnum.data.AutoLockTimeout
@@ -9,21 +11,21 @@ import com.hcmdz.privnum.data.SettingsStore
 import com.hcmdz.privnum.data.ThemeMode
 import com.hcmdz.privnum.data.VcfMapper
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
-import java.io.InputStream
-import java.io.OutputStream
+import kotlinx.coroutines.withContext
 import javax.inject.Inject
 
 data class SettingsUiState(
     val themeMode: ThemeMode = ThemeMode.SYSTEM,
     val incomingPopup: Boolean = true,
     val outgoingPopup: Boolean = true,
-    val     contactCount: Int = 0,
+    val contactCount: Int = 0,
     val autoLockTimeout: AutoLockTimeout = AutoLockTimeout.MIN_5,
     val message: String? = null
 )
@@ -64,9 +66,22 @@ class SettingsViewModel @Inject constructor(
         autoLock.value = timeout
     }
 
-    fun importVcf(stream: InputStream, defaultRegion: String, done: (String) -> Unit) {
+    fun importVcf(
+        resolver: ContentResolver,
+        uri: Uri,
+        defaultRegion: String,
+        done: (String) -> Unit
+    ) {
         viewModelScope.launch {
-            val text = stream.bufferedReader().use { it.readText() }
+            val text = withContext(Dispatchers.IO) {
+                runCatching {
+                    resolver.openInputStream(uri)?.bufferedReader()?.use { it.readText() }
+                }.getOrNull()
+            }
+            if (text.isNullOrBlank()) {
+                done("Cannot read the selected file")
+                return@launch
+            }
             val contacts = VcfMapper.parseVcf(text, defaultRegion)
             if (contacts.isEmpty()) {
                 done("No contacts found in the selected file")
@@ -77,15 +92,21 @@ class SettingsViewModel @Inject constructor(
         }
     }
 
-    fun exportVcf(stream: OutputStream, done: (String) -> Unit) {
+    fun exportVcf(resolver: ContentResolver, uri: Uri, done: (String) -> Unit) {
         viewModelScope.launch {
             val contacts = repository.getAll()
             if (contacts.isEmpty()) {
                 done("No contacts to export")
                 return@launch
             }
-            stream.bufferedWriter().use { it.write(VcfMapper.contactsToVcf(contacts)) }
-            done("${contacts.size} contacts exported")
+            val ok = withContext(Dispatchers.IO) {
+                runCatching {
+                    resolver.openOutputStream(uri)?.bufferedWriter()?.use {
+                        it.write(VcfMapper.contactsToVcf(contacts))
+                    } != null
+                }.getOrDefault(false)
+            }
+            done(if (ok) "${contacts.size} contacts exported" else "Export failed")
         }
     }
 }

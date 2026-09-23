@@ -40,6 +40,7 @@ dependencies {
     implementation(libs.navigation3.ui)
     implementation(libs.hilt.navigation.compose)
     implementation(libs.hilt.lifecycle.viewmodel.compose)
+    implementation(libs.coroutines.android)
 
     implementation(libs.hilt.android)
     ksp(libs.hilt.compiler)
