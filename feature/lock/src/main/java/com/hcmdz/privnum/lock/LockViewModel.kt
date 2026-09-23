@@ -75,11 +75,9 @@ class LockViewModel @Inject constructor(
                 }
                 viewModelScope.launch {
                     if (store.verifyPin(pin)) {
-                        store.failedAttempts = 0
                         store.lastUnlockedAt = System.currentTimeMillis()
                         _state.update { it.copy(unlocked = true, pin = "") }
                     } else {
-                        store.failedAttempts = store.failedAttempts + 1
                         _state.update { it.copy(error = "Invalid PIN", pin = "") }
                     }
                 }
@@ -114,6 +112,14 @@ class LockViewModel @Inject constructor(
         _state.update { it.copy(mode = LockMode.SETUP, pin = "", error = null, setupComplete = false) }
     }
 
+    /**
+     * Called when entering verify mode: a stale unlocked=true from a previous
+     * unlock (shared ViewModelStoreOwner) would pop the screen instantly.
+     */
+    fun reenterVerify() {
+        _state.update { it.copy(unlocked = false, pin = "", error = null) }
+    }
+
     fun disable() {
         viewModelScope.launch {
             store.clear()
@@ -135,6 +141,7 @@ class LockViewModel @Inject constructor(
 
     fun onBiometricSuccess() {
         store.failedAttempts = 0
+        store.forceLocked = false
         store.lastUnlockedAt = System.currentTimeMillis()
         _state.update { it.copy(unlocked = true) }
     }

@@ -99,6 +99,37 @@ class PasscodeLockoutDeviceTest {
         assertFalse(store.verifyPin("1111"))
     }
 
+    @Test
+    fun fifthFailureLocksOut() {
+        store.setPin("1111")
+        repeat(4) {
+            assertFalse(store.verifyPin("0000"))
+            assertFalse(store.isLockedOut())
+        }
+        assertFalse(store.verifyPin("0000"))
+        assertTrue(store.isLockedOut())
+        assertFalse(store.verifyPin("1111"))
+    }
+
+    @Test
+    fun setPinResetsBiometric() {
+        store.biometricEnabled = true
+        store.setPin("1111")
+        assertFalse(store.biometricEnabled)
+    }
+
+    @Test
+    fun forceLockedTriggersLockUntilNextUnlock() {
+        store.setPin("1111")
+        store.passcodeEnabled = true
+        store.autoLockTimeout = AutoLockTimeout.DISABLED
+        assertFalse(store.shouldLock())
+        store.lockNow()
+        assertTrue(store.shouldLock())
+        assertTrue(store.verifyPin("1111"))
+        assertFalse(store.shouldLock())
+    }
+
     @After
     fun teardown() {
         store.clear()

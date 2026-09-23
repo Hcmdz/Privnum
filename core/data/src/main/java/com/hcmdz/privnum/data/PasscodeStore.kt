@@ -55,6 +55,14 @@ class PasscodeStore @Inject constructor(
         }.getOrDefault(AutoLockTimeout.MIN_5)
         set(value) = prefs.edit().putString("auto_lock", value.name).apply()
 
+    var forceLocked: Boolean
+        get() = prefs.getBoolean("force_locked", false)
+        set(value) = prefs.edit().putBoolean("force_locked", value).apply()
+
+    fun lockNow() {
+        forceLocked = true
+    }
+
     var lastUnlockedAt: Long
         get() = prefs.getLong("last_unlocked", 0L)
         set(value) = prefs.edit().putLong("last_unlocked", value).apply()
@@ -69,6 +77,7 @@ class PasscodeStore @Inject constructor(
             .putString("salt", salt.toHex())
             .putString("hash", sha256(salt + pin.toByteArray()))
             .apply()
+        biometricEnabled = false
     }
 
     fun verifyPin(pin: String): Boolean {
@@ -77,6 +86,7 @@ class PasscodeStore @Inject constructor(
         val expected = prefs.getString("hash", null) ?: return false
         return if (sha256(saltHex.hexToBytes() + pin.toByteArray()) == expected) {
             failedAttempts = 0
+            forceLocked = false
             prefs.edit().remove("lockout_until").apply()
             true
         } else {
@@ -107,6 +117,7 @@ class PasscodeStore @Inject constructor(
 
     fun shouldLock(now: Long = System.currentTimeMillis()): Boolean {
         if (!passcodeEnabled) return false
+        if (forceLocked) return true
         return when (val timeout = autoLockTimeout) {
             AutoLockTimeout.DISABLED -> false
             AutoLockTimeout.IMMEDIATELY -> true
