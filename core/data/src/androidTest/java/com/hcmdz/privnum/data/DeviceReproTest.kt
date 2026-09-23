@@ -1,0 +1,97 @@
+package com.hcmdz.privnum.data
+
+import androidx.room.Room
+import androidx.test.core.app.ApplicationProvider
+import androidx.test.ext.junit.runners.AndroidJUnit4
+import com.hcmdz.privnum.data.db.PrivnumDatabase
+import kotlinx.coroutines.test.runTest
+import org.junit.After
+import org.junit.Assert.assertEquals
+import org.junit.Assert.assertFalse
+import org.junit.Assert.assertNull
+import org.junit.Assert.assertTrue
+import org.junit.Before
+import org.junit.Test
+import org.junit.runner.RunWith
+
+private fun contact(
+    full: String = "33612345678",
+    national: String = "612345678",
+    name: String = "Test"
+) = Contact(
+    fullPhoneNumber = full,
+    phoneNumber = national,
+    countryCode = "FR",
+    name = name
+)
+
+@RunWith(AndroidJUnit4::class)
+class ContactRepositoryDeviceTest {
+    private lateinit var repository: ContactRepository
+
+    @Before
+    fun setup() {
+        val context = ApplicationProvider.getApplicationContext<android.content.Context>()
+        context.deleteDatabase("privnum.db")
+        repository = ContactRepository(context)
+    }
+
+    @Test
+    fun updateWithUnchangedNumberKeepsSingleRow() = runTest {
+        assertTrue(repository.add(contact()))
+        assertTrue(repository.update("33612345678", contact().copy(nickname = "JD")))
+        assertEquals("JD", repository.getByFullNumber("33612345678")?.nickname)
+        assertEquals(1, repository.getAll().size)
+    }
+
+    @Test
+    fun updateWithChangedNumberMovesContact() = runTest {
+        assertTrue(repository.add(contact()))
+        assertTrue(repository.update("33612345678", contact(full = "33698765432", national = "698765432")))
+        assertNull(repository.getByFullNumber("33612345678"))
+        assertEquals("Test", repository.getByFullNumber("33698765432")?.name)
+    }
+
+    @Test
+    fun updateMissingContactReturnsFalse() = runTest {
+        assertFalse(repository.update("33000000000", contact(full = "33000000000", national = "000000000")))
+    }
+
+    @After
+    fun teardown() {
+        val context = ApplicationProvider.getApplicationContext<android.content.Context>()
+        context.deleteDatabase("privnum.db")
+    }
+}
+
+@RunWith(AndroidJUnit4::class)
+class PasscodeLockoutDeviceTest {
+    private lateinit var store: PasscodeStore
+
+    @Before
+    fun setup() {
+        val context = ApplicationProvider.getApplicationContext<android.content.Context>()
+        store = PasscodeStore(context)
+        store.clear()
+    }
+
+    @Test
+    fun correctPinAcceptedAfterFourFailures() {
+        store.setPin("1111")
+        repeat(4) { assertFalse(store.verifyPin("0000")) }
+        assertTrue(store.verifyPin("1111"))
+    }
+
+    @Test
+    fun correctPinRejectedDuringLockoutAfterFiveFailures() {
+        store.setPin("1111")
+        repeat(5) { assertFalse(store.verifyPin("0000")) }
+        assertTrue(store.isLockedOut())
+        assertFalse(store.verifyPin("1111"))
+    }
+
+    @After
+    fun teardown() {
+        store.clear()
+    }
+}
