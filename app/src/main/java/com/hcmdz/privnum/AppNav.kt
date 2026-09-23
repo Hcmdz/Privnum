@@ -2,6 +2,10 @@ package com.hcmdz.privnum
 
 import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableIntStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.navigation3.runtime.NavKey
 import androidx.navigation3.runtime.entryProvider
 import androidx.navigation3.runtime.rememberNavBackStack
@@ -40,6 +44,7 @@ fun AppNav(
     onUnlocked: () -> Unit
 ) {
     val backStack = rememberNavBackStack(if (startLocked) LockSetup else Contacts)
+    var newContactNonce by remember { mutableIntStateOf(0) }
     val darkTheme = when (themeMode) {
         ThemeMode.LIGHT -> false
         ThemeMode.DARK -> true
@@ -53,7 +58,10 @@ fun AppNav(
             entryProvider = entryProvider {
                 entry<Contacts> {
                     ContactsScreen(
-                        onAdd = { backStack.add(NewContact) },
+                        onAdd = {
+                            newContactNonce++
+                            backStack.add(NewContact)
+                        },
                         onEdit = { backStack.add(EditContact(it.fullPhoneNumber)) },
                         onOpenSearch = { backStack.add(Search) },
                         onOpenSettings = { backStack.add(Settings) }
@@ -62,6 +70,7 @@ fun AppNav(
                 entry<NewContact> {
                     EditorScreen(
                         fullPhoneNumber = null,
+                        entryNonce = newContactNonce,
                         onSaved = { backStack.removeLastOrNull() },
                         onBack = { backStack.removeLastOrNull() }
                     )
@@ -69,6 +78,7 @@ fun AppNav(
                 entry<EditContact> { key ->
                     EditorScreen(
                         fullPhoneNumber = key.fullPhoneNumber,
+                        entryNonce = 0,
                         onSaved = { backStack.removeLastOrNull() },
                         onBack = { backStack.removeLastOrNull() }
                     )

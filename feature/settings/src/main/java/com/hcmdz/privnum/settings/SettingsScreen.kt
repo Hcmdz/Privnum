@@ -3,7 +3,6 @@ package com.hcmdz.privnum.settings
 import android.content.Context
 import android.content.pm.PackageManager
 import android.os.Build
-import android.telephony.TelephonyManager
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.clickable
@@ -62,6 +61,7 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.hcmdz.privnum.caller.CallerPermissions
 import com.hcmdz.privnum.caller.ScreeningRole
 import com.hcmdz.privnum.data.AutoLockTimeout
+import com.hcmdz.privnum.data.Countries
 import com.hcmdz.privnum.data.ThemeMode
 
 private enum class PinDialogMode { EXPORT, REMOVE }
@@ -81,9 +81,7 @@ private fun readCallStatus(context: Context) = CallStatus(
 private fun defaultRegionLabel(region: String?): String =
     region ?: "Automatic (SIM)"
 
-private fun simRegion(context: Context): String =
-    (context.getSystemService(Context.TELEPHONY_SERVICE) as TelephonyManager)
-        .simCountryIso?.uppercase().orEmpty().ifEmpty { "US" }
+private fun simRegion(context: Context): String = Countries.simRegion(context)
 
 private fun appVersion(context: Context): String {
     val info = runCatching {
