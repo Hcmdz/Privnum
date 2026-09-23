@@ -68,6 +68,9 @@ class PreviewViewModel @Inject constructor(
     private var loadedNumber: String? = null
 
     fun load(fullPhoneNumber: String) {
+        // One-shot flags must never survive across entries sharing this ViewModel,
+        // otherwise the screen auto-pops right after opening.
+        _state.update { it.copy(deleted = false, message = null) }
         if (loadedNumber == fullPhoneNumber) return
         loadedNumber = fullPhoneNumber
         viewModelScope.launch {

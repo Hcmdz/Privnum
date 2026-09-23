@@ -117,6 +117,9 @@ class EditorViewModel @Inject constructor(
      */
     fun enter(fullPhoneNumber: String?) {
         originalNumber = null
+        // Synchronous: LaunchedEffect(saved) fires on first composition, before
+        // the async load() below completes. A stale true would pop instantly.
+        _state.update { it.copy(saved = false, message = null) }
         if (fullPhoneNumber == null) {
             countryTouched = false
             val fresh = EditorUiState(country = initialCountry)
@@ -151,7 +154,9 @@ class EditorViewModel @Inject constructor(
                     website = c.website,
                     birthday = c.birthday,
                     nickname = c.nickname,
-                    labels = c.labels
+                    labels = c.labels,
+                    saved = false,
+                    message = null
                 )
             }
             pristine = _state.value
