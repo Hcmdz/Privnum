@@ -26,6 +26,7 @@ class SettingsStore @Inject constructor(
         val INCOMING_POPUP = booleanPreferencesKey("incoming_popup")
         val OUTGOING_POPUP = booleanPreferencesKey("outgoing_popup")
         val DEFAULT_REGION = stringPreferencesKey("default_region")
+        val RECENT_COUNTRIES = stringPreferencesKey("recent_countries")
     }
 
     val themeMode: Flow<ThemeMode> =
@@ -60,6 +61,21 @@ class SettingsStore @Inject constructor(
         context.settingsDataStore.edit {
             if (region == null) it.remove(Keys.DEFAULT_REGION)
             else it[Keys.DEFAULT_REGION] = region
+        }
+    }
+
+    /** Recently used country codes, most recent first (max 3). */
+    val recentCountries: Flow<List<String>> =
+        context.settingsDataStore.data.map {
+            it[Keys.RECENT_COUNTRIES]?.split(",")?.filter(String::isNotEmpty) ?: emptyList()
+        }
+
+    suspend fun pushRecentCountry(code: String) {
+        context.settingsDataStore.edit {
+            val updated = (listOf(code.uppercase()) +
+                (it[Keys.RECENT_COUNTRIES]?.split(",") ?: emptyList()))
+                .filter { it.isNotEmpty() }.distinct().take(3)
+            it[Keys.RECENT_COUNTRIES] = updated.joinToString(",")
         }
     }
 }

@@ -215,8 +215,49 @@ object Countries {
 
     fun getByDialCode(dialCode: String): Country? = byDialCode[dialCode]
 
+    /** Dial codes held by exactly one country; shared codes (e.g. "1") excluded. */
+    internal val uniqueDialCodes: Map<String, Country> =
+        all.groupBy { it.dialCode }.filterValues { it.size == 1 }
+            .mapValues { it.value.single() }
+
     /** SIM country ISO, or "US" when unavailable. Single source for all features. */
     fun simRegion(context: Context): String =
         (context.getSystemService(Context.TELEPHONY_SERVICE) as TelephonyManager)
             .simCountryIso?.uppercase().orEmpty().ifEmpty { "US" }
+}
+
+/** Filter the country list by name, ISO code, or dial code ("+213", "dz" both match). */
+fun filterCountries(query: String): List<Country> {
+    val q = query.trim().replace(Regex("[+\\s-]"), "")
+    if (q.isEmpty()) return Countries.all
+    return Countries.all.filter { country ->
+        country.name.contains(query.trim(), ignoreCase = true) ||
+            country.code.equals(q, ignoreCase = true) ||
+            country.dialCode.contains(q)
+    }
+}
+
+/**
+ * Suggest a country when raw digits start with a unique foreign dial code and
+ * are not valid in [currentRegion]. Null on collision, "+" input, or valid input.
+ */
+fun suggestCountryFor(rawInput: String, currentRegion: String): Country? {
+    val raw = rawInput.trim()
+    if (raw.isEmpty() || raw.startsWith("+")) return null
+    val digits = raw.filter { it.isDigit() }
+    if (digits.isEmpty() || PhoneNumberUtils.isValid(digits, currentRegion)) return null
+    val match = uniqueDialCodeMatch(digits) ?: return null
+    return match.takeIf { it.code != currentRegion.uppercase() }
+}
+
+private fun uniqueDialCodeMatch(digits: String): Country? {
+    var best: Country? = null
+    var bestLen = 0
+    for ((code, country) in Countries.uniqueDialCodes) {
+        if (code.length > bestLen && digits.startsWith(code) && digits.length > code.length) {
+            best = country
+            bestLen = code.length
+        }
+    }
+    return best
 }
