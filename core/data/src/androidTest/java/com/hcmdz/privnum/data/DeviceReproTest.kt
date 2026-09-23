@@ -57,6 +57,15 @@ class ContactRepositoryDeviceTest {
         assertFalse(repository.update("33000000000", contact(full = "33000000000", national = "000000000")))
     }
 
+    @Test
+    fun clearAllEmptiesTableAndFts() = runTest {
+        assertTrue(repository.add(contact()))
+        assertEquals(1, repository.search("Test").size)
+        repository.clearAll()
+        assertEquals(0, repository.getAll().size)
+        assertEquals(0, repository.search("Test").size)
+    }
+
     @After
     fun teardown() {
         val context = ApplicationProvider.getApplicationContext<android.content.Context>()
