@@ -2,6 +2,8 @@ package com.hcmdz.privnum.editor
 
 import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.ExperimentalFoundationApi
+import androidx.activity.compose.rememberLauncherForActivityResult
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -42,6 +44,7 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.FocusDirection
 import androidx.compose.ui.focus.focusProperties
@@ -60,6 +63,7 @@ import com.hcmdz.privnum.data.Country
 import com.hcmdz.privnum.data.PhoneNumberUtils
 import com.hcmdz.privnum.data.filterCountries
 import com.hcmdz.privnum.data.suggestCountryFor
+import com.hcmdz.privnum.ui.ContactAvatar
 
 @OptIn(ExperimentalMaterial3Api::class, ExperimentalFoundationApi::class)
 @Composable
@@ -104,6 +108,9 @@ fun EditorScreen(
             ?.takeIf { it.code != current?.code }
     }
     val next = KeyboardActions(onNext = { focus.moveFocus(FocusDirection.Down) })
+    val photoLauncher = rememberLauncherForActivityResult(
+        ActivityResultContracts.GetContent()
+    ) { uri -> if (uri != null) viewModel.setPhotoUri(uri) }
 
     Scaffold(
         topBar = {
@@ -133,6 +140,30 @@ fun EditorScreen(
                         "Contact not found",
                         color = MaterialTheme.colorScheme.error
                     )
+                }
+            }
+            item {
+                val photoModel = state.pendingPhotoUri
+                    ?: state.photo.takeIf { it.isNotBlank() }?.let { viewModel.photoModel(it) }
+                Row(
+                    verticalAlignment = Alignment.CenterVertically,
+                    horizontalArrangement = Arrangement.spacedBy(12.dp)
+                ) {
+                    ContactAvatar(
+                        model = photoModel,
+                        name = state.name,
+                        size = 72.dp
+                    )
+                    Column(verticalArrangement = Arrangement.spacedBy(4.dp)) {
+                        TextButton(onClick = { photoLauncher.launch("image/*") }) {
+                            Text(if (photoModel == null) "Add photo" else "Change photo")
+                        }
+                        if (photoModel != null) {
+                            TextButton(onClick = { viewModel.removePhoto() }) {
+                                Text("Remove")
+                            }
+                        }
+                    }
                 }
             }
             item {

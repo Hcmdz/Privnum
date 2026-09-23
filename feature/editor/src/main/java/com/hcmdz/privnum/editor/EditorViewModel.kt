@@ -1,16 +1,20 @@
 package com.hcmdz.privnum.editor
 
 import android.content.Context
+import android.net.Uri
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.hcmdz.privnum.data.Contact
+import com.hcmdz.privnum.data.ContactPhotoStore
 import com.hcmdz.privnum.data.ContactRepository
 import com.hcmdz.privnum.data.Countries
 import com.hcmdz.privnum.data.Country
+import com.hcmdz.privnum.data.ParsedNumber
 import com.hcmdz.privnum.data.PhoneNumberUtils
 import com.hcmdz.privnum.data.SettingsStore
 import dagger.hilt.android.lifecycle.HiltViewModel
 import dagger.hilt.android.qualifiers.ApplicationContext
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
@@ -20,12 +24,15 @@ import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import javax.inject.Inject
 
 data class EditorUiState(
     val name: String = "",
     val nationalNumber: String = "",
     val country: Country? = null,
+    val photo: String = "",
+    val pendingPhotoUri: Uri? = null,
     val appointment: String = "",
     val location: String = "",
     val prefix: String = "",
@@ -54,6 +61,8 @@ fun EditorUiState.inputsEqual(other: EditorUiState): Boolean =
     name == other.name &&
         nationalNumber == other.nationalNumber &&
         country == other.country &&
+        photo == other.photo &&
+        pendingPhotoUri == other.pendingPhotoUri &&
         appointment == other.appointment &&
         location == other.location &&
         prefix == other.prefix &&
@@ -69,7 +78,8 @@ fun EditorUiState.inputsEqual(other: EditorUiState): Boolean =
 class EditorViewModel @Inject constructor(
     private val repository: ContactRepository,
     private val settings: SettingsStore,
-    @ApplicationContext context: Context
+    private val photos: ContactPhotoStore,
+    @ApplicationContext private val context: Context
 ) : ViewModel() {
     private val _state = MutableStateFlow(
         EditorUiState(
@@ -131,6 +141,7 @@ class EditorViewModel @Inject constructor(
                     name = c.name,
                     nationalNumber = c.phoneNumber,
                     country = Countries.getByCode(c.countryCode),
+                    photo = c.photo,
                     appointment = c.appointment,
                     location = c.location,
                     prefix = c.prefix,
@@ -156,6 +167,20 @@ class EditorViewModel @Inject constructor(
         _state.update { it.copy(country = country, numberError = null) }
         viewModelScope.launch { settings.pushRecentCountry(country.code) }
     }
+
+    fun setPhotoUri(uri: Uri?) {
+        _state.update { it.copy(pendingPhotoUri = uri) }
+    }
+
+    fun removePhoto() {
+        val current = _state.value.photo
+        if (current.isNotBlank()) {
+            viewModelScope.launch(Dispatchers.IO) { photos.deletePhoto(current) }
+        }
+        _state.update { it.copy(photo = "", pendingPhotoUri = null) }
+    }
+
+    fun photoModel(photo: String): Any? = photos.photoModel(photo)
 
     fun consumeMessage() {
         _state.update { it.copy(message = null) }
@@ -186,8 +211,48 @@ class EditorViewModel @Inject constructor(
             _state.update { it.copy(nameError = nameError, numberError = numberError) }
             return
         }
-        val contact = Contact(
-            fullPhoneNumber = parsed!!.fullNumber,
+        viewModelScope.launch {
+            var finalPhoto = s.photo
+            s.pendingPhotoUri?.let { uri ->
+                val (bytes, mime) = withContext(Dispatchers.IO) {
+                    runCatching {
+                        context.contentResolver.openInputStream(uri)?.use { it.readBytes() }
+                    }.getOrNull() to photos.contentTypeOf(uri)
+                }
+                if (bytes != null) {
+                    if (finalPhoto.isNotBlank()) {
+                        withContext(Dispatchers.IO) { photos.deletePhoto(finalPhoto) }
+                    }
+                    finalPhoto = withContext(Dispatchers.IO) {
+                        photos.savePhoto(bytes, mime)
+                    }
+                }
+            }
+            val contact = buildContact(name, parsed!!, s, finalPhoto)
+            val original = originalNumber
+            val ok = if (original == null) {
+                repository.add(contact)
+            } else {
+                repository.update(original, contact)
+            }
+            if (ok) {
+                _state.update { it.copy(saved = true, photo = finalPhoto, pendingPhotoUri = null) }
+                pristine = _state.value
+            } else {
+                _state.update { it.copy(message = "Contact already exists") }
+            }
+            onDone(ok)
+        }
+    }
+
+    private fun buildContact(
+        name: String,
+        parsed: ParsedNumber,
+        s: EditorUiState,
+        photo: String
+    ): Contact {
+        return Contact(
+            fullPhoneNumber = parsed.fullNumber,
             phoneNumber = parsed.nationalNumber,
             countryCode = parsed.countryIso,
             name = name,
@@ -200,22 +265,8 @@ class EditorViewModel @Inject constructor(
             website = s.website.trim(),
             birthday = s.birthday.trim(),
             nickname = s.nickname.trim(),
-            labels = s.labels.trim()
+            labels = s.labels.trim(),
+            photo = photo
         )
-        viewModelScope.launch {
-            val original = originalNumber
-            val ok = if (original == null) {
-                repository.add(contact)
-            } else {
-                repository.update(original, contact)
-            }
-            if (ok) {
-                _state.update { it.copy(saved = true) }
-                pristine = _state.value
-            } else {
-                _state.update { it.copy(message = "Contact already exists") }
-            }
-            onDone(ok)
-        }
     }
 }
