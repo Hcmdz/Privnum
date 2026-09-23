@@ -3,6 +3,7 @@ plugins {
     alias(libs.plugins.kotlin.compose)
     alias(libs.plugins.hilt)
     alias(libs.plugins.ksp)
+    alias(libs.plugins.serialization)
 }
 
 android {
@@ -86,6 +87,11 @@ dependencies {
     implementation(project(":core:ui"))
     implementation(project(":core:data"))
     implementation(project(":core:caller"))
+    implementation(project(":feature:contacts"))
+    implementation(project(":feature:editor"))
+    implementation(project(":feature:search"))
+    implementation(project(":feature:settings"))
+    implementation(project(":feature:lock"))
 
     val composeBom = platform(libs.compose.bom)
     implementation(composeBom)
@@ -97,6 +103,10 @@ dependencies {
     implementation(libs.activity.compose)
     implementation(libs.lifecycle.runtime.compose)
     implementation(libs.lifecycle.runtime.ktx)
+    implementation(libs.navigation3.runtime)
+    implementation(libs.navigation3.ui)
+    implementation(libs.hilt.navigation.compose)
+    implementation(libs.kotlinx.serialization.json)
 
     implementation(libs.hilt.android)
     ksp(libs.hilt.compiler)
