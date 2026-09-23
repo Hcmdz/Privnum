@@ -44,4 +44,21 @@ object PhoneNumberUtils {
             fullNumber
         }
     }
+
+    /**
+     * Parse raw editor input: a leading "+" keeps its country (region ignored),
+     * otherwise digits are parsed as a national number in [region].
+     */
+    fun parseForSave(rawInput: String, region: String): ParsedNumber? {
+        val raw = rawInput.trim()
+        return if (raw.startsWith("+")) {
+            parse("+" + raw.drop(1).filter { it.isDigit() }, "US")
+        } else {
+            parse(raw.filter { it.isDigit() }, region)
+        }
+    }
+
+    /** International display preview of raw editor input, or null when unparseable. */
+    fun previewNumber(rawInput: String, region: String): String? =
+        parseForSave(rawInput, region)?.let { "+${it.fullNumber}" }
 }

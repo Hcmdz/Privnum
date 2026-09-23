@@ -1,5 +1,8 @@
 package com.hcmdz.privnum.data
 
+import android.content.Context
+import android.telephony.TelephonyManager
+
 data class Country(
     val name: String,
     val code: String,
@@ -211,4 +214,9 @@ object Countries {
     fun getByCode(code: String): Country? = byCode[code.uppercase()]
 
     fun getByDialCode(dialCode: String): Country? = byDialCode[dialCode]
+
+    /** SIM country ISO, or "US" when unavailable. Single source for all features. */
+    fun simRegion(context: Context): String =
+        (context.getSystemService(Context.TELEPHONY_SERVICE) as TelephonyManager)
+            .simCountryIso?.uppercase().orEmpty().ifEmpty { "US" }
 }
