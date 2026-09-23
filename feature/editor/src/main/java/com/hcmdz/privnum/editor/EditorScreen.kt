@@ -225,7 +225,12 @@ fun EditorScreen(
                     OutlinedTextField(
                         value = state.nationalNumber,
                         onValueChange = {
-                            viewModel.update { s -> s.copy(nationalNumber = it, numberError = null) }
+                            viewModel.update { s ->
+                                s.copy(
+                                    nationalNumber = PhoneNumberUtils.trimPhoneInput(it),
+                                    numberError = null
+                                )
+                            }
                         },
                         label = { Text("Phone number *") },
                         keyboardOptions = KeyboardOptions(

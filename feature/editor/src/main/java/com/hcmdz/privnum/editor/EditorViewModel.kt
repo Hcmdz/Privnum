@@ -204,9 +204,12 @@ class EditorViewModel @Inject constructor(
         var numberError: String? = null
         if (name.length < 2) nameError = "Name must be at least 2 characters"
         val country = s.country
+        val digits = s.nationalNumber.filter { it.isDigit() }
         val parsed = country?.let { PhoneNumberUtils.parseForSave(s.nationalNumber, it.code) }
         if (country == null) {
             numberError = "Select a country"
+        } else if (digits.length < PhoneNumberUtils.MIN_PHONE_DIGITS) {
+            numberError = "Too short"
         } else if (parsed == null ||
             !PhoneNumberUtils.isValid("+" + parsed.fullNumber, parsed.countryIso)
         ) {

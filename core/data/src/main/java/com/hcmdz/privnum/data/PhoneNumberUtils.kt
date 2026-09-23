@@ -12,6 +12,16 @@ data class ParsedNumber(
 object PhoneNumberUtils {
     private val phoneUtil: PhoneNumberUtil by lazy { PhoneNumberUtil.getInstance() }
 
+    const val MAX_PHONE_DIGITS = 15
+    const val MIN_PHONE_DIGITS = 2
+
+    /** Keep an optional leading "+", digits only, capped to E.164 max. */
+    fun trimPhoneInput(rawInput: String): String {
+        val raw = rawInput.trim()
+        val digits = raw.filter { it.isDigit() }.take(MAX_PHONE_DIGITS)
+        return if (raw.startsWith("+") && digits.isNotEmpty()) "+$digits" else digits
+    }
+
     fun parse(phoneStr: String, defaultRegion: String): ParsedNumber? {
         return try {
             val proto = phoneUtil.parse(phoneStr, defaultRegion)
@@ -50,11 +60,11 @@ object PhoneNumberUtils {
      * otherwise digits are parsed as a national number in [region].
      */
     fun parseForSave(rawInput: String, region: String): ParsedNumber? {
-        val raw = rawInput.trim()
+        val raw = trimPhoneInput(rawInput)
         return if (raw.startsWith("+")) {
-            parse("+" + raw.drop(1).filter { it.isDigit() }, "US")
+            parse(raw, "US")
         } else {
-            parse(raw.filter { it.isDigit() }, region)
+            parse(raw, region)
         }
     }
 

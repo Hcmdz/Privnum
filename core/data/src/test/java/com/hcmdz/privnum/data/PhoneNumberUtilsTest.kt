@@ -68,4 +68,14 @@ class PhoneNumberUtilsTest {
         assertNull(PhoneNumberUtils.previewNumber("abc", "DZ"))
         assertNull(PhoneNumberUtils.previewNumber("", "DZ"))
     }
+
+    @Test
+    fun `trimPhoneInput keeps plus and caps to 15 digits`() {
+        assertEquals(frIntl, PhoneNumberUtils.trimPhoneInput("  $frIntl  "))
+        val long = "1234" + "5678" + "9012" + "3456"
+        assertEquals("1234" + "5678" + "9012" + "345", PhoneNumberUtils.trimPhoneInput(long))
+        assertEquals("", PhoneNumberUtils.trimPhoneInput("+"))
+        assertEquals("", PhoneNumberUtils.trimPhoneInput(""))
+        assertEquals(frNational, PhoneNumberUtils.trimPhoneInput("06-12-34-56-78"))
+    }
 }
