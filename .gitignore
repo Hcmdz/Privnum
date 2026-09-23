@@ -1,0 +1,27 @@
+# Gradle
+.gradle/
+build/
+
+# Android Studio
+local.properties
+.idea/
+*.iml
+.DS_Store
+
+# Signing: release keystore and credentials never enter the repo.
+# Credentials live in ~/.gradle/gradle.properties (RELEASE_* keys).
+*.jks
+*.keystore
+*.p8
+*.p12
+*.key
+*.mobileprovision
+*.pem
+keystore.properties
+
+# Keystores and APKs
+*.apk
+*.aab
+
+# Kotlin
+.kotlin/
