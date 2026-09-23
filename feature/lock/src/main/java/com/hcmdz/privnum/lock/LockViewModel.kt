@@ -69,6 +69,10 @@ class LockViewModel @Inject constructor(
         val current = _state.value
         when (current.mode) {
             LockMode.VERIFY -> {
+                if (store.isLockedOut()) {
+                    _state.update { it.copy(error = "Too many attempts, try again later", pin = "") }
+                    return
+                }
                 viewModelScope.launch {
                     if (store.verifyPin(pin)) {
                         store.failedAttempts = 0

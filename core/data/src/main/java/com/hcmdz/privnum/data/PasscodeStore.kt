@@ -23,6 +23,11 @@ enum class AutoLockTimeout(val minutes: Long) {
 class PasscodeStore @Inject constructor(
     @ApplicationContext context: Context
 ) {
+    companion object {
+        const val MAX_FAILED_ATTEMPTS = 5
+        const val LOCKOUT_MS = 60_000L
+    }
+
     private val prefs: SharedPreferences by lazy {
         val masterKey = MasterKey.Builder(context)
             .setKeyScheme(MasterKey.KeyScheme.AES256_GCM)
@@ -67,12 +72,32 @@ class PasscodeStore @Inject constructor(
     }
 
     fun verifyPin(pin: String): Boolean {
+        if (isLockedOut()) return false
         val saltHex = prefs.getString("salt", null) ?: return false
         val expected = prefs.getString("hash", null) ?: return false
-        return sha256(saltHex.hexToBytes() + pin.toByteArray()) == expected
+        return if (sha256(saltHex.hexToBytes() + pin.toByteArray()) == expected) {
+            failedAttempts = 0
+            prefs.edit().remove("lockout_until").apply()
+            true
+        } else {
+            val attempts = failedAttempts + 1
+            failedAttempts = attempts
+            if (attempts >= MAX_FAILED_ATTEMPTS) {
+                prefs.edit()
+                    .putLong("lockout_until", System.currentTimeMillis() + LOCKOUT_MS)
+                    .apply()
+            }
+            false
+        }
     }
 
     fun hasPin(): Boolean = prefs.contains("hash")
+
+    fun isLockedOut(now: Long = System.currentTimeMillis()): Boolean =
+        now < prefs.getLong("lockout_until", 0L)
+
+    fun lockoutRemainingMs(now: Long = System.currentTimeMillis()): Long =
+        (prefs.getLong("lockout_until", 0L) - now).coerceAtLeast(0L)
 
     fun clear() {
         prefs.edit().clear().apply()
@@ -91,13 +116,13 @@ class PasscodeStore @Inject constructor(
 
     private fun sha256(bytes: ByteArray): String =
         MessageDigest.getInstance("SHA-256").digest(bytes).toHex()
-
-    private fun ByteArray.toHex(): String =
-        joinToString("") { "%02x".format(it) }
-
-    private fun String.hexToBytes(): ByteArray =
-        chunked(2).map { it.toInt(16).toByte() }.toByteArray()
 }
+
+internal fun ByteArray.toHex(): String =
+    joinToString("") { "%02x".format(it) }
+
+internal fun String.hexToBytes(): ByteArray =
+    chunked(2).map { it.toInt(16).toByte() }.toByteArray()
 
 private operator fun ByteArray.plus(other: ByteArray): ByteArray {
     val result = ByteArray(size + other.size)
