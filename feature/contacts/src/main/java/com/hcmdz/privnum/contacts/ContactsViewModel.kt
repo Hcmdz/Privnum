@@ -3,6 +3,7 @@ package com.hcmdz.privnum.contacts
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.hcmdz.privnum.data.Contact
+import com.hcmdz.privnum.data.ContactPhotoStore
 import com.hcmdz.privnum.data.ContactRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -26,7 +27,8 @@ data class ContactsUiState(
 
 @HiltViewModel
 class ContactsViewModel @Inject constructor(
-    private val repository: ContactRepository
+    private val repository: ContactRepository,
+    private val photos: ContactPhotoStore
 ) : ViewModel() {
     private val selected = MutableStateFlow<Set<String>>(emptySet())
 
@@ -66,4 +68,6 @@ class ContactsViewModel @Inject constructor(
             onDone(repository.delete(contact.fullPhoneNumber))
         }
     }
+
+    fun photoModel(photo: String): Any? = photos.photoModel(photo)
 }

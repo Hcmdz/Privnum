@@ -7,6 +7,7 @@ import androidx.biometric.BiometricManager
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.hcmdz.privnum.data.AutoLockTimeout
+import com.hcmdz.privnum.data.ContactPhotoStore
 import com.hcmdz.privnum.data.ContactRepository
 import com.hcmdz.privnum.data.PasscodeStore
 import com.hcmdz.privnum.data.SettingsStore
@@ -69,6 +70,7 @@ class SettingsViewModel @Inject constructor(
     private val settings: SettingsStore,
     private val passcode: PasscodeStore,
     private val repository: ContactRepository,
+    private val photos: ContactPhotoStore,
     @ApplicationContext private val context: Context
 ) : ViewModel() {
     private val autoLock = MutableStateFlow(passcode.autoLockTimeout)
@@ -150,7 +152,15 @@ class SettingsViewModel @Inject constructor(
                 message.value = "No contacts found in the selected file"
                 return@launch
             }
-            val added = repository.addAll(contacts)
+            val normalized = withContext(Dispatchers.IO) {
+                contacts.map { contact ->
+                    if (contact.photo.startsWith("data:image/")) {
+                        photos.importDataUri(contact.photo)?.let { contact.copy(photo = it) }
+                            ?: contact
+                    } else contact
+                }
+            }
+            val added = repository.addAll(normalized)
             message.value = "$added contacts imported"
         }
     }
@@ -164,8 +174,11 @@ class SettingsViewModel @Inject constructor(
             }
             val ok = withContext(Dispatchers.IO) {
                 runCatching {
+                    val withPhotos = contacts.map { contact ->
+                        contact.copy(photo = photos.photoDataUri(contact.photo).orEmpty())
+                    }
                     resolver.openOutputStream(uri)?.bufferedWriter()?.use {
-                        it.write(VcfMapper.contactsToVcf(contacts))
+                        it.write(VcfMapper.contactsToVcf(withPhotos))
                     } != null
                 }.getOrDefault(false)
             }

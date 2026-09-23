@@ -31,6 +31,7 @@ import androidx.compose.ui.unit.dp
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.hcmdz.privnum.data.Contact
+import com.hcmdz.privnum.ui.ContactAvatar
 
 @OptIn(ExperimentalMaterial3Api::class, ExperimentalFoundationApi::class)
 @Composable
@@ -106,6 +107,7 @@ fun ContactsScreen(
                     item(key = item.contact.fullPhoneNumber) {
                         ContactRow(
                             item = item,
+                            photoModel = viewModel.photoModel(item.contact.photo),
                             onClick = {
                                 if (state.selectionMode) {
                                     viewModel.toggleSelection(item.contact.fullPhoneNumber)
@@ -128,6 +130,7 @@ fun ContactsScreen(
 @Composable
 private fun ContactRow(
     item: ContactListItem,
+    photoModel: Any?,
     onClick: () -> Unit,
     onLongClick: () -> Unit
 ) {
@@ -138,6 +141,13 @@ private fun ContactRow(
         ),
         headlineContent = { Text(item.contact.displayName()) },
         supportingContent = { Text("+${item.contact.fullPhoneNumber}") },
+        leadingContent = {
+            ContactAvatar(
+                model = photoModel,
+                name = item.contact.displayName(),
+                size = 40.dp
+            )
+        },
         trailingContent = {
             Row(verticalAlignment = Alignment.CenterVertically) {
                 if (item.selected) {

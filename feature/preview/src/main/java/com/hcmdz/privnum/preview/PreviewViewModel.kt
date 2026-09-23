@@ -6,6 +6,7 @@ import androidx.core.content.FileProvider
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.hcmdz.privnum.data.Contact
+import com.hcmdz.privnum.data.ContactPhotoStore
 import com.hcmdz.privnum.data.ContactRepository
 import com.hcmdz.privnum.data.VcfMapper
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -58,6 +59,7 @@ fun avatarRoleIndex(letter: Char): Int =
 @HiltViewModel
 class PreviewViewModel @Inject constructor(
     private val repository: ContactRepository,
+    private val photos: ContactPhotoStore,
     @ApplicationContext private val context: Context
 ) : ViewModel() {
     private val _state = MutableStateFlow(PreviewUiState())
@@ -100,4 +102,6 @@ class PreviewViewModel @Inject constructor(
     fun consumeMessage() {
         _state.update { it.copy(message = null) }
     }
+
+    fun photoModel(photo: String): Any? = photos.photoModel(photo)
 }

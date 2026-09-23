@@ -72,6 +72,7 @@ import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.hcmdz.privnum.data.Contact
 import com.hcmdz.privnum.data.PhoneNumberUtils
+import com.hcmdz.privnum.ui.ContactAvatar
 import kotlinx.coroutines.launch
 
 fun isAppInstalled(context: Context, packageName: String): Boolean =
@@ -167,6 +168,7 @@ fun PreviewScreen(
             else -> {
                 ContactDetails(
                     contact = contact,
+                    photoModel = viewModel.photoModel(contact.photo),
                     modifier = Modifier
                         .fillMaxSize()
                         .padding(padding)
@@ -228,6 +230,7 @@ fun PreviewScreen(
 @Composable
 private fun ContactDetails(
     contact: Contact,
+    photoModel: Any?,
     modifier: Modifier = Modifier,
     onCall: () -> Unit,
     onMessage: () -> Unit,
@@ -251,20 +254,24 @@ private fun ContactDetails(
     }
 
     Column(modifier = modifier, verticalArrangement = Arrangement.spacedBy(8.dp)) {
-        Box(
-            modifier = Modifier
-                .size(72.dp)
-                .clip(CircleShape)
-                .background(container)
-                .align(Alignment.CenterHorizontally),
-            contentAlignment = Alignment.Center
-        ) {
-            Text(
-                letter.toString(),
-                style = MaterialTheme.typography.headlineLarge,
-                color = onContainer
-            )
+        val (container, onContainer) = when (avatarRoleIndex(letter)) {
+            1 -> MaterialTheme.colorScheme.secondaryContainer to
+                MaterialTheme.colorScheme.onSecondaryContainer
+
+            2 -> MaterialTheme.colorScheme.tertiaryContainer to
+                MaterialTheme.colorScheme.onTertiaryContainer
+
+            else -> MaterialTheme.colorScheme.primaryContainer to
+                MaterialTheme.colorScheme.onPrimaryContainer
         }
+        ContactAvatar(
+            model = photoModel,
+            name = contact.displayName(),
+            size = 72.dp,
+            containerColor = container,
+            contentColor = onContainer,
+            modifier = Modifier.align(Alignment.CenterHorizontally)
+        )
         Text(
             contact.displayName(),
             style = MaterialTheme.typography.headlineMedium,
