@@ -25,6 +25,7 @@ class SettingsStore @Inject constructor(
         val THEME_MODE = stringPreferencesKey("theme_mode")
         val INCOMING_POPUP = booleanPreferencesKey("incoming_popup")
         val OUTGOING_POPUP = booleanPreferencesKey("outgoing_popup")
+        val DEFAULT_REGION = stringPreferencesKey("default_region")
     }
 
     val themeMode: Flow<ThemeMode> =
@@ -49,5 +50,16 @@ class SettingsStore @Inject constructor(
 
     suspend fun setOutgoingPopup(enabled: Boolean) {
         context.settingsDataStore.edit { it[Keys.OUTGOING_POPUP] = enabled }
+    }
+
+    /** ISO-3166 region for number parsing, or null for automatic (SIM). */
+    val defaultRegion: Flow<String?> =
+        context.settingsDataStore.data.map { it[Keys.DEFAULT_REGION] }
+
+    suspend fun setDefaultRegion(region: String?) {
+        context.settingsDataStore.edit {
+            if (region == null) it.remove(Keys.DEFAULT_REGION)
+            else it[Keys.DEFAULT_REGION] = region
+        }
     }
 }

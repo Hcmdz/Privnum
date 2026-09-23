@@ -109,6 +109,8 @@ class ContactRepository @Inject constructor(
 
     suspend fun deleteMultiple(fullPhoneNumbers: List<String>): Boolean =
         dao.deleteByFullNumbers(fullPhoneNumbers) > 0
+
+    suspend fun clearAll() = dao.clearAll()
 }
 
 internal fun buildFtsQuery(rawQuery: String): String {
