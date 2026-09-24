@@ -27,6 +27,8 @@ class SettingsStore @Inject constructor(
         val OUTGOING_POPUP = booleanPreferencesKey("outgoing_popup")
         val DEFAULT_REGION = stringPreferencesKey("default_region")
         val RECENT_COUNTRIES = stringPreferencesKey("recent_countries")
+        val DYNAMIC_COLOR = booleanPreferencesKey("dynamic_color")
+        val AMOLED_BLACK = booleanPreferencesKey("amoled_black")
     }
 
     val themeMode: Flow<ThemeMode> =
@@ -77,5 +79,19 @@ class SettingsStore @Inject constructor(
                 .filter { it.isNotEmpty() }.distinct().take(3)
             it[Keys.RECENT_COUNTRIES] = updated.joinToString(",")
         }
+    }
+
+    val dynamicColor: Flow<Boolean> =
+        context.settingsDataStore.data.map { it[Keys.DYNAMIC_COLOR] ?: true }
+
+    suspend fun setDynamicColor(enabled: Boolean) {
+        context.settingsDataStore.edit { it[Keys.DYNAMIC_COLOR] = enabled }
+    }
+
+    val amoledBlack: Flow<Boolean> =
+        context.settingsDataStore.data.map { it[Keys.AMOLED_BLACK] ?: false }
+
+    suspend fun setAmoledBlack(enabled: Boolean) {
+        context.settingsDataStore.edit { it[Keys.AMOLED_BLACK] = enabled }
     }
 }

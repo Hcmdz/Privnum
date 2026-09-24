@@ -217,6 +217,25 @@ fun SettingsScreen(
                     )
                 }
             }
+            val dynamicSupported =
+                android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.S
+            SwitchRow(
+                title = "Dynamic colors",
+                supporting = if (dynamicSupported) null else "Android 12+ only",
+                checked = state.dynamicColor,
+                enabled = dynamicSupported,
+                onChange = { viewModel.setDynamicColor(it) }
+            )
+            val darkEffective = state.themeMode == ThemeMode.DARK ||
+                (state.themeMode == ThemeMode.SYSTEM &&
+                    androidx.compose.foundation.isSystemInDarkTheme())
+            SwitchRow(
+                title = "Pure black (AMOLED)",
+                supporting = if (darkEffective) null else "Dark theme only",
+                checked = state.amoledBlack,
+                enabled = darkEffective,
+                onChange = { viewModel.setAmoledBlack(it) }
+            )
 
             Text("Security", style = MaterialTheme.typography.titleSmall)
             ListItem(
@@ -496,16 +515,27 @@ private fun RegionRow(label: String, selected: Boolean, onClick: () -> Unit) {
 }
 
 @Composable
-private fun SwitchRow(title: String, checked: Boolean, onChange: (Boolean) -> Unit) {
+private fun SwitchRow(
+    title: String,
+    checked: Boolean,
+    supporting: String? = null,
+    enabled: Boolean = true,
+    onChange: (Boolean) -> Unit
+) {
     ListItem(
         headlineContent = { Text(title) },
+        supportingContent = { supporting?.let { Text(it) } },
         trailingContent = {
-            Switch(checked = checked, onCheckedChange = null)
+            Switch(checked = checked, onCheckedChange = null, enabled = enabled)
         },
-        modifier = Modifier.clickable(
-            role = Role.Switch,
-            onClick = { onChange(!checked) }
-        )
+        modifier = if (enabled) {
+            Modifier.clickable(
+                role = Role.Switch,
+                onClick = { onChange(!checked) }
+            )
+        } else {
+            Modifier
+        }
     )
 }
 

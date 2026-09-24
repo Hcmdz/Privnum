@@ -30,6 +30,12 @@ class MainActivity : ComponentActivity() {
             val themeMode by settings.themeMode.collectAsStateWithLifecycle(
                 initialValue = ThemeMode.SYSTEM
             )
+            val dynamicColor by settings.dynamicColor.collectAsStateWithLifecycle(
+                initialValue = true
+            )
+            val amoledBlack by settings.amoledBlack.collectAsStateWithLifecycle(
+                initialValue = false
+            )
             Surface(
                 modifier = Modifier.fillMaxSize(),
                 color = MaterialTheme.colorScheme.background
@@ -37,6 +43,8 @@ class MainActivity : ComponentActivity() {
                 AppNav(
                     startLocked = startLocked,
                     themeMode = themeMode,
+                    dynamicColor = dynamicColor,
+                    amoledBlack = amoledBlack,
                     passcode = passcode,
                     onUnlocked = {}
                 )

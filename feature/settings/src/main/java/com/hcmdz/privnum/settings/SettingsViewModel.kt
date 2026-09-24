@@ -35,6 +35,8 @@ data class SettingsUiState(
     val biometricEnabled: Boolean = false,
     val biometricAvailable: Boolean = false,
     val defaultRegion: String? = null,
+    val dynamicColor: Boolean = true,
+    val amoledBlack: Boolean = false,
     val message: String? = null
 )
 
@@ -62,8 +64,18 @@ private data class AuxState(
     val lock: AutoLockTimeout = AutoLockTimeout.MIN_5,
     val region: String? = null,
     val sec: SecurityState = SecurityState(),
-    val msg: String? = null
+    val msg: String? = null,
+    val dynamicColor: Boolean = true,
+    val amoledBlack: Boolean = false
 )
+
+private data class ThemePrefs(
+    val dynamicColor: Boolean = true,
+    val amoledBlack: Boolean = false
+)
+
+private fun mergeAux(aux: AuxState, prefs: ThemePrefs): AuxState =
+    aux.copy(dynamicColor = prefs.dynamicColor, amoledBlack = prefs.amoledBlack)
 
 @HiltViewModel
 class SettingsViewModel @Inject constructor(
@@ -83,7 +95,11 @@ class SettingsViewModel @Inject constructor(
             settings.incomingPopup,
             settings.outgoingPopup,
             repository.observeContacts(),
-            combine(autoLock, settings.defaultRegion, security, message, ::AuxState)
+            combine(
+                combine(autoLock, settings.defaultRegion, security, message, ::AuxState),
+                combine(settings.dynamicColor, settings.amoledBlack, ::ThemePrefs),
+                ::mergeAux
+            )
         ) { theme, incoming, outgoing, contacts, aux ->
             SettingsUiState(
                 themeMode = theme,
@@ -95,12 +111,22 @@ class SettingsViewModel @Inject constructor(
                 biometricEnabled = aux.sec.biometricEnabled,
                 biometricAvailable = aux.sec.biometricAvailable,
                 defaultRegion = aux.region,
+                dynamicColor = aux.dynamicColor,
+                amoledBlack = aux.amoledBlack,
                 message = aux.msg
             )
         }.stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), SettingsUiState())
 
     fun setTheme(mode: ThemeMode) {
         viewModelScope.launch { settings.setThemeMode(mode) }
+    }
+
+    fun setDynamicColor(enabled: Boolean) {
+        viewModelScope.launch { settings.setDynamicColor(enabled) }
+    }
+
+    fun setAmoledBlack(enabled: Boolean) {
+        viewModelScope.launch { settings.setAmoledBlack(enabled) }
     }
 
     fun setIncoming(enabled: Boolean) {

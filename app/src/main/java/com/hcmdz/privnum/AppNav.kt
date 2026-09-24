@@ -49,6 +49,8 @@ data object LockVerify : NavKey
 fun AppNav(
     startLocked: Boolean,
     themeMode: ThemeMode,
+    dynamicColor: Boolean,
+    amoledBlack: Boolean,
     passcode: PasscodeStore,
     onUnlocked: () -> Unit
 ) {
@@ -60,7 +62,11 @@ fun AppNav(
         ThemeMode.SYSTEM -> isSystemInDarkTheme()
     }
 
-    PrivnumTheme(darkTheme = darkTheme) {
+    PrivnumTheme(
+        darkTheme = darkTheme,
+        dynamicColor = dynamicColor,
+        amoledBlack = amoledBlack
+    ) {
         NavDisplay(
             backStack = backStack,
             onBack = { backStack.removeLastOrNull() },
