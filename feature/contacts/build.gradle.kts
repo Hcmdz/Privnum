@@ -27,6 +27,7 @@ android {
 dependencies {
     implementation(project(":core:ui"))
     implementation(project(":core:data"))
+    implementation(project(":core:caller"))
     implementation(libs.androidx.core)
 
     val composeBom = platform(libs.compose.bom)

@@ -6,6 +6,7 @@ import android.content.Intent
 import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.combinedClickable
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
@@ -27,6 +28,7 @@ import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.ListItem
+import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.SnackbarHost
 import androidx.compose.material3.SnackbarHostState
@@ -48,6 +50,7 @@ import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.compose.LifecycleEventEffect
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import com.hcmdz.privnum.caller.ScreeningRole
 import com.hcmdz.privnum.data.Contact
 import com.hcmdz.privnum.data.VcfMapper
 import com.hcmdz.privnum.ui.ContactAvatar
@@ -70,9 +73,11 @@ fun ContactsScreen(
     val scope = rememberCoroutineScope()
     var deleteConfirm by remember { mutableStateOf(false) }
     var passcodeSet by remember { mutableStateOf(false) }
+    var screeningHeld by remember { mutableStateOf(true) }
 
     LifecycleEventEffect(Lifecycle.Event.ON_RESUME) {
         passcodeSet = viewModel.isPasscodeSet()
+        screeningHeld = ScreeningRole.isHeld(context)
     }
     BackHandler(enabled = state.selectionMode) {
         viewModel.clearSelection()
@@ -155,10 +160,17 @@ fun ContactsScreen(
                 modifier = Modifier
                     .fillMaxSize()
                     .padding(padding)
-                    .padding(32.dp)
+                    .padding(32.dp),
+                verticalArrangement = Arrangement.spacedBy(8.dp)
             ) {
                 Text("No contacts found")
                 Text("Add your first contact")
+                if (!screeningHeld) {
+                    Text("Call detection is off")
+                    OutlinedButton(onClick = onOpenSettings) {
+                        Text("Enable in Settings")
+                    }
+                }
             }
         } else {
             LazyColumn(

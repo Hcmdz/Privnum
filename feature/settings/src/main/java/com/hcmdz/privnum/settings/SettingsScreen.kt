@@ -20,6 +20,7 @@ import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material3.AlertDialog
+import androidx.compose.material3.AssistChip
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -63,6 +64,7 @@ import com.hcmdz.privnum.caller.ScreeningRole
 import com.hcmdz.privnum.data.AutoLockTimeout
 import com.hcmdz.privnum.data.Countries
 import com.hcmdz.privnum.data.ThemeMode
+import com.hcmdz.privnum.ui.ContactAvatar
 
 private enum class PinDialogMode { EXPORT, REMOVE }
 
@@ -303,13 +305,35 @@ fun SettingsScreen(
             ListItem(headlineContent = { Text("Privnum") },
                 supportingContent = { Text("Version ${appVersion(context)}") })
             Row(horizontalArrangement = Arrangement.spacedBy(12.dp)) {
-                TextButton(onClick = { uriHandler.openUri("https://github.com/Hcmdz/Privnum") }) {
+                TextButton(onClick = { uriHandler.openUri("https://github.com/Hcmdz/Privnum?tab=readme-ov-file") }) {
                     Text("README")
                 }
                 TextButton(onClick = { uriHandler.openUri("https://github.com/Hcmdz/Privnum/issues") }) {
                     Text("Report issue")
                 }
+                TextButton(onClick = { uriHandler.openUri("https://github.com/sponsors/Hcmdz") }) {
+                    Text("Support")
+                }
             }
+            Text("Developed by", style = MaterialTheme.typography.titleSmall)
+            ListItem(
+                headlineContent = { Text("Hcmdz") },
+                leadingContent = {
+                    ContactAvatar(model = null, name = "P", size = 48.dp)
+                },
+                trailingContent = {
+                    Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
+                        AssistChip(
+                            onClick = { uriHandler.openUri("https://github.com/Hcmdz/Privnum/issues") },
+                            label = { Text("Contact") }
+                        )
+                        AssistChip(
+                            onClick = { uriHandler.openUri("https://github.com/Hcmdz") },
+                            label = { Text("Github") }
+                        )
+                    }
+                }
+            )
         }
     }
 
