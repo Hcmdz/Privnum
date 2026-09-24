@@ -83,9 +83,14 @@ requests **zero network permissions**.
 - **Private caller ID.** Incoming/outgoing call popup with name, photo and
   notes resolved from the local database; system call-directory provider
   included.
-- **Contacts stay out of the system.** Add, search (FTS prefix), preview,
-  edit, import/export/share VCF (photos included) — nothing ever leaves
-  the app database.
+- **Contacts stay out of the system.** Add, search (FTS prefix, text and
+  digits combined), preview, edit, import/export/share VCF (photos
+  included) — nothing ever leaves the app database.
+- **Several numbers per contact.** Dynamic editor rows with per-row
+  country, one primary flag, and duplicate protection across contacts
+  (a taken number names its owner instead of merging); caller lookup,
+  preview actions, WhatsApp/Telegram rows and VCF backup all cover
+  every number.
 - **Lock it down.** Optional passcode (5-attempt lockout), biometrics,
   auto-lock timeouts, instant lock, encrypted storage.
 - **Yours to theme.** Dynamic (Material You) colors with toggle, pure-black
@@ -193,7 +198,8 @@ app/src/main/java/com/hcmdz/privnum/
 ├── PrivnumApplication.kt        # Hilt application
 └── res/xml/file_paths.xml       # FileProvider paths (VCF/photo sharing)
 core/caller/                    # Screening service, receiver, directory provider, overlay UI
-core/data/                      # Room (contacts + FTS4, exportSchema=true), repository,
+core/data/                      # Room (contacts + phone_numbers + FTS4,
+│   │                           # exportSchema=true, v1→v2 migration), repository,
 │   │                           # DataStore settings, encrypted passcode, VCF, photo store
 │   └── db/                      # Entities, DAO, database + schemas/
 core/ui/                        # Material 3 theme + shared ContactAvatar
@@ -235,13 +241,16 @@ apksigner verify --print-certs app/build/outputs/apk/release/Privnum-release.apk
 
 ## 📏 APK Size
 
-Current release APK: **~4.1 MB** (universal, single APK, R8 + shrink enabled).
+Current release APK: **~5.0 MB** (universal, single APK, R8 + shrink enabled, V3-signed).
 
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
 
 ---
 
 ## 📝 Changelog
+
+### Unreleased
+- Multiple phone numbers per contact (Room v1→v2 migration, primary flag, per-number actions, multi-TEL VCF)
 
 ### v1.0.0
 - Native conversion: contacts, search, editor, details, settings, lock, VCF backup, caller ID
