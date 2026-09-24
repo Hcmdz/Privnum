@@ -26,6 +26,7 @@ class PasscodeStore @Inject constructor(
     companion object {
         const val MAX_FAILED_ATTEMPTS = 5
         const val LOCKOUT_MS = 60_000L
+        private val secureRandom = SecureRandom()
     }
 
     private val prefs: SharedPreferences by lazy {
@@ -72,7 +73,7 @@ class PasscodeStore @Inject constructor(
         set(value) = prefs.edit().putInt("failed", value).apply()
 
     fun setPin(pin: String) {
-        val salt = ByteArray(16).also { SecureRandom().nextBytes(it) }
+        val salt = ByteArray(16).also { secureRandom.nextBytes(it) }
         prefs.edit()
             .putString("salt", salt.toHex())
             .putString("hash", sha256(salt + pin.toByteArray()))

@@ -59,6 +59,11 @@ class CallReceiver : BroadcastReceiver() {
     }
 
     override fun onReceive(context: Context, intent: Intent) {
+        if (intent.action != TelephonyManager.ACTION_PHONE_STATE_CHANGED &&
+            intent.action != Intent.ACTION_NEW_OUTGOING_CALL
+        ) {
+            return
+        }
         if (!Settings.canDrawOverlays(context)) {
             return
         }

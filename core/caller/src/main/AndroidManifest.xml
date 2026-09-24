@@ -32,6 +32,7 @@
             android:name=".CallDirectoryProvider"
             android:authorities="@string/callerid_authority"
             android:readPermission="android.permission.READ_CONTACTS"
+            android:writePermission="android.permission.READ_CONTACTS"
             android:enabled="true"
             android:exported="true">
             <meta-data
