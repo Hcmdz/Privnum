@@ -13,6 +13,9 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
@@ -60,6 +63,36 @@ fun LockScreen(
         viewModel.reenterVerify()
         (context as? FragmentActivity)?.let { viewModel.refreshBiometric(it) }
     }
+    var autoPrompted by remember { mutableStateOf(false) }
+
+    fun launchBiometric() {
+        val activity = context as? FragmentActivity ?: return
+        val prompt = BiometricPrompt(
+            activity,
+            ContextCompat.getMainExecutor(activity),
+            object : BiometricPrompt.AuthenticationCallback() {
+                override fun onAuthenticationSucceeded(
+                    result: BiometricPrompt.AuthenticationResult
+                ) {
+                    viewModel.onBiometricSuccess()
+                }
+            }
+        )
+        prompt.authenticate(
+            BiometricPrompt.PromptInfo.Builder()
+                .setTitle("Unlock Privnum")
+                .setNegativeButtonText("Use PIN")
+                .build()
+        )
+    }
+    LaunchedEffect(state.biometricAvailable, state.biometricEnabled) {
+        if (!autoPrompted &&
+            shouldAutoPromptBiometric(state.biometricAvailable, state.biometricEnabled)
+        ) {
+            autoPrompted = true
+            launchBiometric()
+        }
+    }
 
     if (state.unlocked) return
 
@@ -71,26 +104,7 @@ fun LockScreen(
         onBackspace = { viewModel.backspace() },
         biometricRow = {
             if (state.biometricAvailable && state.biometricEnabled) {
-                Button(onClick = {
-                    val activity = context as? FragmentActivity ?: return@Button
-                    val prompt = BiometricPrompt(
-                        activity,
-                        ContextCompat.getMainExecutor(activity),
-                        object : BiometricPrompt.AuthenticationCallback() {
-                            override fun onAuthenticationSucceeded(
-                                result: BiometricPrompt.AuthenticationResult
-                            ) {
-                                viewModel.onBiometricSuccess()
-                            }
-                        }
-                    )
-                    prompt.authenticate(
-                        BiometricPrompt.PromptInfo.Builder()
-                            .setTitle("Unlock Privnum")
-                            .setNegativeButtonText("Use PIN")
-                            .build()
-                    )
-                }) {
+                Button(onClick = { launchBiometric() }) {
                     Text("Unlock with biometrics")
                 }
             }

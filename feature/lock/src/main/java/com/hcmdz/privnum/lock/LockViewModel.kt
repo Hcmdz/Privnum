@@ -28,6 +28,10 @@ data class LockUiState(
 
 enum class LockMode { VERIFY, SETUP, CONFIRM }
 
+/** Auto-show the system biometric prompt when it can succeed. */
+fun shouldAutoPromptBiometric(available: Boolean, enabled: Boolean): Boolean =
+    available && enabled
+
 @HiltViewModel
 class LockViewModel @Inject constructor(
     private val store: PasscodeStore
