@@ -1,9 +1,11 @@
 # Privnum-native
 
 Privnum — private local caller ID — **converted to a 100% Kotlin native
-Android app (formerly Expo)**. Same project, same behavior; no shared
-code, nothing copied — clean-room reimplementation. The app requests
-**zero network permissions**.
+Android app from [Alternate](https://github.com/BioHazard786/Alternate)
+(MIT, © BioHazard786)**. Same project converted in place: UI and data
+layers rewritten from scratch (the original is React Native + Expo, so no
+TypeScript was copied); the existing Kotlin caller module was adapted.
+The app requests **zero network permissions**.
 
 ## Modules
 

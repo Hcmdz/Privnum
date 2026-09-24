@@ -4,6 +4,19 @@ Project code is MIT (`LICENSE`). This file lists third-party components
 shipped or used at build time. Licenses verified against the artifacts
 resolved by Gradle (POM `license` blocks in the dependency cache).
 
+## Adapted upstream code
+
+`core/caller` (screening service, receiver, directory provider, Room
+entity) is adapted from the pre-existing Kotlin native module of
+[Alternate](https://github.com/BioHazard786/Alternate)
+(`modules/caller-id`, MIT © BioHazard786): same classes, rebranded
+package, Expo bridge removed, screening role added. Everything else
+(UI, data, settings, lock, VCF, editor, preview) is a from-scratch
+Kotlin rewrite — the original app is React Native + Expo, so no
+TypeScript was copied. Inherited upstream thanks: dmkvsk
+(native-module inspiration) and SimpleNexus (call directory
+implementation), per Alternate's acknowledgments.
+
 ## Runtime dependencies
 
 | Project | Version | License (SPDX) | Usage |

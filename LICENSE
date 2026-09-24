@@ -23,9 +23,11 @@ SOFTWARE.
 ---
 
 Lineage note (not part of the license grant above): this is the Privnum
-project, converted from its former Expo implementation to native
-Android — a clean-room Kotlin reimplementation with the same behavior.
-No source code was copied from any other project. Third-party
-trademarks (e.g. WhatsApp/Telegram icons used for interoperability
-rows) belong to their respective owners, and third-party libraries
-remain under their own licenses (see gradle/libs.versions.toml).
+project, converted in place from Alternate (MIT, © BioHazard786) to
+native Android. UI and data layers are a from-scratch Kotlin rewrite
+(the original app is React Native + Expo); the pre-existing Kotlin
+caller module was adapted, not rewritten. No TypeScript was copied.
+Third-party trademarks (e.g. WhatsApp/Telegram icons used for
+interoperability rows) belong to their respective owners, and
+third-party libraries remain under their own licenses (see
+gradle/libs.versions.toml).
