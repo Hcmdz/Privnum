@@ -179,8 +179,8 @@ at `packageRelease` — never silently.
 ```properties
 RELEASE_STORE_FILE=/path/to/your/release.keystore
 RELEASE_KEY_ALIAS=ALIAS
-RELEASE_STORE_[REDACTED:password]
-RELEASE_KEY_[REDACTED:password]
+RELEASE_STORE_PASSWORD=YOUR_KEYSTORE_PASSWORD
+RELEASE_KEY_PASSWORD=YOUR_KEY_PASSWORD
 ```
 
 ```bash
