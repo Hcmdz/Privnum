@@ -27,10 +27,24 @@ class EditorStateTest {
 
     @Test
     fun `inputsEqual ignores transient flags`() {
-        val base = EditorUiState(name = "Ann", country = Countries.getByCode("DZ"))
+        val base = EditorUiState(
+            name = "Ann",
+            numbers = listOf(NumberRow(country = Countries.getByCode("DZ")))
+        )
         assertTrue(base.inputsEqual(base.copy(message = "hi", saved = true, notFound = true)))
         assertFalse(base.inputsEqual(base.copy(name = "Bob")))
-        assertFalse(base.inputsEqual(base.copy(country = Countries.getByCode("FR"))))
+        assertFalse(
+            base.inputsEqual(
+                base.copy(numbers = listOf(NumberRow(country = Countries.getByCode("FR"))))
+            )
+        )
+        assertFalse(
+            base.inputsEqual(
+                base.copy(
+                    numbers = base.numbers + NumberRow(country = Countries.getByCode("DZ"))
+                )
+            )
+        )
     }
 
     @Test
