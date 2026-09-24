@@ -21,12 +21,21 @@ class SearchViewModel @Inject constructor(
     private val repository: ContactRepository
 ) : ViewModel() {
     private val query = MutableStateFlow("")
+    private val searching = MutableStateFlow(false)
+    val isSearching: StateFlow<Boolean> = searching
 
     val results: StateFlow<List<Contact>> =
         query
             .debounce(300)
             .flatMapLatest { q ->
-                if (q.isBlank()) flowOf(emptyList()) else flowOf(repository.search(q))
+                kotlinx.coroutines.flow.flow {
+                    searching.value = true
+                    try {
+                        emit(if (q.isBlank()) emptyList() else repository.search(q))
+                    } finally {
+                        searching.value = false
+                    }
+                }
             }
             .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), emptyList())
 

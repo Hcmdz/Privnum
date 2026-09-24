@@ -97,7 +97,9 @@ fun AppNav(
                     )
                 }
                 entry<Search> {
-                    SearchScreen()
+                    SearchScreen(
+                        onPreview = { backStack.add(PreviewContact(it.fullPhoneNumber)) }
+                    )
                 }
                 entry<PreviewContact> { key ->
                     PreviewScreen(
