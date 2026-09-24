@@ -3,6 +3,30 @@
 
 [![Privnum](docs/assets/feature-graphic.png)](https://github.com/Hcmdz/Privnum)
 
+<div align="center">
+<a href="https://github.com/Hcmdz/Privnum">
+    <img src="assets/app-icon/icon.png" alt="Privnum logo" width="100" height="100" style="border-radius:15px">
+</a>
+<br />
+<br />
+    <a href="https://github.com/Hcmdz/Privnum/issues">Report Bug</a>
+    ·
+    <a href="https://github.com/Hcmdz/Privnum/issues">Request Feature</a>
+    <br />
+    <br />
+</div>
+
+<div align="center">
+   <a href="https://github.com/Hcmdz/Privnum/releases">
+      <img src="get-it-on-github.png" width="170">
+   </a>
+   <a href="https://apps.obtainium.imranr.dev/redirect?r=obtainium://add/https://github.com/Hcmdz/Privnum/">
+      <img src="get-it-on-obtainium.png" width="170">
+   </a>
+</div>
+
+<br />
+
 [![Android](https://img.shields.io/badge/Platform-Android-green.svg?logo=android)](https://www.android.com)
 [![Kotlin](https://img.shields.io/badge/Language-Kotlin-purple.svg?logo=kotlin)](https://kotlinlang.org)
 [![MinSDK](https://img.shields.io/badge/MinSDK-29-orange.svg)](#)
