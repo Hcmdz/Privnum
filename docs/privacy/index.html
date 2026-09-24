@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="Content-Security-Policy" content="default-src 'none'; style-src 'unsafe-inline'; img-src 'self'">
+    <title>Privacy Policy - Privnum</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; line-height: 1.6; color: #333; background: #f8f9fa; }
+        .container { max-width: 800px; margin: 0 auto; padding: 20px; }
+        header { background: #1a1a2e; color: white; padding: 40px 20px; text-align: center; }
+        header h1 { font-size: 28px; margin-bottom: 8px; }
+        header p { opacity: 0.8; font-size: 14px; }
+        main { background: white; padding: 40px 30px; border-radius: 8px; margin-top: 20px; box-shadow: 0 2px 10px rgba(0,0,0,0.05); }
+        h2 { color: #1a1a2e; margin: 30px 0 12px; font-size: 20px; border-bottom: 2px solid #e8e8e8; padding-bottom: 8px; }
+        h2:first-child { margin-top: 0; }
+        p, li { font-size: 15px; color: #444; margin-bottom: 10px; }
+        ul { padding-left: 20px; }
+        li { margin-bottom: 6px; }
+        .highlight { background: #f0f7ff; padding: 16px; border-radius: 6px; border-left: 4px solid #1a73e8; margin: 16px 0; }
+        .highlight p { margin-bottom: 0; }
+        footer { text-align: center; padding: 30px; color: #888; font-size: 13px; }
+        @media (max-width: 600px) { main { padding: 20px 16px; } header { padding: 30px 16px; } }
+    </style>
+</head>
+<body>
+    <header>
+        <h1>Privacy Policy</h1>
+        <p>Effective: September 2026 &middot; for App: Privnum</p>
+    </header>
+    <main>
+        <div class="container">
+            <section>
+                <h2>Summary</h2>
+                <div class="highlight">
+                    <p><strong>Privnum works entirely offline on your device.</strong> No account, no analytics, no crash reporting, no ads, no servers. The app does not even request network access.</p>
+                </div>
+            </section>
+            <section>
+                <h2>Data Stored on Your Device</h2>
+                <p>Privnum stores the following data locally in app-private storage:</p>
+                <ul>
+                    <li><strong>Contacts</strong> &mdash; names, phone numbers, emails, notes and other fields you enter</li>
+                    <li><strong>Contact photos</strong> &mdash; pictures you attach, stored as files next to the database</li>
+                    <li><strong>Settings</strong> &mdash; theme, popup toggles, default region, passcode data (salted SHA-256 hash, encrypted preferences)</li>
+                </ul>
+                <p>System backups of app data are disabled. Uninstalling the app deletes everything.</p>
+            </section>
+            <section>
+                <h2>Backup and Restore</h2>
+                <p>You can export contacts as a VCF file to a folder you choose (including cloud folders mounted on your device) and re-import it later. The file is written by Android's document picker to your chosen location; nothing is uploaded by the app itself.</p>
+            </section>
+            <section>
+                <h2>Permissions</h2>
+                <ul>
+                    <li><strong>Phone state</strong> &mdash; detect incoming/outgoing calls to show the caller popup</li>
+                    <li><strong>Call log</strong> &mdash; call-state resolution where the system requires it</li>
+                    <li><strong>Display over other apps</strong> &mdash; show the caller popup during calls (optional, with in-app rationale)</li>
+                    <li><strong>Notifications</strong> &mdash; call-related notifications on Android 13+</li>
+                </ul>
+                <p>The app does not request camera, microphone, location, or network access. Photos come from the system gallery picker or capture intent.</p>
+            </section>
+            <section>
+                <h2>Third Parties</h2>
+                <p>No third-party SDKs with data collection are embedded. Tapping a WhatsApp/Telegram row opens those apps (or their websites) with the number you chose to contact &mdash; that interaction is governed by their policies. See THIRD_PARTY.md in the repository for open-source licenses.</p>
+            </section>
+            <section>
+                <h2>Security</h2>
+                <ul>
+                    <li>Passcode verified as salted SHA-256 with 5-attempt lockout; storage encrypted (AES-256-GCM, Keystore-backed key)</li>
+                    <li>All data in app-private storage; system backup disabled</li>
+                    <li>Release builds strip debug logs</li>
+                </ul>
+            </section>
+            <section>
+                <h2>Your Rights</h2>
+                <p>Everything lives on your device under your control: export it (VCF), delete contacts individually or all at once, remove the passcode, or uninstall the app to erase all data. There is no account to close and no server copy to request.</p>
+            </section>
+            <section>
+                <h2>Contact</h2>
+                <p>Questions about this policy: open an issue on the project repository (Hcmdz/Privnum).</p>
+            </section>
+        </div>
+    </main>
+    <footer>Privnum &middot; local-first private caller ID</footer>
+</body>
+</html>

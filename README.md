@@ -6,6 +6,9 @@
 [![MinSDK](https://img.shields.io/badge/MinSDK-29-orange.svg)](#)
 [![TargetSDK](https://img.shields.io/badge/TargetSDK-36-blue.svg)](#)
 [![License](https://img.shields.io/badge/License-MIT-blue.svg)](LICENSE)
+[![Stars](https://img.shields.io/github/stars/Hcmdz/Privnum)](https://github.com/Hcmdz/Privnum/stargazers)
+[![Forks](https://img.shields.io/github/forks/Hcmdz/Privnum)](https://github.com/Hcmdz/Privnum/network/members)
+[![Compose M3](https://img.shields.io/badge/Jetpack_Compose-Material_3-4285F4.svg?logo=jetpackcompose)](https://developer.android.com/jetpack/compose)
 
 Privnum — private local caller ID — **converted to a 100% Kotlin native
 Android app from [Alternate](https://github.com/BioHazard786/Alternate)
@@ -42,7 +45,8 @@ requests **zero network permissions**.
 
 | Contacts | Editor | Details |
 |---|---|---|
-| [![Contacts](screenshots/contacts-light.png)](screenshots/contacts-light.png) | [![Editor](screenshots/editor-light.png)](screenshots/editor-light.png) | [![Details](screenshots/preview-light.png)](screenshots/preview-light.png) |
+| [![Contacts light](screenshots/contacts-light.png)](screenshots/contacts-light.png) | [![Editor light](screenshots/editor-light.png)](screenshots/editor-light.png) | [![Details light](screenshots/preview-light.png)](screenshots/preview-light.png) |
+| [![Contacts dark](screenshots/contacts-dark.png)](screenshots/contacts-dark.png) | dark mode supported throughout (Dynamic Color) | [![Details dark](screenshots/preview-dark.png)](screenshots/preview-dark.png) |
 
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
 

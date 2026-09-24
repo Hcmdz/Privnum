@@ -1,0 +1,7 @@
+<?xml version="1.0" ?>
+<baseline xmlns="https://detekt.github.io/schema"
+          xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+          xsi:schemaLocation="https://detekt.github.io/schema https://detekt.github.io/schema/baseline-1.23.xsd">
+    <CurrentIssues>
+    </CurrentIssues>
+</baseline>

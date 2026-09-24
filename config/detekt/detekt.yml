@@ -1,0 +1,51 @@
+build:
+  maxIssues: 0
+
+complexity:
+  LongMethod:
+    threshold: 60
+  LongParameterList:
+    functionThreshold: 8
+    constructorThreshold: 10
+  CyclomaticComplexMethod:
+    threshold: 15
+  TooManyFunctions:
+    thresholdInFiles: 25
+    thresholdInClasses: 25
+  ComplexCondition:
+    threshold: 4
+
+naming:
+  FunctionNaming:
+    functionPattern: '[a-zA-Z][a-zA-Z0-9]*'
+    ignoreAnnotated: ['Composable']
+  TopLevelPropertyNaming:
+    constantPattern: '[A-Za-z][_A-Za-z0-9]*'
+
+style:
+  MaxLineLength:
+    maxLineLength: 120
+  MagicNumber:
+    active: false
+  UnusedPrivateMember:
+    active: true
+  ReturnCount:
+    max: 3
+
+empty-blocks:
+  EmptyFunctionBlock:
+    ignoreOverridden: true
+
+potential-bugs:
+  LateinitUsage:
+    active: true
+
+performance:
+  ForEachOnRange:
+    active: true
+  SpreadOperator:
+    active: true
+
+exceptions:
+  TooGenericExceptionCaught:
+    active: false
