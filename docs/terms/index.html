@@ -12,13 +12,21 @@
         header { background: #1a1a2e; color: white; padding: 40px 20px; text-align: center; }
         header h1 { font-size: 28px; margin-bottom: 8px; }
         header p { opacity: 0.8; font-size: 14px; }
+        nav { background: #16213e; padding: 12px 20px; }
+        nav ul { list-style: none; display: flex; gap: 20px; flex-wrap: wrap; justify-content: center; }
+        nav a { color: #a8d8ea; text-decoration: none; font-size: 13px; }
+        nav a:hover { color: white; }
         main { background: white; padding: 40px 30px; border-radius: 8px; margin-top: 20px; box-shadow: 0 2px 10px rgba(0,0,0,0.05); }
         h2 { color: #1a1a2e; margin: 30px 0 12px; font-size: 20px; border-bottom: 2px solid #e8e8e8; padding-bottom: 8px; }
         h2:first-child { margin-top: 0; }
         p, li { font-size: 15px; color: #444; margin-bottom: 10px; }
         ul, ol { padding-left: 20px; }
         li { margin-bottom: 6px; }
+        .highlight { background: #fff8e1; padding: 16px; border-radius: 6px; border-left: 4px solid #f9a825; margin: 16px 0; }
+        .highlight p { margin-bottom: 0; }
         footer { text-align: center; padding: 30px; color: #888; font-size: 13px; }
+        footer a { color: #1a73e8; text-decoration: none; }
+        a { color: #1a73e8; }
         @media (max-width: 600px) { main { padding: 20px 16px; } header { padding: 30px 16px; } }
     </style>
 </head>
@@ -27,42 +35,73 @@
         <h1>Terms of Service</h1>
         <p>Effective: September 2026 &middot; for App: Privnum</p>
     </header>
+    <nav>
+        <ul>
+            <li><a href="#use">Use of the App</a></li>
+            <li><a href="#license">License</a></li>
+            <li><a href="#data">Your Data</a></li>
+            <li><a href="#ip">Intellectual Property</a></li>
+            <li><a href="#backup">Backup</a></li>
+            <li><a href="#warranty">No Warranty</a></li>
+            <li><a href="#liability">Liability</a></li>
+            <li><a href="#termination">Termination</a></li>
+            <li><a href="#changes">Changes</a></li>
+            <li><a href="#contact">Contact</a></li>
+        </ul>
+    </nav>
     <main>
         <div class="container">
-            <section>
-                <h2>1. The Service</h2>
-                <p>Privnum is a free, offline-first Android app for private local caller ID. It is provided "as is", without warranty of any kind, under the GNU General Public License v3.0 or later (see LICENSE in the repository).</p>
+            <section id="use">
+                <h2>Use of the App</h2>
+                <p>Privnum is a free, offline-first Android app for private local caller ID. You are responsible for the contacts you create, import, export, or delete, and for using caller identification in compliance with local laws on privacy and telecommunications.</p>
             </section>
-            <section>
-                <h2>2. Your Responsibilities</h2>
-                <ol>
-                    <li><strong>Your data, your backups.</strong> Contacts live only on your device. Export a VCF backup before uninstalling, switching devices, or clearing app data.</li>
-                    <li><strong>Your passcode.</strong> There is no recovery: forgetting it locks you out until app data is cleared (which deletes contacts).</li>
-                    <li><strong>Lawful use.</strong> Use caller identification in compliance with local laws on privacy and telecommunications.</li>
-                </ol>
+            <section id="license">
+                <h2>License</h2>
+                <p>Privnum is released under the <a href="https://www.gnu.org/licenses/gpl-3.0.html">GNU General Public License v3.0 or later</a>. You are free to:</p>
+                <ul>
+                    <li>Use the app for any purpose</li>
+                    <li>Study and modify the source code</li>
+                    <li>Distribute copies of the app</li>
+                    <li>Distribute modified versions under the same license</li>
+                </ul>
+                <div class="highlight">
+                    <p>The license requires that any distributed modified version must also be released under GPL-3.0-or-later, with the full source code available.</p>
+                </div>
             </section>
-            <section>
-                <h2>3. Permissions You Grant</h2>
-                <p>Phone state, call log, overlay display, and notifications are used solely for on-device caller identification as described in the Privacy Policy. Granting them is optional where the app offers a choice; declining only disables the related feature.</p>
+            <section id="data">
+                <h2>Your Data</h2>
+                <p>All data you enter into Privnum (contacts, photos, settings, passcode) is stored locally on your device. You retain full ownership of your data. The developer has no access to your data and claims no rights over it.</p>
             </section>
-            <section>
-                <h2>4. Third Parties</h2>
-                <p>Tapping WhatsApp/Telegram rows opens those third-party apps or sites; their terms apply. The app's open-source components keep their own licenses (see THIRD_PARTY.md).</p>
+            <section id="ip">
+                <h2>Intellectual Property</h2>
+                <p>The Privnum source code, design, and documentation are owned by the developer and licensed under GPL-3.0-or-later. The GPL-3.0-or-later license is the sole governing license for the codebase.</p>
             </section>
-            <section>
-                <h2>5. Liability</h2>
-                <p>To the maximum extent permitted by law, the author is not liable for data loss (including forgotten passcodes or uninstalled apps without backup), missed or misidentified calls, or any indirect damages.</p>
+            <section id="backup">
+                <h2>Backup</h2>
+                <p>VCF export is provided as a convenience feature. Keep your own copies of important data: export a backup before uninstalling, switching devices, or clearing app data. The developer is not responsible for data loss, including forgotten passcodes (there is no recovery — clearing app data deletes contacts).</p>
             </section>
-            <section>
-                <h2>6. Changes</h2>
-                <p>These terms may change with app updates; continued use after an update constitutes acceptance. Material changes will be noted in release notes.</p>
+            <section id="warranty">
+                <h2>No Warranty</h2>
+                <p>The app is provided <strong>as-is</strong>, without warranties that it will be error-free or suitable for every device or situation. The developer does not guarantee uninterrupted or error-free operation.</p>
             </section>
-            <section>
-                <h2>7. Contact</h2>
+            <section id="liability">
+                <h2>Limitation of Liability</h2>
+                <p>To the fullest extent permitted by law, the developer shall not be liable for any direct, indirect, incidental, consequential, special, or exemplary damages arising from your use of the app, including but not limited to data loss, missed or misidentified calls, or reliance on app output.</p>
+            </section>
+            <section id="termination">
+                <h2>Termination</h2>
+                <p>You may stop using Privnum at any time by uninstalling the app. Uninstalling removes all locally stored data.</p>
+            </section>
+            <section id="changes">
+                <h2>Changes to These Terms</h2>
+                <p>These terms may be updated from time to time. The latest version will be published on this page. Continued use of the app after changes constitutes acceptance of the updated terms. Material changes will be noted in release notes.</p>
+            </section>
+            <section id="contact">
+                <h2>Contact</h2>
                 <p>Questions: open an issue on the project repository (Hcmdz/Privnum).</p>
             </section>
         </div>
     </main>
-    <footer>Privnum &middot; local-first private caller ID</footer>
+    <footer>Copyright (c) 2026 Hcmdz &middot; Privnum &middot; <a href="../privacy/">Privacy Policy</a></footer>
 </body>
 </html>
