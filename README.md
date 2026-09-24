@@ -1,4 +1,4 @@
-# Privnum-native
+# Privnum
 <a id="readme-top"></a>
 
 [![Android](https://img.shields.io/badge/Platform-Android-green.svg?logo=android)](https://www.android.com)

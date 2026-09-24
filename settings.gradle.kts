@@ -12,7 +12,7 @@ dependencyResolutionManagement {
         mavenCentral()
     }
 }
-rootProject.name = "Privnum-native"
+rootProject.name = "Privnum"
 include(":app")
 include(":core:ui")
 include(":core:data")
