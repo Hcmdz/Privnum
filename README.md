@@ -47,7 +47,7 @@ touching the system contacts, WhatsApp, Telegram, or the network: the app
 requests **zero network permissions**.
 
 - **Package**: `com.hcmdz.privnum`
-- **Version**: 1.0.0 (versionCode 1)
+- **Version**: 1.1.0 (versionCode 2)
 
 <details>
 <summary>Table of Contents</summary>
@@ -249,7 +249,7 @@ Current release APK: **~5.0 MB** (universal, single APK, R8 + shrink enabled, V3
 
 ## 📝 Changelog
 
-### Unreleased
+### v1.1.0
 - Multiple phone numbers per contact (Room v1→v2 migration, primary flag, per-number actions, multi-TEL VCF)
 
 ### v1.0.0
