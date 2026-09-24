@@ -69,7 +69,14 @@ fun AppNav(
     ) {
         NavDisplay(
             backStack = backStack,
-            onBack = { backStack.removeLastOrNull() },
+            onBack = {
+                // Locked gates never pop via back: authenticate to proceed.
+                // (LockSetup with siblings is the Settings setup flow: back cancels it.)
+                val top = backStack.lastOrNull()
+                val lockedGate = top is LockVerify ||
+                    (top is LockSetup && backStack.size == 1)
+                if (!lockedGate) backStack.removeLastOrNull()
+            },
             entryProvider = entryProvider {
                 entry<Contacts> {
                     ContactsScreen(
