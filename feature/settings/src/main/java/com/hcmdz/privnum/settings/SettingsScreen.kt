@@ -321,7 +321,12 @@ fun SettingsScreen(
 
             Text("About", style = MaterialTheme.typography.titleSmall)
             ListItem(headlineContent = { Text("Privnum") },
-                supportingContent = { Text("Version ${appVersion(context)}") })
+                supportingContent = {
+                    Column {
+                        Text("Version ${appVersion(context)}")
+                        Text("Based on Alternate by BioHazard786")
+                    }
+                })
             Row(horizontalArrangement = Arrangement.spacedBy(12.dp)) {
                 TextButton(onClick = { uriHandler.openUri("https://github.com/Hcmdz/Privnum?tab=readme-ov-file") }) {
                     Text("README")
