@@ -42,4 +42,12 @@ class PreviewHelpersTest {
             assertEquals(index, avatarRoleIndex(it.lowercaseChar()))
         }
     }
+
+    @Test
+    fun `messaging packages explicit only when installed`() {
+        assertEquals("com.whatsapp", whatsappPackage(true))
+        assertEquals("org.telegram.messenger", telegramPackage(true))
+        assertEquals(null, whatsappPackage(false))
+        assertEquals(null, telegramPackage(false))
+    }
 }

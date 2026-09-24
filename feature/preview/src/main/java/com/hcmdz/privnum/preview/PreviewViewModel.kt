@@ -52,6 +52,14 @@ fun telegramUri(number: String, profile: Boolean, installed: Boolean): String =
     if (installed) "tg://resolve?phone=$number${if (profile) "&profile" else ""}"
     else "https://t.me/+$number${if (profile) "?profile" else ""}"
 
+/** Explicit package for an installed external app, so the launch Intent is explicit. */
+fun whatsappPackage(installed: Boolean): String? =
+    if (installed) "com.whatsapp" else null
+
+/** Explicit package for an installed external app, so the launch Intent is explicit. */
+fun telegramPackage(installed: Boolean): String? =
+    if (installed) "org.telegram.messenger" else null
+
 /** Stable 0..2 index mapping a name initial to a Material color role pair. */
 fun avatarRoleIndex(letter: Char): Int =
     (letter.uppercaseChar().code % 3 + 3) % 3

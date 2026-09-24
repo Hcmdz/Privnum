@@ -88,6 +88,17 @@ fun isAppInstalled(context: Context, packageName: String): Boolean =
         true
     }.getOrDefault(false)
 
+/** Launches a VIEW intent, explicit when the target package is known. */
+fun openAppIntent(context: Context, uri: String, packageName: String?) {
+    runCatching {
+        context.startActivity(
+            Intent(Intent.ACTION_VIEW, Uri.parse(uri)).apply {
+                packageName?.let(::setPackage)
+            }
+        )
+    }
+}
+
 @OptIn(ExperimentalMaterial3Api::class, ExperimentalFoundationApi::class)
 @Composable
 fun PreviewScreen(
@@ -375,7 +386,11 @@ private fun ContactDetails(
                     number = contact.fullPhoneNumber,
                     onAction = { profile ->
                         val installed = isAppInstalled(context, "com.whatsapp")
-                        onOpenUri(whatsappUri(contact.fullPhoneNumber, installed))
+                        openAppIntent(
+                            context,
+                            whatsappUri(contact.fullPhoneNumber, installed),
+                            whatsappPackage(installed)
+                        )
                     }
                 )
                 ExpandableAppRow(
@@ -384,7 +399,11 @@ private fun ContactDetails(
                     number = contact.fullPhoneNumber,
                     onAction = { profile ->
                         val installed = isAppInstalled(context, "org.telegram.messenger")
-                        onOpenUri(telegramUri(contact.fullPhoneNumber, profile, installed))
+                        openAppIntent(
+                            context,
+                            telegramUri(contact.fullPhoneNumber, profile, installed),
+                            telegramPackage(installed)
+                        )
                     }
                 )
             }
