@@ -208,7 +208,7 @@ fun EditorScreen(
                     val country = state.country
                     // Transparent overlay first in tap dispatch: the text field
                     // consumes taps even when read-only and unfocusable.
-                    Box(modifier = Modifier.weight(0.42f)) {
+                    Box(modifier = Modifier.weight(0.55f)) {
                         OutlinedTextField(
                             value = country?.let { "${it.flag} +${it.dialCode}" }
                                 ?: "",
