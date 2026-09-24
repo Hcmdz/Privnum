@@ -43,7 +43,7 @@ class VcfMapperTest {
     }
 
     @Test
-    fun `parses legacy TS-format VCF from the Expo app`() {
+    fun `parses legacy TS-format VCF`() {
         val tsFormat = "BEGIN:VCARD\r\n" +
             "VERSION:2.1\r\n" +
             "N:;Marie Curie;;Mme;Dr\r\n" +
