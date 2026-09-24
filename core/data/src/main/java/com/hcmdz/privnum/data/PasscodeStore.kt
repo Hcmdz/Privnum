@@ -141,6 +141,10 @@ class PasscodeStore @Inject constructor(
      * ENCRYPT cipher for enrollment (generates the auth-bound key on first
      * use). Cipher init needs no prior auth; only doFinal() unlocks the key.
      */
+    /** Fresh random bytes from the shared generator (single SecureRandom owner). */
+    fun freshEnrollBytes(): ByteArray =
+        ByteArray(32).also { secureRandom.nextBytes(it) }
+
     fun biometricCipherForEnroll(): Cipher? {
         if (!isCryptoBiometricSupported()) return null
         return try {

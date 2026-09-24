@@ -13,7 +13,6 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
-import java.security.SecureRandom
 import javax.crypto.Cipher
 import javax.inject.Inject
 
@@ -158,7 +157,7 @@ class LockViewModel @Inject constructor(
     fun biometricCryptoCipher(): Cipher? {
         if (!store.isCryptoBiometricSupported()) return null
         store.biometricCipherForDecrypt()?.let { return it }
-        enrollBytes = ByteArray(32).also { SecureRandom().nextBytes(it) }
+        enrollBytes = store.freshEnrollBytes()
         return store.biometricCipherForEnroll()
     }
 
