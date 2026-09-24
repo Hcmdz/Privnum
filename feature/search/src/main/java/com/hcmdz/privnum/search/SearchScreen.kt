@@ -88,10 +88,14 @@ fun SearchScreen(
                             )
                         }
                     }
-                    item(key = contact.fullPhoneNumber) {
+                    item(key = contact.id) {
                         ListItem(
                             headlineContent = { Text(contact.displayName()) },
-                            supportingContent = { Text("+${contact.fullPhoneNumber}") },
+                            supportingContent = {
+                                Text(
+                                    contact.primaryNumber()?.let { "+${it.full}" }.orEmpty()
+                                )
+                            },
                             modifier = Modifier.clickable { onPreview(contact) }
                         )
                     }

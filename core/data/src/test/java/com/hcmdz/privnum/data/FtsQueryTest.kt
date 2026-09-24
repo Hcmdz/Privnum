@@ -33,4 +33,30 @@ class FtsQueryTest {
         assertEquals("", buildFtsQuery("OR"))
         assertEquals("x*", buildFtsQuery("x OR"))
     }
+
+    @Test
+    fun `split separates digit prefixes from text`() {
+        assertEquals("" to listOf("1555"), splitSearchTokens("1555"))
+        assertEquals("Test*" to listOf("1555"), splitSearchTokens("Test 1555"))
+        assertEquals("Test*" to emptyList<String>(), splitSearchTokens("Test"))
+        assertEquals("" to emptyList<String>(), splitSearchTokens("  OR "))
+    }
+
+    @Test
+    fun `normalize primary keeps exactly one`() {
+        val numbers = listOf(
+            PhoneNumberRef("a", "a", "FR"),
+            PhoneNumberRef("b", "b", "FR"),
+            PhoneNumberRef("c", "c", "FR")
+        )
+        val defaulted = numbers.normalizePrimary()
+        assertEquals(listOf(true, false, false), defaulted.map { it.primary })
+        val flagged = listOf(
+            PhoneNumberRef("a", "a", "FR"),
+            PhoneNumberRef("b", "b", "FR", primary = true),
+            PhoneNumberRef("c", "c", "FR", primary = true)
+        ).normalizePrimary()
+        assertEquals(listOf(false, true, false), flagged.map { it.primary })
+        assertEquals(emptyList<PhoneNumberRef>(), emptyList<PhoneNumberRef>().normalizePrimary())
+    }
 }

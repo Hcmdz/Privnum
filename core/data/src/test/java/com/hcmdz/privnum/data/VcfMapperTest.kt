@@ -6,10 +6,11 @@ import org.junit.Test
 import java.util.Base64
 
 private fun sampleContact() = Contact(
-    fullPhoneNumber = "33612345678",
-    phoneNumber = "612345678",
-    countryCode = "FR",
     name = "Jean Dupont",
+    numbers = listOf(
+        PhoneNumberRef("33612345678", "612345678", "FR", primary = true),
+        PhoneNumberRef("1650" + "2530000", "650" + "2530000", "US", primary = false)
+    ),
     appointment = "Plombier",
     location = "Lyon",
     suffix = "Jr",
@@ -28,7 +29,8 @@ class VcfMapperTest {
     fun `round trip preserves every field`() {
         val original = sampleContact()
         val parsed = VcfMapper.parseVcf(VcfMapper.toVcf(original), "FR").single()
-        assertEquals(original.fullPhoneNumber, parsed.fullPhoneNumber)
+        assertEquals(original.numbers, parsed.numbers)
+        assertEquals(original.primaryNumber(), parsed.primaryNumber())
         assertEquals(original.name, parsed.name)
         assertEquals(original.prefix, parsed.prefix)
         assertEquals(original.suffix, parsed.suffix)
@@ -56,7 +58,7 @@ class VcfMapperTest {
             "BDAY:1867-11-07\r\n" +
             "END:VCARD"
         val parsed = VcfMapper.parseVcf(tsFormat, "FR").single()
-        assertEquals("33698765432", parsed.fullPhoneNumber)
+        assertEquals("33698765432", parsed.primaryNumber()?.full)
         assertEquals("Marie Curie", parsed.name)
         assertEquals("MC", parsed.nickname)
         assertEquals("marie.curie@example.com", parsed.email)

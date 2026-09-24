@@ -11,6 +11,7 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
@@ -36,6 +37,7 @@ import androidx.compose.material3.ListItem
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.ModalBottomSheet
 import androidx.compose.material3.OutlinedTextField
+import androidx.compose.material3.RadioButton
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.SnackbarHost
 import androidx.compose.material3.SnackbarHostState
@@ -76,7 +78,7 @@ import com.hcmdz.privnum.ui.ContactAvatar
 @OptIn(ExperimentalMaterial3Api::class, ExperimentalFoundationApi::class)
 @Composable
 fun EditorScreen(
-    fullPhoneNumber: String?,
+    contactId: Long?,
     entryNonce: Int,
     onSaved: () -> Unit,
     onBack: () -> Unit,
@@ -86,6 +88,7 @@ fun EditorScreen(
     val context = LocalContext.current
     val recents by viewModel.recentCountries.collectAsStateWithLifecycle()
     var showCountries by remember { mutableStateOf(false) }
+    var countryRowTarget by remember { mutableStateOf(0) }
     var countryQuery by rememberSaveable { mutableStateOf("") }
     var moreExpanded by rememberSaveable { mutableStateOf(false) }
     var abandonConfirm by remember { mutableStateOf(false) }
@@ -95,8 +98,8 @@ fun EditorScreen(
 
     BackHandler(enabled = dirty && !state.saved) { abandonConfirm = true }
 
-    LaunchedEffect(entryNonce, fullPhoneNumber) {
-        viewModel.enter(fullPhoneNumber)
+    LaunchedEffect(entryNonce, contactId) {
+        viewModel.enter(contactId)
     }
     LaunchedEffect(state.saved) {
         if (state.saved) onSaved()
@@ -108,12 +111,13 @@ fun EditorScreen(
         }
     }
 
-    val preview = remember(state.nationalNumber, state.country) {
-        state.country?.let { PhoneNumberUtils.previewNumber(state.nationalNumber, it.code) }
+    val firstRow = state.numbers.getOrNull(0)
+    val preview = remember(firstRow?.nationalNumber, firstRow?.country) {
+        firstRow?.country?.let { PhoneNumberUtils.previewNumber(firstRow.nationalNumber, it.code) }
     }
-    val suggestion = remember(state.nationalNumber, state.country) {
-        val current = state.country
-        suggestCountryFor(state.nationalNumber, current?.code ?: "")
+    val suggestion = remember(firstRow?.nationalNumber, firstRow?.country) {
+        val current = firstRow?.country
+        suggestCountryFor(firstRow?.nationalNumber.orEmpty(), current?.code ?: "")
             ?.takeIf { it.code != current?.code }
     }
     val next = KeyboardActions(onNext = { focus.moveFocus(FocusDirection.Down) })
@@ -132,7 +136,7 @@ fun EditorScreen(
     Scaffold(
         topBar = {
             TopAppBar(
-                title = { Text(if (fullPhoneNumber == null) "New contact" else "Edit contact") },
+                title = { Text(if (contactId == null) "New contact" else "Edit contact") },
                 navigationIcon = {
                     IconButton(onClick = {
                         if (dirty && !state.saved) abandonConfirm = true else onBack()
@@ -203,75 +207,104 @@ fun EditorScreen(
                         .testTag("editor_name")
                 )
             }
-            item {
-                Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
-                    val country = state.country
-                    // Transparent overlay first in tap dispatch: the text field
-                    // consumes taps even when read-only and unfocusable.
-                    Box(modifier = Modifier.weight(0.55f)) {
+            state.numbers.forEachIndexed { index, row ->
+                item(key = "number_$index") {
+                    Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
+                        val country = row.country
+                        // Transparent overlay first in tap dispatch: the text field
+                        // consumes taps even when read-only and unfocusable.
+                        Box(modifier = Modifier.weight(0.55f)) {
+                            OutlinedTextField(
+                                value = country?.let { "${it.flag} +${it.dialCode}" }
+                                    ?: "",
+                                onValueChange = {},
+                                label = { Text("Country *") },
+                                trailingIcon = {
+                                    Icon(
+                                        Icons.Filled.ArrowDropDown,
+                                        contentDescription = null
+                                    )
+                                },
+                                readOnly = true,
+                                singleLine = true,
+                                modifier = Modifier
+                                    .fillMaxWidth()
+                                    .focusProperties { canFocus = false }
+                            )
+                            Box(
+                                modifier = Modifier
+                                    .matchParentSize()
+                                    .testTag(if (index == 0) "editor_country" else "editor_country_$index")
+                                    .semantics {
+                                        contentDescription =
+                                            "Selected country: ${country?.name ?: "none"}"
+                                    }
+                                    .clickable(
+                                        role = Role.DropdownList,
+                                        onClick = {
+                                            countryRowTarget = index
+                                            showCountries = true
+                                        }
+                                    )
+                            )
+                        }
                         OutlinedTextField(
-                            value = country?.let { "${it.flag} +${it.dialCode}" }
-                                ?: "",
-                            onValueChange = {},
-                            label = { Text("Country *") },
-                            trailingIcon = {
-                                Icon(
-                                    Icons.Filled.ArrowDropDown,
-                                    contentDescription = null
-                                )
+                            value = row.nationalNumber,
+                            onValueChange = {
+                                viewModel.updateRow(index) { r ->
+                                    r.copy(nationalNumber = PhoneNumberUtils.trimPhoneInput(it))
+                                }
                             },
-                            readOnly = true,
+                            label = { Text("Phone number *") },
+                            keyboardOptions = KeyboardOptions(
+                                keyboardType = KeyboardType.Phone,
+                                imeAction = ImeAction.Next
+                            ),
+                            keyboardActions = next,
+                            isError = state.numberErrorRow == index,
+                            supportingText = {
+                                if (state.numberErrorRow == index) {
+                                    state.numberError?.let { Text(it) }
+                                } else if (index == 0) {
+                                    preview?.let { Text("Will be saved as $it") }
+                                }
+                            },
                             singleLine = true,
                             modifier = Modifier
-                                .fillMaxWidth()
-                                .focusProperties { canFocus = false }
-                        )
-                        Box(
-                            modifier = Modifier
-                                .matchParentSize()
-                                .testTag("editor_country")
-                                .semantics {
-                                    contentDescription =
-                                        "Selected country: ${country?.name ?: "none"}"
-                                }
-                                .clickable(
-                                    role = Role.DropdownList,
-                                    onClick = { showCountries = true }
-                                )
+                                .weight(1f)
+                                .testTag(if (index == 0) "editor_number" else "editor_number_$index")
                         )
                     }
-                    OutlinedTextField(
-                        value = state.nationalNumber,
-                        onValueChange = {
-                            viewModel.update { s ->
-                                s.copy(
-                                    nationalNumber = PhoneNumberUtils.trimPhoneInput(it),
-                                    numberError = null
-                                )
+                    Row(
+                        verticalAlignment = Alignment.CenterVertically,
+                        horizontalArrangement = Arrangement.spacedBy(4.dp)
+                    ) {
+                        RadioButton(
+                            selected = row.primary,
+                            onClick = { viewModel.setPrimaryRow(index) }
+                        )
+                        Text(
+                            "Primary",
+                            modifier = Modifier.clickable { viewModel.setPrimaryRow(index) }
+                        )
+                        Spacer(modifier = Modifier.weight(1f))
+                        if (state.numbers.size > 1) {
+                            TextButton(onClick = { viewModel.removeNumberRow(index) }) {
+                                Text("Remove")
                             }
-                        },
-                        label = { Text("Phone number *") },
-                        keyboardOptions = KeyboardOptions(
-                            keyboardType = KeyboardType.Phone,
-                            imeAction = ImeAction.Next
-                        ),
-                        keyboardActions = next,
-                        isError = state.numberError != null,
-                        supportingText = {
-                            state.numberError?.let { Text(it) }
-                                ?: preview?.let { Text("Will be saved as $it") }
-                        },
-                        singleLine = true,
-                        modifier = Modifier
-                            .weight(1f)
-                            .testTag("editor_number")
-                    )
+                        }
+                    }
+                }
+            }
+            item {
+                TextButton(onClick = { viewModel.addNumberRow() }) {
+                    Text("Add another number")
                 }
             }
             if (suggestion != null) {
                 item {
                     AssistChip(
-                        onClick = { viewModel.setCountry(suggestion) },
+                        onClick = { viewModel.setRowCountry(0, suggestion) },
                         label = {
                             Text("Switch to +${suggestion.dialCode} (${suggestion.name})?")
                         }
@@ -381,7 +414,7 @@ fun EditorScreen(
                         .fillMaxWidth()
                         .testTag("editor_save")
                 ) {
-                    Text(if (fullPhoneNumber == null) "Save contact" else "Save changes")
+                    Text(if (contactId == null) "Save contact" else "Save changes")
                 }
             }
         }
@@ -405,7 +438,7 @@ fun EditorScreen(
                         items(recents, key = { it.code }) { country: Country ->
                             AssistChip(
                                 onClick = {
-                                    viewModel.setCountry(country)
+                                    viewModel.setRowCountry(countryRowTarget, country)
                                     showCountries = false
                                 },
                                 label = { Text("${country.flag} ${country.name}") }
@@ -416,7 +449,8 @@ fun EditorScreen(
                 val filtered = remember(countryQuery) { filterCountries(countryQuery) }
                 LazyColumn(modifier = Modifier.weight(1f, fill = false)) {
                     items(filtered, key = { it.code }) { country: Country ->
-                        val selected = country.code == state.country?.code
+                        val selected = country.code ==
+                            state.numbers.getOrNull(countryRowTarget)?.country?.code
                         ListItem(
                             headlineContent = { Text("${country.flag} ${country.name}") },
                             supportingContent = { Text("+${country.dialCode}") },
@@ -429,7 +463,7 @@ fun EditorScreen(
                                 }
                             },
                             modifier = Modifier.clickable {
-                                viewModel.setCountry(country)
+                                viewModel.setRowCountry(countryRowTarget, country)
                                 showCountries = false
                             }
                         )

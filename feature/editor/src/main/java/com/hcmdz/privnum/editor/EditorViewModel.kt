@@ -10,7 +10,9 @@ import com.hcmdz.privnum.data.ContactRepository
 import com.hcmdz.privnum.data.Countries
 import com.hcmdz.privnum.data.Country
 import com.hcmdz.privnum.data.ParsedNumber
+import com.hcmdz.privnum.data.PhoneNumberRef
 import com.hcmdz.privnum.data.PhoneNumberUtils
+import com.hcmdz.privnum.data.SaveResult
 import com.hcmdz.privnum.data.SettingsStore
 import dagger.hilt.android.lifecycle.HiltViewModel
 import dagger.hilt.android.qualifiers.ApplicationContext
@@ -27,10 +29,15 @@ import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import javax.inject.Inject
 
-data class EditorUiState(
-    val name: String = "",
+data class NumberRow(
     val nationalNumber: String = "",
     val country: Country? = null,
+    val primary: Boolean = false
+)
+
+data class EditorUiState(
+    val name: String = "",
+    val numbers: List<NumberRow> = emptyList(),
     val photo: String = "",
     val pendingPhotoUri: Uri? = null,
     val appointment: String = "",
@@ -45,6 +52,7 @@ data class EditorUiState(
     val labels: String = "",
     val nameError: String? = null,
     val numberError: String? = null,
+    val numberErrorRow: Int = -1,
     val message: String? = null,
     val notFound: Boolean = false,
     val saved: Boolean = false
@@ -74,8 +82,7 @@ fun birthdayToMillis(raw: String): Long? {
 /** Input-field equality, ignoring transient UI flags. */
 fun EditorUiState.inputsEqual(other: EditorUiState): Boolean =
     name == other.name &&
-        nationalNumber == other.nationalNumber &&
-        country == other.country &&
+        numbers == other.numbers &&
         photo == other.photo &&
         pendingPhotoUri == other.pendingPhotoUri &&
         appointment == other.appointment &&
@@ -96,17 +103,18 @@ class EditorViewModel @Inject constructor(
     private val photos: ContactPhotoStore,
     @ApplicationContext private val context: Context
 ) : ViewModel() {
-    private val _state = MutableStateFlow(
-        EditorUiState(
-            country = resolveDefaultCountry(null, Countries.simRegion(context))
-        )
+    private val initialCountry: Country = resolveDefaultCountry(null, Countries.simRegion(context))
+
+    private fun freshState() = EditorUiState(
+        numbers = listOf(NumberRow(country = initialCountry))
     )
+
+    private val _state = MutableStateFlow(freshState())
     val state: StateFlow<EditorUiState> = _state.asStateFlow()
 
-    private var originalNumber: String? = null
+    private var originalId: Long? = null
     private var countryTouched = false
     private var pristine = _state.value
-    private val initialCountry = _state.value.country
 
     val recentCountries: StateFlow<List<Country>> =
         settings.recentCountries
@@ -118,38 +126,44 @@ class EditorViewModel @Inject constructor(
             val setting = settings.defaultRegion.first()
             if (!countryTouched && setting != null) {
                 val country = resolveDefaultCountry(setting, "")
-                _state.update { it.copy(country = country) }
+                _state.update { s ->
+                    s.copy(
+                        numbers = s.numbers.mapIndexed { index, row ->
+                            if (index == 0) row.copy(country = country) else row
+                        }
+                    )
+                }
                 pristine = _state.value
             }
         }
     }
 
     /**
-     * Called on screen entry: a null number means a new contact and must reset
+     * Called on screen entry: a null id means a new contact and must reset
      * any draft leaked by a shared ViewModelStoreOwner across backstack entries.
-     * originalNumber is always reset first: load() refuses to run twice, which
+     * originalId is always reset first: load() refuses to run twice, which
      * would otherwise show the previous contact when editing another one.
      */
-    fun enter(fullPhoneNumber: String?) {
-        originalNumber = null
+    fun enter(contactId: Long?) {
+        originalId = null
         // Synchronous: LaunchedEffect(saved) fires on first composition, before
         // the async load() below completes. A stale true would pop instantly.
         _state.update { it.copy(saved = false, message = null) }
-        if (fullPhoneNumber == null) {
+        if (contactId == null) {
             countryTouched = false
-            val fresh = EditorUiState(country = initialCountry)
+            val fresh = freshState()
             _state.value = fresh
             pristine = fresh
         } else {
-            load(fullPhoneNumber)
+            load(contactId)
         }
     }
 
-    fun load(fullPhoneNumber: String) {
-        if (originalNumber != null) return
-        originalNumber = fullPhoneNumber
+    fun load(contactId: Long) {
+        if (originalId != null) return
+        originalId = contactId
         viewModelScope.launch {
-            val c = repository.getByFullNumber(fullPhoneNumber)
+            val c = repository.getById(contactId)
             if (c == null) {
                 _state.update { it.copy(notFound = true) }
                 return@launch
@@ -157,8 +171,13 @@ class EditorViewModel @Inject constructor(
             _state.update {
                 it.copy(
                     name = c.name,
-                    nationalNumber = c.phoneNumber,
-                    country = Countries.getByCode(c.countryCode),
+                    numbers = c.numbers.map { n ->
+                        NumberRow(
+                            nationalNumber = n.national,
+                            country = Countries.getByCode(n.country),
+                            primary = n.primary
+                        )
+                    }.ifEmpty { listOf(NumberRow(country = initialCountry)) },
                     photo = c.photo,
                     appointment = c.appointment,
                     location = c.location,
@@ -182,10 +201,48 @@ class EditorViewModel @Inject constructor(
         _state.update(mutator)
     }
 
-    fun setCountry(country: Country) {
-        countryTouched = true
-        _state.update { it.copy(country = country, numberError = null) }
+    fun updateRow(index: Int, mutator: (NumberRow) -> NumberRow) {
+        _state.update { s ->
+            s.copy(
+                numbers = s.numbers.mapIndexed { i, row ->
+                    if (i == index) mutator(row) else row
+                },
+                numberError = if (s.numberErrorRow == index) null else s.numberError,
+                numberErrorRow = if (s.numberErrorRow == index) -1 else s.numberErrorRow
+            )
+        }
+    }
+
+    fun setCountry(country: Country) = setRowCountry(0, country)
+
+    fun setRowCountry(index: Int, country: Country) {
+        if (index == 0) countryTouched = true
+        updateRow(index) { it.copy(country = country) }
         viewModelScope.launch { settings.pushRecentCountry(country.code) }
+    }
+
+    fun addNumberRow() {
+        _state.update { s ->
+            val fallback = s.numbers.lastOrNull()?.country ?: initialCountry
+            s.copy(numbers = s.numbers + NumberRow(country = fallback))
+        }
+    }
+
+    fun removeNumberRow(index: Int) {
+        _state.update { s ->
+            if (s.numbers.size <= 1) return@update s
+            val remaining = s.numbers.filterIndexed { i, _ -> i != index }
+            val fixed = if (remaining.none { it.primary }) {
+                remaining.mapIndexed { i, row -> row.copy(primary = i == 0) }
+            } else remaining
+            s.copy(numbers = fixed, numberError = null, numberErrorRow = -1)
+        }
+    }
+
+    fun setPrimaryRow(index: Int) {
+        _state.update { s ->
+            s.copy(numbers = s.numbers.mapIndexed { i, row -> row.copy(primary = i == index) })
+        }
     }
 
     fun setPhotoUri(uri: Uri?) {
@@ -221,21 +278,28 @@ class EditorViewModel @Inject constructor(
         val name = s.name.trim()
         var nameError: String? = null
         var numberError: String? = null
+        var numberErrorRow = -1
         if (name.length < 2) nameError = "Name must be at least 2 characters"
-        val country = s.country
-        val digits = s.nationalNumber.filter { it.isDigit() }
-        val parsed = country?.let { PhoneNumberUtils.parseForSave(s.nationalNumber, it.code) }
-        if (country == null) {
-            numberError = "Select a country"
-        } else if (digits.length < PhoneNumberUtils.MIN_PHONE_DIGITS) {
-            numberError = "Too short"
-        } else if (parsed == null ||
-            !PhoneNumberUtils.isValid("+" + parsed.fullNumber, parsed.countryIso)
-        ) {
-            numberError = "Invalid phone number"
+        val parsedRows = mutableListOf<PhoneNumberRef>()
+        s.numbers.forEachIndexed { index, row ->
+            val error = parseRow(row)
+            if (error != null) {
+                if (numberError == null) {
+                    numberError = error
+                    numberErrorRow = index
+                }
+            } else {
+                parseRowValue(row)?.let { parsedRows.add(it) }
+            }
         }
         if (nameError != null || numberError != null) {
-            _state.update { it.copy(nameError = nameError, numberError = numberError) }
+            _state.update {
+                it.copy(
+                    nameError = nameError,
+                    numberError = numberError,
+                    numberErrorRow = numberErrorRow
+                )
+            }
             return
         }
         viewModelScope.launch {
@@ -255,34 +319,69 @@ class EditorViewModel @Inject constructor(
                     }
                 }
             }
-            val contact = buildContact(name, parsed!!, s, finalPhoto)
-            val original = originalNumber
-            val ok = if (original == null) {
+            val contact = buildContact(name, parsedRows, s, finalPhoto)
+            val original = originalId
+            val result = if (original == null) {
                 repository.add(contact)
             } else {
                 repository.update(original, contact)
             }
-            if (ok) {
-                _state.update { it.copy(saved = true, photo = finalPhoto, pendingPhotoUri = null) }
-                pristine = _state.value
-            } else {
-                _state.update { it.copy(message = "Contact already exists") }
+            when (result) {
+                is SaveResult.Saved -> {
+                    _state.update {
+                        it.copy(saved = true, photo = finalPhoto, pendingPhotoUri = null)
+                    }
+                    pristine = _state.value
+                    onDone(true)
+                }
+                is SaveResult.DuplicateNumber -> {
+                    val owner = result.ownerName.ifBlank { "another contact" }
+                    _state.update { it.copy(message = "Number already used by $owner") }
+                    onDone(false)
+                }
+                is SaveResult.NotFound -> {
+                    _state.update { it.copy(notFound = true) }
+                    onDone(false)
+                }
             }
-            onDone(ok)
         }
+    }
+
+    /** Error message for an invalid row, null when the row parses. */
+    private fun parseRow(row: NumberRow): String? {
+        val country = row.country
+        val digits = row.nationalNumber.filter { it.isDigit() }
+        val parsed = country?.let { PhoneNumberUtils.parseForSave(row.nationalNumber, it.code) }
+        return when {
+            country == null -> "Select a country"
+            digits.length < PhoneNumberUtils.MIN_PHONE_DIGITS -> "Too short"
+            parsed == null ||
+                !PhoneNumberUtils.isValid("+" + parsed.fullNumber, parsed.countryIso) ->
+                "Invalid phone number"
+            else -> null
+        }
+    }
+
+    private fun parseRowValue(row: NumberRow): PhoneNumberRef? {
+        val parsed = row.country?.let { PhoneNumberUtils.parseForSave(row.nationalNumber, it.code) }
+            ?: return null
+        return PhoneNumberRef(
+            full = parsed.fullNumber,
+            national = parsed.nationalNumber,
+            country = parsed.countryIso,
+            primary = row.primary
+        )
     }
 
     private fun buildContact(
         name: String,
-        parsed: ParsedNumber,
+        numbers: List<PhoneNumberRef>,
         s: EditorUiState,
         photo: String
     ): Contact {
         return Contact(
-            fullPhoneNumber = parsed.fullNumber,
-            phoneNumber = parsed.nationalNumber,
-            countryCode = parsed.countryIso,
             name = name,
+            numbers = numbers,
             appointment = s.appointment.trim(),
             location = s.location.trim(),
             prefix = s.prefix.trim(),

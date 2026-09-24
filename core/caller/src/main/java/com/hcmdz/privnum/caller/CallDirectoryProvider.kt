@@ -128,8 +128,7 @@ class CallDirectoryProvider : ContentProvider() {
                     val cursor = MatrixCursor(projection)
 
                     val callerEntity = runBlocking(Dispatchers.IO) {
-                        val result = repo.getByFullNumber(correctedPhoneNumber)
-                        result
+                        repo.findByNumber(correctedPhoneNumber)
                     }
 
                     callerEntity?.let { entity ->
@@ -154,8 +153,10 @@ class CallDirectoryProvider : ContentProvider() {
                                     else -> "Mobile"
                                 }
 
-                                PhoneLookup.NUMBER -> entity.fullPhoneNumber
-                                PhoneLookup.NORMALIZED_NUMBER -> entity.phoneNumber
+                                PhoneLookup.NUMBER -> entity.primaryNumber()
+                                    ?.let { "+${it.full}" }.orEmpty()
+                                PhoneLookup.NORMALIZED_NUMBER -> entity.primaryNumber()
+                                    ?.national.orEmpty()
                                 PhoneLookup.PHOTO_THUMBNAIL_URI,
                                 PhoneLookup.PHOTO_URI -> {
                                     if (entity.photo.isNotEmpty()) {

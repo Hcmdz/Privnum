@@ -2,6 +2,8 @@ package com.hcmdz.privnum.data
 
 import com.hcmdz.privnum.data.db.ContactDao
 import com.hcmdz.privnum.data.db.ContactEntity
+import com.hcmdz.privnum.data.db.ContactWithNumbers
+import com.hcmdz.privnum.data.db.PhoneNumberEntity
 import com.hcmdz.privnum.data.db.PrivnumDatabase
 import dagger.hilt.android.qualifiers.ApplicationContext
 import android.content.Context
@@ -11,11 +13,32 @@ import kotlinx.coroutines.flow.map
 import javax.inject.Inject
 import javax.inject.Singleton
 
-fun ContactEntity.toContact() = Contact(
+fun ContactWithNumbers.toContact() = Contact(
+    id = contact.id,
+    name = contact.name,
+    numbers = numbers.sortedBy { it.id }.map {
+        PhoneNumberRef(
+            full = it.full,
+            national = it.national,
+            country = it.country,
+            primary = it.isPrimary
+        )
+    },
+    appointment = contact.appointment,
+    location = contact.location,
+    suffix = contact.suffix,
+    prefix = contact.prefix,
+    email = contact.email,
+    notes = contact.notes,
+    website = contact.website,
+    birthday = contact.birthday,
+    labels = contact.labels,
+    nickname = contact.nickname,
+    photo = contact.photo
+)
+
+fun Contact.toEntity() = ContactEntity(
     id = id,
-    fullPhoneNumber = fullPhoneNumber,
-    phoneNumber = phoneNumber,
-    countryCode = countryCode,
     name = name,
     appointment = appointment,
     location = location,
@@ -30,24 +53,22 @@ fun ContactEntity.toContact() = Contact(
     photo = photo
 )
 
-fun Contact.toEntity() = ContactEntity(
-    id = id,
-    fullPhoneNumber = fullPhoneNumber,
-    phoneNumber = phoneNumber,
-    countryCode = countryCode,
-    name = name,
-    appointment = appointment,
-    location = location,
-    suffix = suffix,
-    prefix = prefix,
-    email = email,
-    notes = notes,
-    website = website,
-    birthday = birthday,
-    labels = labels,
-    nickname = nickname,
-    photo = photo
-)
+fun Contact.toNumberEntities(contactId: Long) =
+    numbers.normalizePrimary().map {
+        PhoneNumberEntity(
+            contactId = contactId,
+            full = it.full,
+            national = it.national,
+            country = it.country,
+            isPrimary = it.primary
+        )
+    }
+
+sealed interface SaveResult {
+    data object Saved : SaveResult
+    data object NotFound : SaveResult
+    data class DuplicateNumber(val ownerName: String) : SaveResult
+}
 
 @Singleton
 class ContactRepository @Inject constructor(
@@ -55,7 +76,9 @@ class ContactRepository @Inject constructor(
     private val photos: ContactPhotoStore
 ) {
     private val db: PrivnumDatabase by lazy {
-        Room.databaseBuilder(context, PrivnumDatabase::class.java, "privnum.db").build()
+        Room.databaseBuilder(context, PrivnumDatabase::class.java, "privnum.db")
+            .addMigrations(com.hcmdz.privnum.data.db.MIGRATION_1_2)
+            .build()
     }
     private val dao: ContactDao get() = db.contactDao()
 
@@ -64,65 +87,93 @@ class ContactRepository @Inject constructor(
 
     suspend fun getAll(): List<Contact> = dao.getAll().map { it.toContact() }
 
-    suspend fun getByFullNumber(fullPhoneNumber: String): Contact? =
-        dao.getByFullNumber(fullPhoneNumber)?.toContact()
+    suspend fun getById(id: Long): Contact? = dao.getById(id)?.toContact()
 
-    fun getByFullNumberSync(fullPhoneNumber: String): Contact? {
+    suspend fun findByNumber(full: String): Contact? {
+        val id = dao.findContactIdByFull(full) ?: return null
+        return dao.getById(id)?.toContact()
+    }
+
+    fun findByNumberSync(full: String): Contact? {
         return try {
-            kotlinx.coroutines.runBlocking {
-                dao.getByFullNumber(fullPhoneNumber)?.toContact()
-            }
+            kotlinx.coroutines.runBlocking { findByNumber(full) }
         } catch (e: Exception) {
             null
         }
     }
 
     suspend fun search(rawQuery: String): List<Contact> {
-        val query = buildFtsQuery(rawQuery).ifEmpty { return emptyList() }
-        return dao.search(query).map { it.toContact() }
+        val (textQuery, digitPrefixes) = splitSearchTokens(rawQuery)
+        if (textQuery.isEmpty() && digitPrefixes.isEmpty()) return emptyList()
+        var ids: Set<Long>? = null
+        if (textQuery.isNotEmpty()) {
+            ids = dao.searchTextIds(textQuery).toSet()
+        }
+        for (prefix in digitPrefixes) {
+            val prefixIds = dao.findIdsByNumberPrefix(prefix).toSet()
+            ids = ids?.intersect(prefixIds) ?: prefixIds
+        }
+        val finalIds = ids ?: return emptyList()
+        if (finalIds.isEmpty()) return emptyList()
+        return dao.getByIds(finalIds.toList())
+            .map { it.toContact() }
+            .sortedBy { it.name.lowercase() }
     }
 
-    suspend fun add(contact: Contact): Boolean {
-        if (dao.getByFullNumber(contact.fullPhoneNumber) != null) return false
-        dao.insert(contact.toEntity())
-        return true
+    suspend fun add(contact: Contact): SaveResult {
+        val fulls = contact.numbers.map { it.full }
+        if (fulls.isEmpty()) return SaveResult.Saved
+        val ownerId = dao.findContactIdsByFulls(fulls).firstOrNull()
+        if (ownerId != null) {
+            val owner = dao.getById(ownerId)?.contact?.name.orEmpty()
+            return SaveResult.DuplicateNumber(owner)
+        }
+        val id = dao.insertContact(contact.toEntity().copy(id = 0))
+        dao.insertNumbers(contact.toNumberEntities(id))
+        return SaveResult.Saved
     }
 
     suspend fun addAll(contacts: List<Contact>): Int {
-        val existing = dao.getAll().map { it.fullPhoneNumber }.toSet()
-        val fresh = contacts.filter { it.fullPhoneNumber !in existing }
-        if (fresh.isEmpty()) return 0
-        dao.insertAll(fresh.map { it.toEntity() })
-        return fresh.size
-    }
-
-    suspend fun update(originalFullNumber: String, contact: Contact): Boolean {
-        val existing = dao.getByFullNumber(originalFullNumber) ?: return false
-        if (originalFullNumber != contact.fullPhoneNumber) {
-            dao.deleteByFullNumber(originalFullNumber)
+        var added = 0
+        for (contact in contacts) {
+            if (add(contact) is SaveResult.Saved) added++
         }
-        dao.upsert(contact.toEntity().copy(id = existing.id))
-        return true
+        return added
     }
 
-    suspend fun delete(fullPhoneNumber: String): Boolean {
-        val photo = dao.getByFullNumber(fullPhoneNumber)?.photo.orEmpty()
-        return (dao.deleteByFullNumber(fullPhoneNumber) > 0).also { ok ->
+    suspend fun update(id: Long, contact: Contact): SaveResult {
+        val existing = dao.getById(id) ?: return SaveResult.NotFound
+        val fulls = contact.numbers.map { it.full }
+        val ownerId = if (fulls.isEmpty()) null
+            else dao.findContactIdsByFulls(fulls).firstOrNull { it != id }
+        if (ownerId != null) {
+            val owner = dao.getById(ownerId)?.contact?.name.orEmpty()
+            return SaveResult.DuplicateNumber(owner)
+        }
+        dao.updateContact(contact.toEntity().copy(id = existing.contact.id))
+        dao.deleteNumbersByContact(existing.contact.id)
+        dao.insertNumbers(contact.toNumberEntities(existing.contact.id))
+        return SaveResult.Saved
+    }
+
+    suspend fun delete(id: Long): Boolean {
+        val photo = dao.getById(id)?.contact?.photo.orEmpty()
+        return (dao.deleteContactById(id) > 0).also { ok ->
             if (ok) photos.deletePhoto(photo)
         }
     }
 
-    suspend fun deleteMultiple(fullPhoneNumbers: List<String>): Boolean {
-        val photosToDrop = dao.getAll()
-            .filter { it.fullPhoneNumber in fullPhoneNumbers }
-            .map { it.photo }
-        return (dao.deleteByFullNumbers(fullPhoneNumbers) > 0).also { ok ->
+    suspend fun deleteMultiple(ids: List<Long>): Boolean {
+        if (ids.isEmpty()) return false
+        val photosToDrop = dao.getByIds(ids).map { it.contact.photo }
+        return (dao.deleteContactsByIds(ids) > 0).also { ok ->
             if (ok) photosToDrop.forEach { photos.deletePhoto(it) }
         }
     }
 
     suspend fun clearAll() {
-        dao.clearAll()
+        dao.clearNumbers()
+        dao.clearContacts()
         photos.deleteAllPhotos()
     }
 }
@@ -135,4 +186,17 @@ internal fun buildFtsQuery(rawQuery: String): String {
         .map { it.trim() }
         .filter { it.isNotEmpty() && it.uppercase() !in operators }
         .joinToString(" ") { "$it*" }
+}
+
+/** Splits a search string into an FTS text query plus digit prefixes for number lookup. */
+internal fun splitSearchTokens(rawQuery: String): Pair<String, List<String>> {
+    val operators = setOf("AND", "OR", "NOT", "NEAR")
+    val tokens = rawQuery.trim()
+        .split("\\s+".toRegex())
+        .flatMap { chunk -> chunk.split(Regex("[^\\p{L}\\p{Nd}]+")) }
+        .map { it.trim() }
+        .filter { it.isNotEmpty() && it.uppercase() !in operators }
+    val digits = tokens.filter { it.all(Char::isDigit) }
+    val text = tokens.filterNot { it.all(Char::isDigit) }.joinToString(" ") { "$it*" }
+    return text to digits
 }

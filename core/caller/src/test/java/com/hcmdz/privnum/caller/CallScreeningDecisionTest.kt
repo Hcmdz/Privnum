@@ -1,16 +1,15 @@
 package com.hcmdz.privnum.caller
 
 import com.hcmdz.privnum.data.Contact
+import com.hcmdz.privnum.data.PhoneNumberRef
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertFalse
 import org.junit.Assert.assertTrue
 import org.junit.Test
 
 private fun contact() = Contact(
-    fullPhoneNumber = "1",
-    phoneNumber = "1",
-    countryCode = "US",
-    name = "Test"
+    name = "Test",
+    numbers = listOf(PhoneNumberRef("1", "1", "US", primary = true))
 )
 
 class CallScreeningDecisionTest {

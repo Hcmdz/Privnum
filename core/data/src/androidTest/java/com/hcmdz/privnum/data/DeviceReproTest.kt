@@ -20,11 +20,12 @@ private fun contact(
     national: String = "612345678",
     name: String = "Test"
 ) = Contact(
-    fullPhoneNumber = full,
-    phoneNumber = national,
-    countryCode = "FR",
-    name = name
+    name = name,
+    numbers = listOf(PhoneNumberRef(full, national, "FR", primary = true))
 )
+
+private fun assertSaved(result: SaveResult) =
+    assertTrue(result is SaveResult.Saved)
 
 @RunWith(AndroidJUnit4::class)
 class ContactRepositoryDeviceTest {
@@ -41,28 +42,66 @@ class ContactRepositoryDeviceTest {
 
     @Test
     fun updateWithUnchangedNumberKeepsSingleRow() = runTest {
-        assertTrue(repository.add(contact()))
-        assertTrue(repository.update("33612345678", contact().copy(nickname = "JD")))
-        assertEquals("JD", repository.getByFullNumber("33612345678")?.nickname)
+        assertSaved(repository.add(contact()))
+        val id = repository.getAll().single().id
+        assertSaved(repository.update(id, contact().copy(nickname = "JD")))
+        assertEquals("JD", repository.findByNumber("33612345678")?.nickname)
         assertEquals(1, repository.getAll().size)
     }
 
     @Test
     fun updateWithChangedNumberMovesContact() = runTest {
-        assertTrue(repository.add(contact()))
-        assertTrue(repository.update("33612345678", contact(full = "33698765432", national = "698765432")))
-        assertNull(repository.getByFullNumber("33612345678"))
-        assertEquals("Test", repository.getByFullNumber("33698765432")?.name)
+        assertSaved(repository.add(contact()))
+        val id = repository.getAll().single().id
+        assertSaved(
+            repository.update(id, contact(full = "33698765432", national = "698765432"))
+        )
+        assertNull(repository.findByNumber("33612345678"))
+        assertEquals("Test", repository.findByNumber("33698765432")?.name)
     }
 
     @Test
-    fun updateMissingContactReturnsFalse() = runTest {
-        assertFalse(repository.update("33000000000", contact(full = "33000000000", national = "000000000")))
+    fun updateMissingContactReturnsNotFound() = runTest {
+        assertTrue(
+            repository.update(
+                999999,
+                contact(full = "33000000000", national = "000000000")
+            ) is SaveResult.NotFound
+        )
+    }
+
+    @Test
+    fun duplicateNumberRefusedNamingOwner() = runTest {
+        assertSaved(repository.add(contact(name = "Owner")))
+        val other = repository.add(contact(name = "Clone"))
+        assertTrue(other is SaveResult.DuplicateNumber)
+        assertEquals("Owner", (other as SaveResult.DuplicateNumber).ownerName)
+        val ownerId = repository.getAll().single().id
+        assertSaved(repository.add(contact(full = "33698765432", national = "698765432", name = "Second")))
+        val secondId = repository.getAll().single { it.name == "Second" }.id
+        val moved = repository.update(secondId, contact(name = "Second"))
+        assertTrue(moved is SaveResult.DuplicateNumber)
+        assertEquals("Owner", (moved as SaveResult.DuplicateNumber).ownerName)
+        assertEquals("Owner", repository.getById(ownerId)?.name)
+    }
+
+    @Test
+    fun secondNumberSearchableByDigits() = runTest {
+        val twoNumbers = contact().copy(
+            numbers = listOf(
+                PhoneNumberRef("33612345678", "612345678", "FR", primary = true),
+                PhoneNumberRef("1555" + "1234567", "555" + "1234567", "US", primary = false)
+            )
+        )
+        assertSaved(repository.add(twoNumbers))
+        assertEquals(1, repository.search("1555").size)
+        assertEquals("Test", repository.search("1555").single().name)
+        assertEquals(1, repository.search("Test 1555").size)
     }
 
     @Test
     fun clearAllEmptiesTableAndFts() = runTest {
-        assertTrue(repository.add(contact()))
+        assertSaved(repository.add(contact()))
         assertEquals(1, repository.search("Test").size)
         repository.clearAll()
         assertEquals(0, repository.getAll().size)
@@ -72,8 +111,9 @@ class ContactRepositoryDeviceTest {
     @Test
     fun deleteRemovesPhotoFile() = runTest {
         val path = photos.savePhoto(byteArrayOf(1, 2, 3), "image/jpeg")
-        assertTrue(repository.add(contact().copy(photo = path)))
-        assertTrue(repository.delete("33612345678"))
+        assertSaved(repository.add(contact().copy(photo = path)))
+        val id = repository.getAll().single().id
+        assertTrue(repository.delete(id))
         assertNull(photos.readBytes(path))
     }
 

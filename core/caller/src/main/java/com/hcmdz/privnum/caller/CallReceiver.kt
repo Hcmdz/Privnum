@@ -512,7 +512,7 @@ class CallReceiver : BroadcastReceiver() {
                 context,
                 ContactPhotoStore(context)
             )
-            val callerEntity = callerRepository.getByFullNumberSync(correctedPhoneNumber)
+            val callerEntity = callerRepository.findByNumberSync(correctedPhoneNumber)
 
             if (callerEntity != null) {
                 val callerInfo = CallerInfo(

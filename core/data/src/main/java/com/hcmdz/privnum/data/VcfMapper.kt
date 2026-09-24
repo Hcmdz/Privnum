@@ -32,10 +32,13 @@ object VcfMapper {
             vcard.addExtendedProperty("X-ANDROID-CUSTOM", "$NICKNAME_PROP;${contact.nickname}")
         }
 
-        val tel = Telephone("+${contact.fullPhoneNumber}")
-        tel.types.add(TelephoneType.CELL)
-        tel.pref = 1
-        vcard.addTelephoneNumber(tel)
+        val numbers = contact.numbers.normalizePrimary()
+        numbers.forEachIndexed { index, number ->
+            val tel = Telephone("+${number.full}")
+            tel.types.add(TelephoneType.CELL)
+            if (index == 0) tel.pref = 1
+            vcard.addTelephoneNumber(tel)
+        }
 
         if (contact.email.isNotBlank()) {
             val email = vcard.addEmail(contact.email)
@@ -112,9 +115,19 @@ object VcfMapper {
         val prefix = structuredName?.prefixes?.firstOrNull().orEmpty()
         val suffix = structuredName?.suffixes?.firstOrNull().orEmpty()
 
-        val tel = vcard.telephoneNumbers.firstOrNull() ?: return null
-        val parsed = PhoneNumberUtils.parse(tel.text, defaultRegion) ?: return null
+        val parsedNumbers = vcard.telephoneNumbers.mapNotNull { tel ->
+            PhoneNumberUtils.parse(tel.text, defaultRegion)?.let { parsed ->
+                PhoneNumberRef(
+                    full = parsed.fullNumber,
+                    national = parsed.nationalNumber,
+                    country = parsed.countryIso,
+                    primary = (tel.pref ?: 0) > 0
+                )
+            }
+        }
+        if (parsedNumbers.isEmpty()) return null
         if (name.isBlank()) return null
+        val numbers = parsedNumbers.normalizePrimary()
 
         val nickname = vcard.extendedProperties
             .firstOrNull {
@@ -136,10 +149,8 @@ object VcfMapper {
         }.orEmpty()
 
         return Contact(
-            fullPhoneNumber = parsed.fullNumber,
-            phoneNumber = parsed.nationalNumber,
-            countryCode = parsed.countryIso,
             name = name,
+            numbers = numbers,
             appointment = vcard.titles.firstOrNull()?.value.orEmpty(),
             location = vcard.addresses.firstOrNull {
                 it.locality != null

@@ -18,6 +18,11 @@ android {
         arg("room.schemaLocation", "$projectDir/schemas")
     }
 
+    // MigrationTestHelper loads exported schemas from test assets.
+    sourceSets {
+        getByName("androidTest").assets.srcDirs("$projectDir/schemas")
+    }
+
     compileOptions {
         sourceCompatibility = JavaVersion.VERSION_17
         targetCompatibility = JavaVersion.VERSION_17

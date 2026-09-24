@@ -32,22 +32,22 @@ class ContactsViewModel @Inject constructor(
     private val photos: ContactPhotoStore,
     private val passcode: PasscodeStore
 ) : ViewModel() {
-    private val selected = MutableStateFlow<Set<String>>(emptySet())
+    private val selected = MutableStateFlow<Set<Long>>(emptySet())
 
     val uiState: StateFlow<ContactsUiState> =
         combine(repository.observeContacts(), selected) { contacts, selection ->
             ContactsUiState(
                 items = contacts.map {
-                    ContactListItem(it, it.fullPhoneNumber in selection)
+                    ContactListItem(it, it.id in selection)
                 },
                 selectionMode = selection.isNotEmpty(),
                 selectedCount = selection.size
             )
         }.stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), ContactsUiState())
 
-    fun toggleSelection(fullPhoneNumber: String) {
+    fun toggleSelection(id: Long) {
         selected.value = selected.value.toMutableSet().also { set ->
-            if (!set.add(fullPhoneNumber)) set.remove(fullPhoneNumber)
+            if (!set.add(id)) set.remove(id)
         }
     }
 
@@ -56,10 +56,10 @@ class ContactsViewModel @Inject constructor(
     }
 
     fun deleteSelected(onDone: (Boolean) -> Unit = {}) {
-        val numbers = selected.value.toList()
-        if (numbers.isEmpty()) return
+        val ids = selected.value.toList()
+        if (ids.isEmpty()) return
         viewModelScope.launch {
-            val ok = repository.deleteMultiple(numbers)
+            val ok = repository.deleteMultiple(ids)
             if (ok) clearSelection()
             onDone(ok)
         }
@@ -67,7 +67,7 @@ class ContactsViewModel @Inject constructor(
 
     fun delete(contact: Contact, onDone: (Boolean) -> Unit = {}) {
         viewModelScope.launch {
-            onDone(repository.delete(contact.fullPhoneNumber))
+            onDone(repository.delete(contact.id))
         }
     }
 
@@ -81,17 +81,23 @@ fun contactClipboardLines(contacts: List<Contact>): String =
     contacts.joinToString("\n\n") { contact ->
         listOf(
             "Name" to contact.displayName(),
-            "Phone" to "+${contact.fullPhoneNumber}",
-            "Email" to contact.email,
-            "Appointment" to contact.appointment,
-            "Location" to contact.location,
-            "Notes" to contact.notes,
-            "Nickname" to contact.nickname,
-            "Website" to contact.website,
-            "Birthday" to contact.birthday,
-            "Labels" to contact.labels,
-            "Prefix" to contact.prefix,
-            "Suffix" to contact.suffix
+        ).plus(
+            contact.numbers.mapIndexed { index, number ->
+                (if (index == 0) "Phone" else "Phone ${index + 1}") to "+${number.full}"
+            }
+        ).plus(
+            listOf(
+                "Email" to contact.email,
+                "Appointment" to contact.appointment,
+                "Location" to contact.location,
+                "Notes" to contact.notes,
+                "Nickname" to contact.nickname,
+                "Website" to contact.website,
+                "Birthday" to contact.birthday,
+                "Labels" to contact.labels,
+                "Prefix" to contact.prefix,
+                "Suffix" to contact.suffix
+            )
         ).filter { it.second.isNotBlank() }
             .joinToString("\n") { (label, value) -> "$label - $value" }
     }

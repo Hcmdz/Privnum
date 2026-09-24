@@ -73,16 +73,16 @@ class PreviewViewModel @Inject constructor(
     private val _state = MutableStateFlow(PreviewUiState())
     val state: StateFlow<PreviewUiState> = _state.asStateFlow()
 
-    private var loadedNumber: String? = null
+    private var loadedId: Long? = null
 
-    fun load(fullPhoneNumber: String) {
+    fun load(contactId: Long) {
         // One-shot flags must never survive across entries sharing this ViewModel,
         // otherwise the screen auto-pops right after opening.
         _state.update { it.copy(deleted = false, message = null) }
-        if (loadedNumber == fullPhoneNumber) return
-        loadedNumber = fullPhoneNumber
+        if (loadedId == contactId) return
+        loadedId = contactId
         viewModelScope.launch {
-            val contact = repository.getByFullNumber(fullPhoneNumber)
+            val contact = repository.getById(contactId)
             _state.update {
                 if (contact == null) it.copy(contact = null, notFound = true)
                 else it.copy(contact = contact, notFound = false)
@@ -93,7 +93,7 @@ class PreviewViewModel @Inject constructor(
     fun delete() {
         val contact = _state.value.contact ?: return
         viewModelScope.launch {
-            if (repository.delete(contact.fullPhoneNumber)) {
+            if (repository.delete(contact.id)) {
                 _state.update { it.copy(deleted = true) }
             } else {
                 _state.update { it.copy(message = "Delete failed") }

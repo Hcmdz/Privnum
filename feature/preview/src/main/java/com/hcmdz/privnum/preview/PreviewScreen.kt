@@ -70,6 +70,7 @@ import androidx.compose.ui.unit.dp
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.hcmdz.privnum.data.Contact
+import com.hcmdz.privnum.data.PhoneNumberRef
 import com.hcmdz.privnum.data.PhoneNumberUtils
 import com.hcmdz.privnum.ui.ContactAvatar
 import kotlinx.coroutines.launch
@@ -102,7 +103,7 @@ fun openAppIntent(context: Context, uri: String, packageName: String?) {
 @OptIn(ExperimentalMaterial3Api::class, ExperimentalFoundationApi::class)
 @Composable
 fun PreviewScreen(
-    fullPhoneNumber: String,
+    contactId: Long,
     onBack: () -> Unit,
     onEdit: (Contact) -> Unit,
     viewModel: PreviewViewModel = hiltViewModel()
@@ -113,7 +114,7 @@ fun PreviewScreen(
     val scope = rememberCoroutineScope()
     var deleteConfirm by remember { mutableStateOf(false) }
 
-    LaunchedEffect(fullPhoneNumber) { viewModel.load(fullPhoneNumber) }
+    LaunchedEffect(contactId) { viewModel.load(contactId) }
     LaunchedEffect(state.deleted) { if (state.deleted) onBack() }
     LaunchedEffect(state.message) {
         state.message?.let {
@@ -184,10 +185,10 @@ fun PreviewScreen(
                         .verticalScroll(rememberScrollState())
                         .padding(16.dp),
                     onCall = {
-                        openUri("tel:+${contact.fullPhoneNumber}")
+                        contact.primaryNumber()?.let { openUri("tel:+${it.full}") }
                     },
                     onMessage = {
-                        openUri("smsto:+${contact.fullPhoneNumber}")
+                        contact.primaryNumber()?.let { openUri("smsto:+${it.full}") }
                     },
                     onEmail = {
                         if (contact.email.isNotBlank()) openUri("mailto:${contact.email}")
@@ -331,21 +332,25 @@ private fun ContactDetails(
                     style = MaterialTheme.typography.titleMedium,
                     modifier = Modifier.padding(16.dp)
                 )
-                val formatted = "+" + PhoneNumberUtils.formatNational(
-                    contact.fullPhoneNumber,
-                    contact.countryCode
-                )
-                ListItem(
-                    headlineContent = { Text(formatted) },
-                    supportingContent = { Text("Mobile") },
-                    leadingContent = {
-                        Icon(Icons.Filled.Phone, contentDescription = null)
-                    },
-                    modifier = Modifier.combinedClickable(
-                        onClick = onCall,
-                        onLongClick = { onCopy("+" + contact.fullPhoneNumber) }
+                contact.numbers.forEachIndexed { index, number ->
+                    val formatted = "+" + PhoneNumberUtils.formatNational(
+                        number.full,
+                        number.country
                     )
-                )
+                    ListItem(
+                        headlineContent = { Text(formatted) },
+                        supportingContent = {
+                            Text(if (index == 0) "Mobile" else "Mobile ${index + 1}")
+                        },
+                        leadingContent = {
+                            Icon(Icons.Filled.Phone, contentDescription = null)
+                        },
+                        modifier = Modifier.combinedClickable(
+                            onClick = { onOpenUri("tel:+${number.full}") },
+                            onLongClick = { onCopy("+" + number.full) }
+                        )
+                    )
+                }
                 if (contact.email.isNotBlank()) {
                     ListItem(
                         headlineContent = { Text(contact.email) },
@@ -383,12 +388,12 @@ private fun ContactDetails(
                 ExpandableAppRow(
                     name = "WhatsApp",
                     icon = Icons.Filled.Message,
-                    number = contact.fullPhoneNumber,
-                    onAction = { profile ->
+                    numbers = contact.numbers,
+                    onAction = { number, profile ->
                         val installed = isAppInstalled(context, "com.whatsapp")
                         openAppIntent(
                             context,
-                            whatsappUri(contact.fullPhoneNumber, installed),
+                            whatsappUri(number, installed),
                             whatsappPackage(installed)
                         )
                     }
@@ -396,12 +401,12 @@ private fun ContactDetails(
                 ExpandableAppRow(
                     name = "Telegram",
                     icon = Icons.Filled.Send,
-                    number = contact.fullPhoneNumber,
-                    onAction = { profile ->
+                    numbers = contact.numbers,
+                    onAction = { number, profile ->
                         val installed = isAppInstalled(context, "org.telegram.messenger")
                         openAppIntent(
                             context,
-                            telegramUri(contact.fullPhoneNumber, profile, installed),
+                            telegramUri(number, profile, installed),
                             telegramPackage(installed)
                         )
                     }
@@ -499,8 +504,8 @@ private fun ActionButton(label: String, icon: androidx.compose.ui.graphics.vecto
 private fun ExpandableAppRow(
     name: String,
     icon: androidx.compose.ui.graphics.vector.ImageVector,
-    number: String,
-    onAction: (profile: Boolean) -> Unit
+    numbers: List<PhoneNumberRef>,
+    onAction: (number: String, profile: Boolean) -> Unit
 ) {
     var expanded by rememberSaveable { mutableStateOf(false) }
     Column {
@@ -516,15 +521,17 @@ private fun ExpandableAppRow(
             modifier = Modifier.clickable { expanded = !expanded }
         )
         if (expanded) {
-            val formatted = "+$number"
-            ListItem(
-                headlineContent = { Text("Message  $formatted") },
-                modifier = Modifier.clickable { onAction(false) }
-            )
-            ListItem(
-                headlineContent = { Text("Voice call  $formatted") },
-                modifier = Modifier.clickable { onAction(true) }
-            )
+            numbers.forEach { number ->
+                val formatted = "+${number.full}"
+                ListItem(
+                    headlineContent = { Text("Message  $formatted") },
+                    modifier = Modifier.clickable { onAction(number.full, false) }
+                )
+                ListItem(
+                    headlineContent = { Text("Voice call  $formatted") },
+                    modifier = Modifier.clickable { onAction(number.full, true) }
+                )
+            }
         }
     }
 }

@@ -192,19 +192,19 @@ fun ContactsScreen(
                             )
                         }
                     }
-                    item(key = item.contact.fullPhoneNumber) {
+                    item(key = item.contact.id) {
                         ContactRow(
                             item = item,
                             photoModel = viewModel.photoModel(item.contact.photo),
                             onClick = {
                                 if (state.selectionMode) {
-                                    viewModel.toggleSelection(item.contact.fullPhoneNumber)
+                                    viewModel.toggleSelection(item.contact.id)
                                 } else {
                                     onPreview(item.contact)
                                 }
                             },
                             onLongClick = {
-                                viewModel.toggleSelection(item.contact.fullPhoneNumber)
+                                viewModel.toggleSelection(item.contact.id)
                             }
                         )
                     }
@@ -249,7 +249,11 @@ private fun ContactRow(
             onLongClick = onLongClick
         ),
         headlineContent = { Text(item.contact.displayName()) },
-        supportingContent = { Text("+${item.contact.fullPhoneNumber}") },
+        supportingContent = {
+            Text(
+                item.contact.primaryNumber()?.let { "+${it.full}" }.orEmpty()
+            )
+        },
         leadingContent = {
             ContactAvatar(
                 model = photoModel,

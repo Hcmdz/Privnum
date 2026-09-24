@@ -28,7 +28,7 @@ data object Contacts : NavKey
 data object NewContact : NavKey
 
 @Serializable
-data class EditContact(val fullPhoneNumber: String) : NavKey
+data class EditContact(val contactId: Long) : NavKey
 
 @Serializable
 data object Search : NavKey
@@ -37,7 +37,7 @@ data object Search : NavKey
 data object Settings : NavKey
 
 @Serializable
-data class PreviewContact(val fullPhoneNumber: String) : NavKey
+data class PreviewContact(val contactId: Long) : NavKey
 
 @Serializable
 data object LockSetup : NavKey
@@ -84,7 +84,7 @@ fun AppNav(
                             newContactNonce++
                             backStack.add(NewContact)
                         },
-                        onPreview = { backStack.add(PreviewContact(it.fullPhoneNumber)) },
+                        onPreview = { backStack.add(PreviewContact(it.id)) },
                         onOpenSearch = { backStack.add(Search) },
                         onOpenSettings = { backStack.add(Settings) },
                         onLockNow = {
@@ -95,7 +95,7 @@ fun AppNav(
                 }
                 entry<NewContact> {
                     EditorScreen(
-                        fullPhoneNumber = null,
+                        contactId = null,
                         entryNonce = newContactNonce,
                         onSaved = { backStack.removeLastOrNull() },
                         onBack = { backStack.removeLastOrNull() }
@@ -103,7 +103,7 @@ fun AppNav(
                 }
                 entry<EditContact> { key ->
                     EditorScreen(
-                        fullPhoneNumber = key.fullPhoneNumber,
+                        contactId = key.contactId,
                         entryNonce = 0,
                         // Pop editor + preview, back to the list (source popToTop).
                         onSaved = {
@@ -115,14 +115,14 @@ fun AppNav(
                 }
                 entry<Search> {
                     SearchScreen(
-                        onPreview = { backStack.add(PreviewContact(it.fullPhoneNumber)) }
+                        onPreview = { backStack.add(PreviewContact(it.id)) }
                     )
                 }
                 entry<PreviewContact> { key ->
                     PreviewScreen(
-                        fullPhoneNumber = key.fullPhoneNumber,
+                        contactId = key.contactId,
                         onBack = { backStack.removeLastOrNull() },
-                        onEdit = { backStack.add(EditContact(it.fullPhoneNumber)) }
+                        onEdit = { backStack.add(EditContact(it.id)) }
                     )
                 }
                 entry<Settings> {
