@@ -48,7 +48,7 @@ requests **zero network permissions**.
 | Contacts | Editor | Details |
 |---|---|---|
 | [![Contacts light](screenshots/contacts-light.png)](screenshots/contacts-light.png) | [![Editor light](screenshots/editor-light.png)](screenshots/editor-light.png) | [![Details light](screenshots/preview-light.png)](screenshots/preview-light.png) |
-| [![Contacts dark](screenshots/contacts-dark.png)](screenshots/contacts-dark.png) | dark mode supported throughout (Dynamic Color) | [![Details dark](screenshots/preview-dark.png)](screenshots/preview-dark.png) |
+| [![Contacts dark](screenshots/contacts-dark.png)](screenshots/contacts-dark.png) | [![Editor dark](screenshots/editor-dark.png)](screenshots/editor-dark.png) | [![Details dark](screenshots/preview-dark.png)](screenshots/preview-dark.png) |
 
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
 
