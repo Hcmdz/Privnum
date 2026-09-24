@@ -124,8 +124,8 @@ Entry points: `MainActivity` (launcher), `CallReceiver` (phone-state broadcasts)
 ### Installation
 
 ```bash
-git clone https://github.com/Hcmdz/Privnum-native.git
-cd Privnum-native
+git clone https://github.com/Hcmdz/Privnum.git
+cd Privnum
 export JAVA_HOME=<jdk-17> ANDROID_HOME=<sdk>
 ./gradlew assembleDebug     # app/build/outputs/apk/debug/Privnum-debug.apk
 ./gradlew installDebug      # run on device
@@ -226,7 +226,7 @@ This project is licensed under the [MIT](LICENSE) — see the [LICENSE](LICENSE)
 
 Hcmdz — [@Hcmdz](https://github.com/Hcmdz)
 
-Project link: [https://github.com/Hcmdz/Privnum-native](https://github.com/Hcmdz/Privnum-native)
+Project link: [https://github.com/Hcmdz/Privnum](https://github.com/Hcmdz/Privnum)
 
 ## 🙏 Acknowledgments
 
