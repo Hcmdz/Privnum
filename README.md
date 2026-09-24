@@ -1,6 +1,8 @@
 # Privnum
 <a id="readme-top"></a>
 
+[![Privnum](docs/assets/feature-graphic.png)](https://github.com/Hcmdz/Privnum)
+
 [![Android](https://img.shields.io/badge/Platform-Android-green.svg?logo=android)](https://www.android.com)
 [![Kotlin](https://img.shields.io/badge/Language-Kotlin-purple.svg?logo=kotlin)](https://kotlinlang.org)
 [![MinSDK](https://img.shields.io/badge/MinSDK-29-orange.svg)](#)
