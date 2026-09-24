@@ -115,6 +115,7 @@ fun SettingsScreen(
     var regionDialog by remember { mutableStateOf(false) }
     var pinDialog by remember { mutableStateOf<PinDialogMode?>(null) }
     var deleteConfirm by remember { mutableStateOf(false) }
+    var overlayRationale by remember { mutableStateOf(false) }
 
     LifecycleEventEffect(Lifecycle.Event.ON_RESUME) {
         viewModel.refreshSecurity()
@@ -186,9 +187,7 @@ fun SettingsScreen(
                 title = "Display over other apps",
                 granted = callStatus.overlay,
                 actionLabel = "Grant",
-                onAction = {
-                    systemSettingsLauncher.launch(CallerPermissions.overlaySettingsIntent())
-                }
+                onAction = { overlayRationale = true }
             )
             StatusRow(
                 title = "Phone state permission",
@@ -431,6 +430,25 @@ fun SettingsScreen(
                         if (result == PinCheck.OK) pinDialog = null
                     }
                 }
+            }
+        )
+    }
+
+    if (overlayRationale) {
+        AlertDialog(
+            onDismissRequest = { overlayRationale = false },
+            title = { Text("Display over other apps") },
+            text = { Text("Privnum needs this permission to show the caller popup during incoming calls.") },
+            confirmButton = {
+                TextButton(
+                    onClick = {
+                        overlayRationale = false
+                        systemSettingsLauncher.launch(CallerPermissions.overlaySettingsIntent())
+                    }
+                ) { Text("Continue") }
+            },
+            dismissButton = {
+                TextButton(onClick = { overlayRationale = false }) { Text("Cancel") }
             }
         )
     }

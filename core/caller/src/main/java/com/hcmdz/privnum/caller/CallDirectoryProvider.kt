@@ -13,6 +13,7 @@ import android.provider.ContactsContract.PhoneLookup
 import android.util.Base64
 import android.util.Log
 import androidx.core.net.toUri
+import com.hcmdz.privnum.data.ContactPhotoStore
 import com.hcmdz.privnum.data.ContactRepository
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.runBlocking
@@ -42,7 +43,7 @@ class CallDirectoryProvider : ContentProvider() {
 
     override fun onCreate(): Boolean {
         context?.let { ctx ->
-            contactRepository = ContactRepository(ctx)
+            contactRepository = ContactRepository(ctx, ContactPhotoStore(ctx))
             val authority = ctx.getString(R.string.callerid_authority)
             authorityUri = "content://$authority".toUri()
 

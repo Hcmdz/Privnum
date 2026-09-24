@@ -24,6 +24,7 @@ import android.view.WindowManager
 import android.widget.ImageButton
 import android.widget.ImageView
 import android.widget.TextView
+import com.hcmdz.privnum.data.ContactPhotoStore
 import com.hcmdz.privnum.data.ContactRepository
 import java.lang.ref.WeakReference
 
@@ -502,7 +503,10 @@ class CallReceiver : BroadcastReceiver() {
             val correctedPhoneNumber = getCorrectedPhoneNumber(phoneNumberInString, context)
 
             // Use Room database to get caller information synchronously
-            val callerRepository = ContactRepository(context)
+            val callerRepository = ContactRepository(
+                context,
+                ContactPhotoStore(context)
+            )
             val callerEntity = callerRepository.getByFullNumberSync(correctedPhoneNumber)
 
             if (callerEntity != null) {

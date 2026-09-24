@@ -1,9 +1,14 @@
 package com.hcmdz.privnum.data
 
 import android.content.Context
+import android.graphics.Bitmap
+import android.graphics.BitmapFactory
+import android.graphics.Matrix
 import android.net.Uri
 import android.util.Base64
+import androidx.exifinterface.media.ExifInterface
 import dagger.hilt.android.qualifiers.ApplicationContext
+import java.io.ByteArrayOutputStream
 import java.io.File
 import java.nio.ByteBuffer
 import java.util.UUID
@@ -31,6 +36,56 @@ class ContactPhotoStore @Inject constructor(
         val file = File(dir(), "${UUID.randomUUID()}.${extForMime(mime)}")
         file.writeBytes(bytes)
         return file.absolutePath
+    }
+
+    /** Gallery/camera pick → oriented square JPEG capped at 512px. */
+    fun savePickedPhoto(bytes: ByteArray): String =
+        savePhoto(processPicked(bytes), "image/jpeg")
+
+    fun processPicked(bytes: ByteArray, maxSize: Int = 512): ByteArray {
+        val bounds = BitmapFactory.Options().apply { inJustDecodeBounds = true }
+        BitmapFactory.decodeByteArray(bytes, 0, bytes.size, bounds)
+        if (bounds.outWidth <= 0 || bounds.outHeight <= 0) return bytes
+        var bitmap = BitmapFactory.decodeByteArray(bytes, 0, bytes.size) ?: return bytes
+        bitmap = bitmap.oriented(bytes)
+        val side = minOf(bitmap.width, bitmap.height)
+        val cropped = Bitmap.createBitmap(
+            bitmap,
+            (bitmap.width - side) / 2,
+            (bitmap.height - side) / 2,
+            side,
+            side
+        )
+        val scaled = if (side > maxSize) {
+            Bitmap.createScaledBitmap(cropped, maxSize, maxSize, true)
+        } else {
+            cropped
+        }
+        val out = ByteArrayOutputStream()
+        return if (scaled.compress(Bitmap.CompressFormat.JPEG, 80, out)) {
+            out.toByteArray()
+        } else {
+            bytes
+        }
+    }
+
+    private fun Bitmap.oriented(bytes: ByteArray): Bitmap {
+        val orientation = runCatching {
+            ExifInterface(bytes.inputStream()).getAttributeInt(
+                ExifInterface.TAG_ORIENTATION,
+                ExifInterface.ORIENTATION_NORMAL
+            )
+        }.getOrDefault(ExifInterface.ORIENTATION_NORMAL)
+        val matrix = Matrix()
+        when (orientation) {
+            ExifInterface.ORIENTATION_ROTATE_90 -> matrix.postRotate(90f)
+            ExifInterface.ORIENTATION_ROTATE_180 -> matrix.postRotate(180f)
+            ExifInterface.ORIENTATION_ROTATE_270 -> matrix.postRotate(270f)
+            ExifInterface.ORIENTATION_FLIP_HORIZONTAL -> matrix.postScale(-1f, 1f)
+            ExifInterface.ORIENTATION_FLIP_VERTICAL -> matrix.postScale(1f, -1f)
+            else -> return this
+        }
+        return Bitmap.createBitmap(this, 0, 0, width, height, matrix, true)
     }
 
     fun readBytes(photo: String): ByteArray? {
@@ -84,6 +139,10 @@ class ContactPhotoStore @Inject constructor(
     fun deletePhoto(photo: String) {
         if (photo.isBlank() || photo.startsWith("data:image/")) return
         runCatching { File(photo).takeIf { it.exists() }?.delete() }
+    }
+
+    fun deleteAllPhotos() {
+        runCatching { dir().listFiles()?.forEach { it.delete() } }
     }
 
     fun contentTypeOf(uri: Uri): String? =

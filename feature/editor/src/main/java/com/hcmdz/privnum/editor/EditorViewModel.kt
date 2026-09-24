@@ -241,17 +241,17 @@ class EditorViewModel @Inject constructor(
         viewModelScope.launch {
             var finalPhoto = s.photo
             s.pendingPhotoUri?.let { uri ->
-                val (bytes, mime) = withContext(Dispatchers.IO) {
+                val bytes = withContext(Dispatchers.IO) {
                     runCatching {
                         context.contentResolver.openInputStream(uri)?.use { it.readBytes() }
-                    }.getOrNull() to photos.contentTypeOf(uri)
+                    }.getOrNull()
                 }
                 if (bytes != null) {
                     if (finalPhoto.isNotBlank()) {
                         withContext(Dispatchers.IO) { photos.deletePhoto(finalPhoto) }
                     }
                     finalPhoto = withContext(Dispatchers.IO) {
-                        photos.savePhoto(bytes, mime)
+                        photos.savePickedPhoto(bytes)
                     }
                 }
             }

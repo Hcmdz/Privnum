@@ -92,7 +92,11 @@ fun AppNav(
                     EditorScreen(
                         fullPhoneNumber = key.fullPhoneNumber,
                         entryNonce = 0,
-                        onSaved = { backStack.removeLastOrNull() },
+                        // Pop editor + preview, back to the list (source popToTop).
+                        onSaved = {
+                            backStack.removeLastOrNull()
+                            backStack.removeLastOrNull()
+                        },
                         onBack = { backStack.removeLastOrNull() }
                     )
                 }

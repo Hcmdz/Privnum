@@ -51,7 +51,8 @@ fun Contact.toEntity() = ContactEntity(
 
 @Singleton
 class ContactRepository @Inject constructor(
-    @ApplicationContext private val context: Context
+    @ApplicationContext private val context: Context,
+    private val photos: ContactPhotoStore
 ) {
     private val db: PrivnumDatabase by lazy {
         Room.databaseBuilder(context, PrivnumDatabase::class.java, "privnum.db").build()
@@ -104,13 +105,26 @@ class ContactRepository @Inject constructor(
         return true
     }
 
-    suspend fun delete(fullPhoneNumber: String): Boolean =
-        dao.deleteByFullNumber(fullPhoneNumber) > 0
+    suspend fun delete(fullPhoneNumber: String): Boolean {
+        val photo = dao.getByFullNumber(fullPhoneNumber)?.photo.orEmpty()
+        return (dao.deleteByFullNumber(fullPhoneNumber) > 0).also { ok ->
+            if (ok) photos.deletePhoto(photo)
+        }
+    }
 
-    suspend fun deleteMultiple(fullPhoneNumbers: List<String>): Boolean =
-        dao.deleteByFullNumbers(fullPhoneNumbers) > 0
+    suspend fun deleteMultiple(fullPhoneNumbers: List<String>): Boolean {
+        val photosToDrop = dao.getAll()
+            .filter { it.fullPhoneNumber in fullPhoneNumbers }
+            .map { it.photo }
+        return (dao.deleteByFullNumbers(fullPhoneNumbers) > 0).also { ok ->
+            if (ok) photosToDrop.forEach { photos.deletePhoto(it) }
+        }
+    }
 
-    suspend fun clearAll() = dao.clearAll()
+    suspend fun clearAll() {
+        dao.clearAll()
+        photos.deleteAllPhotos()
+    }
 }
 
 internal fun buildFtsQuery(rawQuery: String): String {

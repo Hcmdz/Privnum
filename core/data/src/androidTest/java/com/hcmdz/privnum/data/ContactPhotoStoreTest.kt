@@ -1,5 +1,7 @@
 package com.hcmdz.privnum.data
 
+import android.graphics.Bitmap
+import android.graphics.BitmapFactory
 import androidx.test.core.app.ApplicationProvider
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import org.junit.Assert.assertArrayEquals
@@ -9,6 +11,7 @@ import org.junit.Assert.assertNull
 import org.junit.Assert.assertTrue
 import org.junit.Test
 import org.junit.runner.RunWith
+import java.io.ByteArrayOutputStream
 import java.nio.ByteBuffer
 
 @RunWith(AndroidJUnit4::class)
@@ -55,5 +58,39 @@ class ContactPhotoStoreTest {
         assertEquals("png", extForMime("image/png"))
         assertEquals("jpg", extForMime("image/bmp"))
         assertEquals("jpg", extForMime(null))
+    }
+
+    @Test
+    fun processPickedProducesSquareJpeg() {
+        val src = Bitmap.createBitmap(1000, 600, Bitmap.Config.ARGB_8888)
+        val png = ByteArrayOutputStream()
+        src.compress(Bitmap.CompressFormat.PNG, 100, png)
+        val result = store.processPicked(png.toByteArray())
+        assertEquals(0xFF.toByte(), result[0])
+        assertEquals(0xD8.toByte(), result[1])
+        val decoded = BitmapFactory.decodeByteArray(result, 0, result.size)
+        assertNotNull(decoded)
+        assertEquals(512, decoded!!.width)
+        assertEquals(512, decoded.height)
+    }
+
+    @Test
+    fun processPickedNeverUpscales() {
+        val src = Bitmap.createBitmap(400, 300, Bitmap.Config.ARGB_8888)
+        val png = ByteArrayOutputStream()
+        src.compress(Bitmap.CompressFormat.PNG, 100, png)
+        val decoded = BitmapFactory.decodeByteArray(
+            store.processPicked(png.toByteArray()), 0,
+            store.processPicked(png.toByteArray()).size
+        )
+        assertNotNull(decoded)
+        assertEquals(300, decoded!!.width)
+        assertEquals(300, decoded.height)
+    }
+
+    @Test
+    fun processPickedPassesThroughGarbage() {
+        val garbage = byteArrayOf(1, 2, 3)
+        assertArrayEquals(garbage, store.processPicked(garbage))
     }
 }

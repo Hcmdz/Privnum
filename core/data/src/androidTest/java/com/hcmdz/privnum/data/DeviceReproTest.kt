@@ -28,12 +28,14 @@ private fun contact(
 @RunWith(AndroidJUnit4::class)
 class ContactRepositoryDeviceTest {
     private lateinit var repository: ContactRepository
+    private lateinit var photos: ContactPhotoStore
 
     @Before
     fun setup() {
         val context = ApplicationProvider.getApplicationContext<android.content.Context>()
         context.deleteDatabase("privnum.db")
-        repository = ContactRepository(context)
+        photos = ContactPhotoStore(context)
+        repository = ContactRepository(context, photos)
     }
 
     @Test
@@ -64,6 +66,14 @@ class ContactRepositoryDeviceTest {
         repository.clearAll()
         assertEquals(0, repository.getAll().size)
         assertEquals(0, repository.search("Test").size)
+    }
+
+    @Test
+    fun deleteRemovesPhotoFile() = runTest {
+        val path = photos.savePhoto(byteArrayOf(1, 2, 3), "image/jpeg")
+        assertTrue(repository.add(contact().copy(photo = path)))
+        assertTrue(repository.delete("33612345678"))
+        assertNull(photos.readBytes(path))
     }
 
     @After

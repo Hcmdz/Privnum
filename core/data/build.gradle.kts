@@ -31,6 +31,7 @@ dependencies {
 
     implementation(libs.libphonenumber)
     implementation(libs.ez.vcard)
+    implementation(libs.exifinterface)
 
     implementation(libs.datastore.preferences)
 
