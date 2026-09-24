@@ -210,7 +210,8 @@ fun EditorScreen(
                     // consumes taps even when read-only and unfocusable.
                     Box(modifier = Modifier.weight(0.42f)) {
                         OutlinedTextField(
-                            value = country?.flag ?: "",
+                            value = country?.let { "${it.flag} +${it.dialCode}" }
+                                ?: "",
                             onValueChange = {},
                             label = { Text("Country *") },
                             trailingIcon = {
