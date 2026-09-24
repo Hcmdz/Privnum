@@ -1,5 +1,7 @@
 package com.hcmdz.privnum.editor
 
+import android.content.Intent
+import android.net.Uri
 import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.activity.compose.rememberLauncherForActivityResult
@@ -21,9 +23,12 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.filled.ArrowDropDown
 import androidx.compose.material.icons.filled.Check
+import androidx.compose.material.icons.filled.DateRange
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.AssistChip
 import androidx.compose.material3.Button
+import androidx.compose.material3.DatePicker
+import androidx.compose.material3.DatePickerDialog
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -37,6 +42,7 @@ import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.material3.TopAppBar
+import androidx.compose.material3.rememberDatePickerState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
@@ -48,6 +54,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.FocusDirection
 import androidx.compose.ui.focus.focusProperties
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.semantics.Role
@@ -57,6 +64,7 @@ import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardCapitalization
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
+import androidx.core.content.FileProvider
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.hcmdz.privnum.data.Country
@@ -75,6 +83,7 @@ fun EditorScreen(
     viewModel: EditorViewModel = hiltViewModel()
 ) {
     val state by viewModel.state.collectAsStateWithLifecycle()
+    val context = LocalContext.current
     val recents by viewModel.recentCountries.collectAsStateWithLifecycle()
     var showCountries by remember { mutableStateOf(false) }
     var countryQuery by rememberSaveable { mutableStateOf("") }
@@ -111,6 +120,14 @@ fun EditorScreen(
     val photoLauncher = rememberLauncherForActivityResult(
         ActivityResultContracts.GetContent()
     ) { uri -> if (uri != null) viewModel.setPhotoUri(uri) }
+    var cameraUri by remember { mutableStateOf<Uri?>(null) }
+    val cameraLauncher = rememberLauncherForActivityResult(
+        ActivityResultContracts.TakePicture()
+    ) { ok ->
+        if (ok) cameraUri?.let { viewModel.setPhotoUri(it) }
+    }
+    var photoChoice by remember { mutableStateOf(false) }
+    var birthdayDialog by remember { mutableStateOf(false) }
 
     Scaffold(
         topBar = {
@@ -155,7 +172,7 @@ fun EditorScreen(
                         size = 72.dp
                     )
                     Column(verticalArrangement = Arrangement.spacedBy(4.dp)) {
-                        TextButton(onClick = { photoLauncher.launch("image/*") }) {
+                        TextButton(onClick = { photoChoice = true }) {
                             Text(if (photoModel == null) "Add photo" else "Change photo")
                         }
                         if (photoModel != null) {
@@ -327,9 +344,27 @@ fun EditorScreen(
                     }
                 }
                 item {
-                    Field("Birthday", state.birthday) {
-                        viewModel.update { s -> s.copy(birthday = it) }
-                    }
+                    OutlinedTextField(
+                        value = state.birthday,
+                        onValueChange = {},
+                        label = { Text("Birthday") },
+                        readOnly = true,
+                        singleLine = true,
+                        trailingIcon = {
+                            IconButton(onClick = { birthdayDialog = true }) {
+                                Icon(
+                                    Icons.Filled.DateRange,
+                                    contentDescription = "Pick birthday"
+                                )
+                            }
+                        },
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .clickable(
+                                role = Role.Button,
+                                onClick = { birthdayDialog = true }
+                            )
+                    )
                 }
                 item {
                     Field("Labels", state.labels) {
@@ -400,6 +435,82 @@ fun EditorScreen(
                     }
                 }
             }
+        }
+    }
+
+    if (photoChoice) {
+        AlertDialog(
+            onDismissRequest = { photoChoice = false },
+            title = { Text("Contact photo") },
+            text = { Text("Take a new picture or choose one from the gallery.") },
+            confirmButton = {
+                TextButton(
+                    onClick = {
+                        photoChoice = false
+                        photoLauncher.launch("image/*")
+                    }
+                ) { Text("Gallery") }
+            },
+            dismissButton = {
+                Row {
+                    TextButton(
+                        onClick = {
+                            photoChoice = false
+                            val file = java.io.File(
+                                context.cacheDir,
+                                "camera_${System.currentTimeMillis()}.jpg"
+                            )
+                            cameraUri = FileProvider.getUriForFile(
+                                context,
+                                "com.hcmdz.privnum.fileprovider",
+                                file
+                            )
+                            val cameraIntent = Intent(
+                                android.provider.MediaStore.ACTION_IMAGE_CAPTURE
+                            )
+                            if (cameraIntent.resolveActivity(context.packageManager) != null) {
+                                cameraUri?.let { cameraLauncher.launch(it) }
+                            } else {
+                                viewModel.showMessage("No camera app found")
+                            }
+                        }
+                    ) { Text("Camera") }
+                    TextButton(onClick = { photoChoice = false }) { Text("Cancel") }
+                }
+            }
+        )
+    }
+
+    if (birthdayDialog) {
+        val dateState = rememberDatePickerState(
+            initialSelectedDateMillis = birthdayToMillis(state.birthday)
+        )
+        DatePickerDialog(
+            onDismissRequest = { birthdayDialog = false },
+            confirmButton = {
+                TextButton(
+                    onClick = {
+                        dateState.selectedDateMillis?.let { millis ->
+                            val date = java.time.Instant.ofEpochMilli(millis)
+                                .atZone(java.time.ZoneOffset.UTC)
+                                .toLocalDate()
+                            viewModel.update { s ->
+                                s.copy(
+                                    birthday = "%04d-%02d-%02d".format(
+                                        date.year, date.monthValue, date.dayOfMonth
+                                    )
+                                )
+                            }
+                        }
+                        birthdayDialog = false
+                    }
+                ) { Text("OK") }
+            },
+            dismissButton = {
+                TextButton(onClick = { birthdayDialog = false }) { Text("Cancel") }
+            }
+        ) {
+            DatePicker(state = dateState)
         }
     }
 

@@ -56,6 +56,21 @@ fun resolveDefaultCountry(setting: String?, simIso: String): Country =
         ?: Countries.getByCode(simIso)
         ?: Countries.getByCode("DZ")!!
 
+/** Initial DatePicker millis for stored birthdays, null when unparseable. */
+fun birthdayToMillis(raw: String): Long? {
+    val trimmed = raw.trim()
+    return runCatching {
+        if (trimmed.startsWith("--")) {
+            val parts = trimmed.removePrefix("--").split("-")
+            java.time.LocalDate.of(
+                java.time.LocalDate.now().year, parts[0].toInt(), parts[1].toInt()
+            )
+        } else {
+            java.time.LocalDate.parse(trimmed)
+        }.atStartOfDay(java.time.ZoneOffset.UTC).toInstant().toEpochMilli()
+    }.getOrNull()
+}
+
 /** Input-field equality, ignoring transient UI flags. */
 fun EditorUiState.inputsEqual(other: EditorUiState): Boolean =
     name == other.name &&
@@ -189,6 +204,10 @@ class EditorViewModel @Inject constructor(
 
     fun consumeMessage() {
         _state.update { it.copy(message = null) }
+    }
+
+    fun showMessage(text: String) {
+        _state.update { it.copy(message = text) }
     }
 
     fun isDirty(): Boolean = !_state.value.inputsEqual(pristine)

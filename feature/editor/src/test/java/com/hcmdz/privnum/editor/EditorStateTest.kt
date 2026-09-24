@@ -32,4 +32,12 @@ class EditorStateTest {
         assertFalse(base.inputsEqual(base.copy(name = "Bob")))
         assertFalse(base.inputsEqual(base.copy(country = Countries.getByCode("FR"))))
     }
+
+    @Test
+    fun `birthday millis parses stored formats`() {
+        assertTrue((birthdayToMillis("2023-05-04") ?: 0) > 0)
+        assertTrue((birthdayToMillis("--05-04") ?: 0) > 0)
+        assertEquals(null, birthdayToMillis("soon"))
+        assertEquals(null, birthdayToMillis(""))
+    }
 }
