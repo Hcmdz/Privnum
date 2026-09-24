@@ -8,6 +8,7 @@ import kotlinx.coroutines.test.runTest
 import org.junit.After
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertFalse
+import org.junit.Assert.assertNotNull
 import org.junit.Assert.assertNull
 import org.junit.Assert.assertTrue
 import org.junit.Before
@@ -138,6 +139,32 @@ class PasscodeLockoutDeviceTest {
         assertTrue(store.shouldLock())
         assertTrue(store.verifyPin("1111"))
         assertFalse(store.shouldLock())
+    }
+
+    @Test
+    fun biometricDecryptCipherNullWhenNeverEnrolled() {
+        assertFalse(store.biometricEnrolled())
+        assertNull(store.biometricCipherForDecrypt())
+    }
+
+    @Test
+    fun biometricUseWithoutAuthFailsClosed() {
+        org.junit.Assume.assumeTrue(
+            "Needs API 30+ auth-bound keys",
+            android.os.Build.VERSION.SDK_INT >= 30
+        )
+        // An enroll cipher created but never authed through the prompt must
+        // not yield a usable token: doFinal throws UserNotAuthenticatedException.
+        val cipher = store.biometricCipherForEnroll()
+        assertNotNull(cipher)
+        var threw = false
+        try {
+            cipher?.doFinal(byteArrayOf(7, 7, 7))
+        } catch (e: Exception) {
+            threw = true
+        }
+        assertTrue(threw)
+        assertFalse(store.verifyBiometricToken(cipher!!))
     }
 
     @After

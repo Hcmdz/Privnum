@@ -1,13 +1,13 @@
 package com.hcmdz.privnum
 
 import android.os.Bundle
-import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
+import androidx.fragment.app.FragmentActivity
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.hcmdz.privnum.data.PasscodeStore
 import com.hcmdz.privnum.data.SettingsStore
@@ -16,7 +16,7 @@ import dagger.hilt.android.AndroidEntryPoint
 import javax.inject.Inject
 
 @AndroidEntryPoint
-class MainActivity : ComponentActivity() {
+class MainActivity : FragmentActivity() {
     @Inject
     lateinit var settings: SettingsStore
 

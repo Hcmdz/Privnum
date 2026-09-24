@@ -102,6 +102,7 @@ dependencies {
     implementation(libs.compose.material.icons.extended)
 
     implementation(libs.activity.compose)
+    implementation(libs.fragment.ktx)
     implementation(libs.lifecycle.runtime.compose)
     implementation(libs.lifecycle.runtime.ktx)
     implementation(libs.navigation3.runtime)

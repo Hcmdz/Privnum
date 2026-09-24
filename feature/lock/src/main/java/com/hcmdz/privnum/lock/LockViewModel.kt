@@ -1,6 +1,7 @@
 package com.hcmdz.privnum.lock
 
 import androidx.biometric.BiometricManager
+import androidx.biometric.BiometricPrompt
 import androidx.fragment.app.FragmentActivity
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
@@ -12,6 +13,8 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
+import java.security.SecureRandom
+import javax.crypto.Cipher
 import javax.inject.Inject
 
 data class LockUiState(
@@ -47,6 +50,9 @@ class LockViewModel @Inject constructor(
     val state: StateFlow<LockUiState> = _state.asStateFlow()
 
     private var firstPin = ""
+
+    /** Raw bytes for a pending crypto enrollment; never persisted, cleared after use. */
+    private var enrollBytes: ByteArray? = null
 
     fun refreshBiometric(activity: FragmentActivity) {
         val manager = BiometricManager.from(activity)
@@ -134,6 +140,7 @@ class LockViewModel @Inject constructor(
     }
 
     fun setBiometric(enabled: Boolean) {
+        if (!enabled) store.clearBiometricEnrollment()
         store.biometricEnabled = enabled
         _state.update { it.copy(biometricEnabled = enabled) }
     }
@@ -143,7 +150,45 @@ class LockViewModel @Inject constructor(
         _state.update { it.copy(autoLockTimeout = timeout) }
     }
 
-    fun onBiometricSuccess() {
+    /**
+     * Cipher for the biometric prompt: decrypt when enrolled, enroll-cipher
+     * otherwise. Null on API <30 or on failure — the caller falls back to
+     * the plain authenticate() + boolean unlock.
+     */
+    fun biometricCryptoCipher(): Cipher? {
+        if (!store.isCryptoBiometricSupported()) return null
+        store.biometricCipherForDecrypt()?.let { return it }
+        enrollBytes = ByteArray(32).also { SecureRandom().nextBytes(it) }
+        return store.biometricCipherForEnroll()
+    }
+
+    fun onBiometricSuccess(cryptoObject: BiometricPrompt.CryptoObject?) {
+        val cipher = cryptoObject?.cipher
+        if (cipher == null) {
+            legacyBiometricUnlock()
+            return
+        }
+        viewModelScope.launch {
+            val pending = enrollBytes
+            val ok = if (pending != null) {
+                val enrolled = store.completeBiometricEnroll(cipher, pending)
+                enrollBytes = null
+                enrolled
+            } else {
+                store.verifyBiometricToken(cipher)
+            }
+            if (ok) {
+                store.failedAttempts = 0
+                store.forceLocked = false
+                store.lastUnlockedAt = System.currentTimeMillis()
+                _state.update { it.copy(unlocked = true) }
+            } else {
+                _state.update { it.copy(error = "Biometric failed", pin = "") }
+            }
+        }
+    }
+
+    private fun legacyBiometricUnlock() {
         store.failedAttempts = 0
         store.forceLocked = false
         store.lastUnlockedAt = System.currentTimeMillis()

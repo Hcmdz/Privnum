@@ -67,6 +67,9 @@ fun LockScreen(
 
     fun launchBiometric() {
         val activity = context as? FragmentActivity ?: return
+        val crypto = viewModel.biometricCryptoCipher()?.let {
+            BiometricPrompt.CryptoObject(it)
+        }
         val prompt = BiometricPrompt(
             activity,
             ContextCompat.getMainExecutor(activity),
@@ -74,16 +77,26 @@ fun LockScreen(
                 override fun onAuthenticationSucceeded(
                     result: BiometricPrompt.AuthenticationResult
                 ) {
-                    viewModel.onBiometricSuccess()
+                    viewModel.onBiometricSuccess(result.cryptoObject)
                 }
             }
         )
-        prompt.authenticate(
-            BiometricPrompt.PromptInfo.Builder()
-                .setTitle("Unlock Privnum")
-                .setNegativeButtonText("Use PIN")
-                .build()
-        )
+        if (crypto != null) {
+            prompt.authenticate(
+                BiometricPrompt.PromptInfo.Builder()
+                    .setTitle("Unlock Privnum")
+                    .setNegativeButtonText("Use PIN")
+                    .build(),
+                crypto
+            )
+        } else {
+            prompt.authenticate(
+                BiometricPrompt.PromptInfo.Builder()
+                    .setTitle("Unlock Privnum")
+                    .setNegativeButtonText("Use PIN")
+                    .build()
+            )
+        }
     }
     LaunchedEffect(state.biometricAvailable, state.biometricEnabled) {
         if (!autoPrompted &&

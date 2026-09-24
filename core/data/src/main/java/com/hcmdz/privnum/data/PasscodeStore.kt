@@ -2,11 +2,22 @@ package com.hcmdz.privnum.data
 
 import android.content.Context
 import android.content.SharedPreferences
+import android.os.Build
+import android.security.keystore.KeyGenParameterSpec
+import android.security.keystore.KeyProperties
+import android.util.Base64
+import androidx.annotation.RequiresApi
 import androidx.security.crypto.EncryptedSharedPreferences
 import androidx.security.crypto.MasterKey
 import dagger.hilt.android.qualifiers.ApplicationContext
+import java.security.InvalidKeyException
+import java.security.KeyStore
 import java.security.MessageDigest
 import java.security.SecureRandom
+import javax.crypto.Cipher
+import javax.crypto.KeyGenerator
+import javax.crypto.SecretKey
+import javax.crypto.spec.GCMParameterSpec
 import javax.inject.Inject
 import javax.inject.Singleton
 
@@ -27,6 +38,9 @@ class PasscodeStore @Inject constructor(
         const val MAX_FAILED_ATTEMPTS = 5
         const val LOCKOUT_MS = 60_000L
         private val secureRandom = SecureRandom()
+        const val BIOMETRIC_KEY_ALIAS = "privnum_biometric_key"
+        private const val BIOMETRIC_TOKEN_PREF = "biometric_token"
+        private const val BIOMETRIC_HASH_PREF = "biometric_token_hash"
     }
 
     private val prefs: SharedPreferences by lazy {
@@ -112,8 +126,139 @@ class PasscodeStore @Inject constructor(
 
     fun clear() {
         prefs.edit().clear().apply()
+        deleteBiometricKey()
         passcodeEnabled = false
         biometricEnabled = false
+    }
+
+    /** Per-use biometric binding needs API 30+; below that the boolean flow applies. */
+    fun isCryptoBiometricSupported(): Boolean =
+        Build.VERSION.SDK_INT >= Build.VERSION_CODES.R
+
+    fun biometricEnrolled(): Boolean = prefs.contains(BIOMETRIC_TOKEN_PREF)
+
+    /**
+     * ENCRYPT cipher for enrollment (generates the auth-bound key on first
+     * use). Cipher init needs no prior auth; only doFinal() unlocks the key.
+     */
+    fun biometricCipherForEnroll(): Cipher? {
+        if (!isCryptoBiometricSupported()) return null
+        return try {
+            val key = ensureBiometricKey() ?: return null
+            Cipher.getInstance("AES/GCM/NoPadding").apply {
+                init(Cipher.ENCRYPT_MODE, key)
+            }
+        } catch (e: Exception) {
+            null
+        }
+    }
+
+    /**
+     * DECRYPT cipher when enrolled. A broken key (e.g. biometric enrollment
+     * changed) clears the enrollment and yields null for transparent re-enroll.
+     */
+    fun biometricCipherForDecrypt(): Cipher? {
+        if (!isCryptoBiometricSupported()) return null
+        val parts = prefs.getString(BIOMETRIC_TOKEN_PREF, null)?.split(".")
+            ?: return null
+        if (parts.size != 2) return null
+        return try {
+            val key = loadBiometricKey() ?: run {
+                clearBiometricEnrollment()
+                return null
+            }
+            val iv = Base64.decode(parts[0], Base64.DEFAULT)
+            Cipher.getInstance("AES/GCM/NoPadding").apply {
+                init(Cipher.DECRYPT_MODE, key, GCMParameterSpec(128, iv))
+            }
+        } catch (e: InvalidKeyException) {
+            clearBiometricEnrollment()
+            null
+        } catch (e: Exception) {
+            null
+        }
+    }
+
+    /** Encrypts raw bytes with an authenticated cipher, persists IV+ciphertext+hash. */
+    fun completeBiometricEnroll(cipher: Cipher, rawBytes: ByteArray): Boolean =
+        try {
+            val ct = cipher.doFinal(rawBytes) ?: return false
+            val iv = cipher.iv ?: return false
+            prefs.edit()
+                .putString(
+                    BIOMETRIC_TOKEN_PREF,
+                    Base64.encodeToString(iv, Base64.NO_WRAP) + "." +
+                        Base64.encodeToString(ct, Base64.NO_WRAP)
+                )
+                .putString(BIOMETRIC_HASH_PREF, sha256(rawBytes))
+                .apply()
+            true
+        } catch (e: Exception) {
+            false
+        }
+
+    /** Decrypts with an authenticated cipher and checks the token. Never throws. */
+    fun verifyBiometricToken(cipher: Cipher): Boolean =
+        try {
+            val parts = prefs.getString(BIOMETRIC_TOKEN_PREF, null)?.split(".")
+                ?: return false
+            if (parts.size != 2) return false
+            val expected = prefs.getString(BIOMETRIC_HASH_PREF, null) ?: return false
+            val pt = cipher.doFinal(Base64.decode(parts[1], Base64.DEFAULT))
+            biometricTokenMatches(pt, expected)
+        } catch (e: Exception) {
+            false
+        }
+
+    fun clearBiometricEnrollment() {
+        prefs.edit()
+            .remove(BIOMETRIC_TOKEN_PREF)
+            .remove(BIOMETRIC_HASH_PREF)
+            .apply()
+        deleteBiometricKey()
+    }
+
+    @RequiresApi(Build.VERSION_CODES.R)
+    private fun ensureBiometricKey(): SecretKey? =
+        try {
+            loadBiometricKey() ?: KeyGenerator
+                .getInstance(KeyProperties.KEY_ALGORITHM_AES, "AndroidKeyStore")
+                .run {
+                    init(
+                        KeyGenParameterSpec.Builder(
+                            BIOMETRIC_KEY_ALIAS,
+                            KeyProperties.PURPOSE_ENCRYPT or KeyProperties.PURPOSE_DECRYPT
+                        )
+                            .setBlockModes(KeyProperties.BLOCK_MODE_GCM)
+                            .setEncryptionPaddings(KeyProperties.ENCRYPTION_PADDING_NONE)
+                            .setUserAuthenticationRequired(true)
+                            .setUserAuthenticationParameters(
+                                0,
+                                KeyProperties.AUTH_BIOMETRIC_STRONG
+                            )
+                            .setInvalidatedByBiometricEnrollment(true)
+                            .build()
+                    )
+                    generateKey()
+                }
+        } catch (e: Exception) {
+            android.util.Log.e("PasscodeStore", "ensureBiometricKey failed", e)
+            null
+        }
+
+    private fun loadBiometricKey(): SecretKey? =
+        try {
+            val ks = KeyStore.getInstance("AndroidKeyStore").apply { load(null) }
+            (ks.getEntry(BIOMETRIC_KEY_ALIAS, null) as? KeyStore.SecretKeyEntry)?.secretKey
+        } catch (e: Exception) {
+            null
+        }
+
+    private fun deleteBiometricKey() {
+        runCatching {
+            val ks = KeyStore.getInstance("AndroidKeyStore").apply { load(null) }
+            ks.deleteEntry(BIOMETRIC_KEY_ALIAS)
+        }
     }
 
     fun shouldLock(now: Long = System.currentTimeMillis()): Boolean {
@@ -129,6 +274,14 @@ class PasscodeStore @Inject constructor(
     private fun sha256(bytes: ByteArray): String =
         MessageDigest.getInstance("SHA-256").digest(bytes).toHex()
 }
+
+/** Constant-time token check; pure, total, and JVM-testable. */
+internal fun biometricTokenMatches(decrypted: ByteArray?, expectedHashHex: String): Boolean =
+    runCatching {
+        if (decrypted == null || expectedHashHex.isBlank()) return@runCatching false
+        val actual = MessageDigest.getInstance("SHA-256").digest(decrypted)
+        MessageDigest.isEqual(actual, expectedHashHex.hexToBytes())
+    }.getOrDefault(false)
 
 internal fun ByteArray.toHex(): String =
     joinToString("") { "%02x".format(it) }
