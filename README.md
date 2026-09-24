@@ -7,7 +7,7 @@
 [![Kotlin](https://img.shields.io/badge/Language-Kotlin-purple.svg?logo=kotlin)](https://kotlinlang.org)
 [![MinSDK](https://img.shields.io/badge/MinSDK-29-orange.svg)](#)
 [![TargetSDK](https://img.shields.io/badge/TargetSDK-36-blue.svg)](#)
-[![License](https://img.shields.io/badge/License-MIT-blue.svg)](LICENSE)
+[![License: GPL v3](https://img.shields.io/badge/License-GPLv3-blue.svg)](https://www.gnu.org/licenses/gpl-3.0)
 [![Stars](https://img.shields.io/github/stars/Hcmdz/Privnum)](https://github.com/Hcmdz/Privnum/stargazers)
 [![Forks](https://img.shields.io/github/forks/Hcmdz/Privnum)](https://github.com/Hcmdz/Privnum/network/members)
 [![Compose M3](https://img.shields.io/badge/Jetpack_Compose-Material_3-4285F4.svg?logo=jetpackcompose)](https://developer.android.com/jetpack/compose)
@@ -218,7 +218,9 @@ Current release APK: **~4.1 MB** (universal, single APK, R8 + shrink enabled).
 
 ## 📄 License
 
-This project is licensed under the [MIT](LICENSE) — see the [LICENSE](LICENSE) file for details.
+Copyright (c) 2026 Hcmdz. This project is licensed under the
+[GNU General Public License v3.0 or later](https://www.gnu.org/licenses/gpl-3.0) —
+see the [LICENSE](LICENSE) file for details.
 
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
 

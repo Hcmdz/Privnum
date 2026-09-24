@@ -33,6 +33,7 @@ import androidx.compose.material.icons.filled.Message
 import androidx.compose.material.icons.filled.Notes
 import androidx.compose.material.icons.filled.Phone
 import androidx.compose.material.icons.filled.Place
+import androidx.compose.material.icons.filled.Send
 import androidx.compose.material.icons.filled.Place
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Button
@@ -65,7 +66,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalUriHandler
-import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
@@ -383,7 +383,7 @@ private fun ContactDetails(
                 )
                 ExpandableAppRow(
                     name = "WhatsApp",
-                    iconRes = R.drawable.whatsapp,
+                    icon = Icons.Filled.Message,
                     number = contact.fullPhoneNumber,
                     onAction = { profile ->
                         val installed = isAppInstalled(context, "com.whatsapp")
@@ -392,7 +392,7 @@ private fun ContactDetails(
                 )
                 ExpandableAppRow(
                     name = "Telegram",
-                    iconRes = R.drawable.telegram,
+                    icon = Icons.Filled.Send,
                     number = contact.fullPhoneNumber,
                     onAction = { profile ->
                         val installed = isAppInstalled(context, "org.telegram.messenger")
@@ -491,7 +491,7 @@ private fun ActionButton(label: String, icon: androidx.compose.ui.graphics.vecto
 @Composable
 private fun ExpandableAppRow(
     name: String,
-    iconRes: Int,
+    icon: androidx.compose.ui.graphics.vector.ImageVector,
     number: String,
     onAction: (profile: Boolean) -> Unit
 ) {
@@ -500,8 +500,8 @@ private fun ExpandableAppRow(
         ListItem(
             headlineContent = { Text(name, style = MaterialTheme.typography.titleLarge) },
             leadingContent = {
-                Image(
-                    painterResource(iconRes),
+                Icon(
+                    icon,
                     contentDescription = null,
                     modifier = Modifier.size(25.dp)
                 )
