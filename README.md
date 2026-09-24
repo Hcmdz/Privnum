@@ -229,8 +229,8 @@ Current release APK: **~4.1 MB** (universal, single APK, R8 + shrink enabled).
 
 ## ⚖️ Legal
 
-- [Terms of Service](docs/terms/) — required before Play publishing
-- [Privacy Policy](docs/privacy/) — required before Play publishing
+- [Terms of Service](docs/terms/)
+- [Privacy Policy](docs/privacy/)
 
 ---
 
