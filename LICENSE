@@ -22,10 +22,10 @@ SOFTWARE.
 
 ---
 
-Lineage note (not part of the license grant above): this is the native
-Android build of the Privnum project — a clean-room Kotlin
-reimplementation with behavioral parity to the Expo variant. No source
-code was copied from any other project. Third-party trademarks
-(e.g. WhatsApp/Telegram icons used for interoperability rows) belong to
-their respective owners, and third-party libraries remain under their
-own licenses (see gradle/libs.versions.toml).
+Lineage note (not part of the license grant above): this is the Privnum
+project, converted from its former Expo implementation to native
+Android — a clean-room Kotlin reimplementation with the same behavior.
+No source code was copied from any other project. Third-party
+trademarks (e.g. WhatsApp/Telegram icons used for interoperability
+rows) belong to their respective owners, and third-party libraries
+remain under their own licenses (see gradle/libs.versions.toml).

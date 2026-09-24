@@ -1,10 +1,9 @@
 # Privnum-native
 
-Native Android build of **Privnum** — private local caller ID. 100% Kotlin,
-zero network permissions.
-
-Same project, same behavior as the Expo variant; no shared code, nothing
-copied — clean-room reimplementation.
+Privnum — private local caller ID — **converted to a 100% Kotlin native
+Android app (formerly Expo)**. Same project, same behavior; no shared
+code, nothing copied — clean-room reimplementation. The app requests
+**zero network permissions**.
 
 ## Modules
 
