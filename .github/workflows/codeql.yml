@@ -37,7 +37,9 @@ jobs:
         dependency-caching: true
 
     - name: Build Android project
-      run: ./gradlew assembleDebug --no-daemon
+      # --no-build-cache: a fully cached build compiles nothing, leaving the
+      # CodeQL tracer with no source to extract (exit 32, "no source seen").
+      run: ./gradlew assembleDebug --no-daemon --no-build-cache
       env:
         GRADLE_OPTS: "-Dorg.gradle.jvmargs=-Xmx2048m"
 
