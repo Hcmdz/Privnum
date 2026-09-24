@@ -240,16 +240,6 @@ private fun ContactDetails(
 ) {
     val context = LocalContext.current
     val letter = contact.displayName().firstOrNull()?.uppercaseChar() ?: '#'
-    val (container, onContainer) = when (avatarRoleIndex(letter)) {
-        1 -> MaterialTheme.colorScheme.secondaryContainer to
-            MaterialTheme.colorScheme.onSecondaryContainer
-
-        2 -> MaterialTheme.colorScheme.tertiaryContainer to
-            MaterialTheme.colorScheme.onTertiaryContainer
-
-        else -> MaterialTheme.colorScheme.primaryContainer to
-            MaterialTheme.colorScheme.onPrimaryContainer
-    }
 
     Column(modifier = modifier, verticalArrangement = Arrangement.spacedBy(8.dp)) {
         val (container, onContainer) = when (avatarRoleIndex(letter)) {
