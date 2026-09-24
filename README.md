@@ -71,8 +71,8 @@ requests **zero network permissions**.
 
 | Contacts | Editor | Details |
 |---|---|---|
-| [![Contacts light](screenshots/contacts-light.png)](screenshots/contacts-light.png) | [![Editor light](screenshots/editor-light.png)](screenshots/editor-light.png) | [![Details light](screenshots/preview-light.png)](screenshots/preview-light.png) |
-| [![Contacts dark](screenshots/contacts-dark.png)](screenshots/contacts-dark.png) | [![Editor dark](screenshots/editor-dark.png)](screenshots/editor-dark.png) | [![Details dark](screenshots/preview-dark.png)](screenshots/preview-dark.png) |
+| [![Contacts light](screenshots/contacts-light.png?v=2)](screenshots/contacts-light.png?v=2) | [![Editor light](screenshots/editor-light.png?v=2)](screenshots/editor-light.png?v=2) | [![Details light](screenshots/preview-light.png?v=2)](screenshots/preview-light.png?v=2) |
+| [![Contacts dark](screenshots/contacts-dark.png?v=2)](screenshots/contacts-dark.png?v=2) | [![Editor dark](screenshots/editor-dark.png?v=2)](screenshots/editor-dark.png?v=2) | [![Details dark](screenshots/preview-dark.png?v=2)](screenshots/preview-dark.png?v=2) |
 
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
 
