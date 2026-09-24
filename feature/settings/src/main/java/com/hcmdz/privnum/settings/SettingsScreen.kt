@@ -333,6 +333,15 @@ fun SettingsScreen(
                     Text("Support")
                 }
             }
+            Text("Legal", style = MaterialTheme.typography.titleSmall)
+            Row(horizontalArrangement = Arrangement.spacedBy(12.dp)) {
+                TextButton(onClick = { uriHandler.openUri("https://hcmdz.github.io/Privnum/privacy/") }) {
+                    Text("Privacy")
+                }
+                TextButton(onClick = { uriHandler.openUri("https://hcmdz.github.io/Privnum/terms/") }) {
+                    Text("Terms")
+                }
+            }
             Text("Developed by", style = MaterialTheme.typography.titleSmall)
             ListItem(
                 headlineContent = { Text("Hcmdz") },
