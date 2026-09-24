@@ -1,0 +1,18 @@
+name: Feature request
+description: Propose a change in scope
+body:
+  - type: textarea
+    attributes:
+      label: Problem
+      description: What task is currently hard or impossible?
+    validations:
+      required: true
+  - type: textarea
+    attributes:
+      label: Proposed scope
+      description: Smallest change that solves it; note what stays out
+  - type: checkboxes
+    attributes:
+      label: Checklist
+      options:
+        - label: No secrets or personal data included

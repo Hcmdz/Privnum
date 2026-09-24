@@ -52,3 +52,10 @@ verified end to end with `adb emu gsm call`).
 All data stays in the app-private Room database (`allowBackup=false`).
 Release builds strip `Log.d/v`. No analytics, no crash reporting,
 no network access.
+
+## Docs
+
+- `THIRD_PARTY.md` — dependency licenses and brand-asset notes
+- `SECURITY.md` — vulnerability reporting
+- `CONTRIBUTING.md` — setup and conventions
+- `LICENSE` — MIT

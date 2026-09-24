@@ -1,0 +1,23 @@
+name: Bug report
+description: Report a reproducible defect
+body:
+  - type: input
+    attributes:
+      label: App version
+      description: versionName from Settings > About, e.g. 1.0.0 (1)
+    validations:
+      required: true
+  - type: textarea
+    attributes:
+      label: Steps to reproduce
+      description: Exact taps from a clean state
+    validations:
+      required: true
+  - type: textarea
+    attributes:
+      label: Expected vs actual
+  - type: checkboxes
+    attributes:
+      label: Checklist
+      options:
+        - label: No personal data (names, numbers, screenshots with contacts) attached
