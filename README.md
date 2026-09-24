@@ -64,6 +64,11 @@ requests **zero network permissions**.
   the app database.
 - **Lock it down.** Optional passcode (5-attempt lockout), biometrics,
   auto-lock timeouts, instant lock, encrypted storage.
+- **Yours to theme.** Dynamic (Material You) colors with toggle, pure-black
+  AMOLED mode, light/dark/system.
+- **Faces with names.** Optional contact photos (gallery or camera, cropped
+  square on-device), shown in list, details and call popup, kept through
+  VCF backup.
 - **Offline by construction.** No accounts, no analytics, no crash
   reporting, no `INTERNET` permission.
 
@@ -87,7 +92,10 @@ Hilt ViewModels and StateFlow; Room repository pattern; no network layer.
 | Settings | DataStore Preferences | 1.1.3 |
 | Phone numbers | libphonenumber | 9.0.40 |
 | VCF | ez-vcard | 0.12.2 |
-| Images | Coil 3 | 3.3.0 |
+| Images | Coil 3 | 3.6.3 |
+| Camera metadata | Exifinterface | 1.4.2 |
+| Biometrics | AndroidX Biometric | 1.4.0-alpha07 |
+| JSON | kotlinx.serialization | 1.11.0 |
 | Build | AGP 9.4.1, Kotlin 2.4.10, KSP 2.3.12, compileSdk 37, minSdk 29 | — |
 
 ### Security Features
@@ -112,7 +120,8 @@ Entry points: `MainActivity` (launcher), `CallReceiver` (phone-state broadcasts)
 
 ### CI & Quality
 
-- GitHub Actions: `.github/workflows/ci.yml` (unit tests + lint + debug build), Dependabot (gradle + actions, weekly)
+- GitHub Actions: `.github/workflows/ci.yml` (unit tests + lint + debug build), CodeQL (java-kotlin, weekly), Dependabot (gradle + actions, weekly)
+- Static analysis: detekt (`./gradlew detekt`, config in `config/detekt/`)
 - Gate: `./gradlew testDebugUnitTest lintDebug`
 
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
@@ -168,7 +177,9 @@ feature/contacts|editor|        # MVI screens + Hilt ViewModels + unit tests
   search|settings|lock|preview/
 gradle/libs.versions.toml       # Single source for dependency versions
 .github/workflows/ci.yml        # test + lint + debug build
-screenshots/                    # Light-mode captures used above
+screenshots/                    # Light- and dark-mode captures used above
+docs/privacy|terms/             # Published Privacy Policy and Terms of Service
+config/detekt/                  # Static-analysis rules
 ```
 
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
@@ -213,6 +224,13 @@ Current release APK: **~4.1 MB** (universal, single APK, R8 + shrink enabled).
 - Build: AGP 9.4.1, Kotlin 2.4.10
 
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
+
+---
+
+## ⚖️ Legal
+
+- [Terms of Service](docs/terms/) — required before Play publishing
+- [Privacy Policy](docs/privacy/) — required before Play publishing
 
 ---
 
