@@ -56,12 +56,14 @@ fun LockScreen(
         return
     }
 
-    LaunchedEffect(state.unlocked) {
-        if (state.unlocked) onUnlocked()
+    var verificationReady by remember { mutableStateOf(false) }
+    LaunchedEffect(state.unlocked, verificationReady) {
+        if (verificationReady && state.unlocked) onUnlocked()
     }
     LaunchedEffect(Unit) {
         viewModel.reenterVerify()
         (context as? FragmentActivity)?.let { viewModel.refreshBiometric(it) }
+        verificationReady = true
     }
     var autoPrompted by remember { mutableStateOf(false) }
 
