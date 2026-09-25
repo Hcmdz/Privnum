@@ -43,8 +43,9 @@ class CallDirectoryProvider : ContentProvider() {
 
     override fun onCreate(): Boolean {
         context?.let { ctx ->
+            val localizedContext = createLocalizedContext(ctx)
             contactRepository = ContactRepository(ctx, ContactPhotoStore(ctx))
-            val authority = ctx.getString(R.string.callerid_authority)
+            val authority = localizedContext.getString(R.string.callerid_authority)
             authorityUri = "content://$authority".toUri()
 
             uriMatcher.apply {
@@ -86,6 +87,7 @@ class CallDirectoryProvider : ContentProvider() {
         selectionArgs: Array<out String>?,
         sortOrder: String?
     ): Cursor? {
+        val localizedContext = context?.let { createLocalizedContext(it) } ?: return null
         // val callingPackage = callingPackage
         // Log.d("CallerIDProvider", "Query from: $callingPackage")
         // Log.d("CallerIDProvider", "Device: ${Build.MANUFACTURER} ${Build.MODEL}")
@@ -95,7 +97,7 @@ class CallDirectoryProvider : ContentProvider() {
 
         when (matchResult) {
             DIRECTORIES -> {
-                val label = context?.getString(R.string.app_name) ?: return null
+                val label = localizedContext.getString(R.string.app_name)
 
                 val cursor = MatrixCursor(projection)
                 projection?.map { column ->
@@ -150,7 +152,7 @@ class CallDirectoryProvider : ContentProvider() {
                                     entity.appointment.isNotEmpty() && entity.location.isNotEmpty() -> "${entity.appointment}, ${entity.location}"
                                     entity.appointment.isNotEmpty() -> entity.appointment
                                     entity.location.isNotEmpty() -> entity.location
-                                    else -> "Mobile"
+                                    else -> localizedContext.getString(R.string.mobile_label)
                                 }
 
                                 PhoneLookup.NUMBER -> entity.primaryNumber()

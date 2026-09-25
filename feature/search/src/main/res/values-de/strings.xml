@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="search_field_label">Kontakte suchen</string>
+    <string name="search_empty_prompt">Geben Sie einen Namen oder eine E-Mail-Adresse ein, um zu suchen</string>
+    <string name="search_no_results">Keine Kontakte gefunden</string>
+</resources>

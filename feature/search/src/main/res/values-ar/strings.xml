@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="search_field_label">البحث في جهات الاتصال</string>
+    <string name="search_empty_prompt">اكتب اسمًا أو بريدًا إلكترونيًا للبحث</string>
+    <string name="search_no_results">لم يتم العثور على جهات الاتصال</string>
+</resources>

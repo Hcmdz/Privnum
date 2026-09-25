@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="lock_confirm_pin">Confirm PIN</string>
+    <string name="lock_choose_pin">Choose a 4-digit PIN</string>
+    <string name="lock_enter_pin">Enter PIN</string>
+    <string name="lock_unlock_with_biometrics">Unlock with biometrics</string>
+    <string name="lock_biometric_prompt_title">Unlock Privnum</string>
+    <string name="lock_biometric_prompt_negative">Use PIN</string>
+    <string name="lock_error_too_many_attempts">Too many attempts, try again later</string>
+    <string name="lock_error_invalid_pin">Invalid PIN</string>
+    <string name="lock_error_pins_do_not_match">PINs do not match</string>
+    <string name="lock_error_biometric_failed">Biometric failed</string>
+</resources>

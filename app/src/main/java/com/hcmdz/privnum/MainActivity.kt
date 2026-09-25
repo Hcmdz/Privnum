@@ -2,12 +2,14 @@ package com.hcmdz.privnum
 
 import android.os.Bundle
 import androidx.activity.compose.setContent
+import androidx.appcompat.app.AppCompatActivity
+import androidx.appcompat.app.AppCompatDelegate
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
-import androidx.fragment.app.FragmentActivity
+import androidx.core.os.LocaleListCompat
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.hcmdz.privnum.data.PasscodeStore
 import com.hcmdz.privnum.data.SettingsStore
@@ -16,7 +18,7 @@ import dagger.hilt.android.AndroidEntryPoint
 import javax.inject.Inject
 
 @AndroidEntryPoint
-class MainActivity : FragmentActivity() {
+class MainActivity : AppCompatActivity() {
     @Inject
     lateinit var settings: SettingsStore
 
@@ -46,7 +48,12 @@ class MainActivity : FragmentActivity() {
                     dynamicColor = dynamicColor,
                     amoledBlack = amoledBlack,
                     passcode = passcode,
-                    onUnlocked = {}
+                    onUnlocked = {},
+                    onLanguageSelected = { languageTag ->
+                        val locales = languageTag?.let { LocaleListCompat.forLanguageTags(it) }
+                            ?: LocaleListCompat.getEmptyLocaleList()
+                        AppCompatDelegate.setApplicationLocales(locales)
+                    }
                 )
             }
         }

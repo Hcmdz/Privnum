@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="contacts_title">联系人</string>
+    <plurals name="contacts_selected_count">
+        <item quantity="one">已选择 %d 个</item>
+        <item quantity="other">已选择 %d 个</item>
+    </plurals>
+    <string name="contacts_clipboard_label">联系人</string>
+    <string name="contacts_copied_to_clipboard">已复制到剪贴板</string>
+    <string name="contacts_share_chooser_title">分享联系人</string>
+    <string name="contacts_copy_selected_description">复制所选联系人</string>
+    <string name="contacts_share_selected_description">分享所选联系人</string>
+    <string name="contacts_delete_selected_description">删除所选联系人</string>
+    <string name="contacts_lock_now_description">立即锁定</string>
+    <string name="contacts_search_description">搜索</string>
+    <string name="contacts_settings_description">设置</string>
+    <string name="contacts_add_contact_description">添加联系人</string>
+    <string name="contacts_empty_title">未找到联系人</string>
+    <string name="contacts_empty_subtitle">添加第一个联系人</string>
+    <string name="contacts_call_detection_off">来电检测已关闭</string>
+    <string name="contacts_enable_in_settings">在设置中启用</string>
+    <string name="contacts_delete_dialog_title">删除联系人？</string>
+    <plurals name="contacts_delete_count">
+        <item quantity="one">将永久删除 %d 个联系人。</item>
+        <item quantity="other">将永久删除 %d 个联系人。</item>
+    </plurals>
+    <string name="contacts_delete">删除</string>
+    <string name="contacts_cancel">取消</string>
+    <string name="contacts_clipboard_name">姓名</string>
+    <string name="contacts_clipboard_phone">电话</string>
+    <string name="contacts_clipboard_additional_phone">电话 %1$d</string>
+    <string name="contacts_clipboard_email">电子邮件</string>
+    <string name="contacts_clipboard_appointment">预约</string>
+    <string name="contacts_clipboard_location">位置</string>
+    <string name="contacts_clipboard_notes">备注</string>
+    <string name="contacts_clipboard_nickname">昵称</string>
+    <string name="contacts_clipboard_website">网站</string>
+    <string name="contacts_clipboard_birthday">生日</string>
+    <string name="contacts_clipboard_labels">标签</string>
+    <string name="contacts_clipboard_prefix">前缀</string>
+    <string name="contacts_clipboard_suffix">后缀</string>
+</resources>

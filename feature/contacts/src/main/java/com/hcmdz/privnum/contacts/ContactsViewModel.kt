@@ -76,27 +76,46 @@ class ContactsViewModel @Inject constructor(
     fun isPasscodeSet(): Boolean = passcode.passcodeEnabled && passcode.hasPin()
 }
 
+data class ContactClipboardLabels(
+    val name: String,
+    val phone: String,
+    val additionalPhone: String,
+    val email: String,
+    val appointment: String,
+    val location: String,
+    val notes: String,
+    val nickname: String,
+    val website: String,
+    val birthday: String,
+    val labels: String,
+    val prefix: String,
+    val suffix: String
+)
+
 /** "Label - value" lines for non-empty fields, contacts separated by a blank line. */
-fun contactClipboardLines(contacts: List<Contact>): String =
+fun contactClipboardLines(
+    contacts: List<Contact>,
+    labels: ContactClipboardLabels
+): String =
     contacts.joinToString("\n\n") { contact ->
         listOf(
-            "Name" to contact.displayName(),
+            labels.name to contact.displayName(),
         ).plus(
             contact.numbers.mapIndexed { index, number ->
-                (if (index == 0) "Phone" else "Phone ${index + 1}") to "+${number.full}"
+                (if (index == 0) labels.phone else labels.additionalPhone.format(index + 1)) to "+${number.full}"
             }
         ).plus(
             listOf(
-                "Email" to contact.email,
-                "Appointment" to contact.appointment,
-                "Location" to contact.location,
-                "Notes" to contact.notes,
-                "Nickname" to contact.nickname,
-                "Website" to contact.website,
-                "Birthday" to contact.birthday,
-                "Labels" to contact.labels,
-                "Prefix" to contact.prefix,
-                "Suffix" to contact.suffix
+                labels.email to contact.email,
+                labels.appointment to contact.appointment,
+                labels.location to contact.location,
+                labels.notes to contact.notes,
+                labels.nickname to contact.nickname,
+                labels.website to contact.website,
+                labels.birthday to contact.birthday,
+                labels.labels to contact.labels,
+                labels.prefix to contact.prefix,
+                labels.suffix to contact.suffix
             )
         ).filter { it.second.isNotBlank() }
             .joinToString("\n") { (label, value) -> "$label - $value" }

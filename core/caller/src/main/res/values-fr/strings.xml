@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_icon_description">Icône de l’application</string>
+    <string name="close_button_description">Fermer</string>
+    <string name="minimize_button_description">Réduire</string>
+    <string name="unknown_caller">Appelant inconnu</string>
+    <string name="close_button_icon" translatable="false">✕</string>
+    <string name="minimize_button_icon" translatable="false">_</string>
+    <string name="app_name" translatable="false">Privnum</string>
+    <string name="caller_photo_description">Photo de l’appelant</string>
+    <string name="appointment">rendez-vous</string>
+    <string name="city">ville</string>
+    <string name="mobile_label">Mobile</string>
+</resources>

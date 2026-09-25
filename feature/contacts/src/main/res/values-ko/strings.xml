@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="contacts_title">연락처</string>
+    <plurals name="contacts_selected_count">
+        <item quantity="one">%d개 선택됨</item>
+        <item quantity="other">%d개 선택됨</item>
+    </plurals>
+    <string name="contacts_clipboard_label">연락처</string>
+    <string name="contacts_copied_to_clipboard">클립보드에 복사됨</string>
+    <string name="contacts_share_chooser_title">연락처 공유</string>
+    <string name="contacts_copy_selected_description">선택 항목 복사</string>
+    <string name="contacts_share_selected_description">선택 항목 공유</string>
+    <string name="contacts_delete_selected_description">선택 항목 삭제</string>
+    <string name="contacts_lock_now_description">지금 잠금</string>
+    <string name="contacts_search_description">검색</string>
+    <string name="contacts_settings_description">설정</string>
+    <string name="contacts_add_contact_description">연락처 추가</string>
+    <string name="contacts_empty_title">연락처를 찾을 수 없음</string>
+    <string name="contacts_empty_subtitle">첫 연락처 추가</string>
+    <string name="contacts_call_detection_off">통화 감지 꺼짐</string>
+    <string name="contacts_enable_in_settings">설정에서 사용</string>
+    <string name="contacts_delete_dialog_title">연락처를 삭제할까요?</string>
+    <plurals name="contacts_delete_count">
+        <item quantity="one">%d개의 연락처가 영구히 삭제됩니다.</item>
+        <item quantity="other">%d개의 연락처가 영구히 삭제됩니다.</item>
+    </plurals>
+    <string name="contacts_delete">삭제</string>
+    <string name="contacts_cancel">취소</string>
+    <string name="contacts_clipboard_name">이름</string>
+    <string name="contacts_clipboard_phone">전화번호</string>
+    <string name="contacts_clipboard_additional_phone">전화번호 %1$d</string>
+    <string name="contacts_clipboard_email">이메일</string>
+    <string name="contacts_clipboard_appointment">약속</string>
+    <string name="contacts_clipboard_location">위치</string>
+    <string name="contacts_clipboard_notes">메모</string>
+    <string name="contacts_clipboard_nickname">별명</string>
+    <string name="contacts_clipboard_website">웹사이트</string>
+    <string name="contacts_clipboard_birthday">생일</string>
+    <string name="contacts_clipboard_labels">라벨</string>
+    <string name="contacts_clipboard_prefix">접두사</string>
+    <string name="contacts_clipboard_suffix">접미사</string>
+</resources>

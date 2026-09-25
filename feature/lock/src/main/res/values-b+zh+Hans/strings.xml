@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="lock_confirm_pin">确认 PIN</string>
+    <string name="lock_choose_pin">设置 4 位 PIN</string>
+    <string name="lock_enter_pin">输入 PIN</string>
+    <string name="lock_unlock_with_biometrics">使用生物识别解锁</string>
+    <string name="lock_biometric_prompt_title">解锁 Privnum</string>
+    <string name="lock_biometric_prompt_negative">使用 PIN</string>
+    <string name="lock_error_too_many_attempts">尝试次数过多，请稍后再试</string>
+    <string name="lock_error_invalid_pin">PIN 无效</string>
+    <string name="lock_error_pins_do_not_match">两次输入的 PIN 不匹配</string>
+    <string name="lock_error_biometric_failed">生物识别失败</string>
+</resources>

@@ -4,6 +4,7 @@ import org.junit.Assert.assertEquals
 import org.junit.Assert.assertNull
 import org.junit.Assert.assertTrue
 import org.junit.Test
+import java.util.Locale
 
 class CountriesHelpersTest {
 
@@ -11,6 +12,12 @@ class CountriesHelpersTest {
     fun `filter matches name case-insensitively`() {
         val codes = filterCountries("fran").map { it.code }
         assertTrue(codes.contains("FR"))
+    }
+
+    @Test
+    fun `filter matches localized country name`() {
+        assertTrue(filterCountries("France", Locale.FRENCH).map { it.code }.contains("FR"))
+        assertTrue(filterCountries("مصر", Locale.forLanguageTag("ar")).map { it.code }.contains("EG"))
     }
 
     @Test

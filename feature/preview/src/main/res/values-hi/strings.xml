@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="preview_back">वापस</string>
+    <string name="preview_call">कॉल करें</string>
+    <string name="preview_cancel">रद्द करें</string>
+    <string name="preview_copied_to_clipboard">क्लिपबोर्ड पर कॉपी किया गया</string>
+    <string name="preview_contact_info">संपर्क की जानकारी</string>
+    <string name="preview_contact_not_found">संपर्क नहीं मिला</string>
+    <string name="preview_delete">हटाएँ</string>
+    <string name="preview_delete_contact_action">संपर्क हटाएँ</string>
+    <string name="preview_delete_contact_message">यह संपर्क आपके डिवाइस से स्थायी रूप से हटा दिया जाएगा</string>
+    <string name="preview_delete_contact_title">संपर्क हटाएँ?</string>
+    <string name="preview_delete_failed">संपर्क हटाने में विफल</string>
+    <string name="preview_edit_contact">संपर्क संपादित करें</string>
+    <string name="preview_email">ईमेल</string>
+    <string name="preview_message">संदेश</string>
+    <string name="preview_share_contact_action">संपर्क साझा करें</string>
+    <string name="preview_share_contact_chooser">संपर्क साझा करें</string>
+    <string name="preview_share_failed">साझा करने में विफल</string>
+    <string name="preview_connected_apps">जुड़े हुए ऐप्स</string>
+    <string name="preview_about_contact">%1$s के बारे में</string>
+    <string name="preview_birthday">जन्मदिन</string>
+    <string name="preview_message_number">%1$s को संदेश भेजें</string>
+    <string name="preview_voice_call_number">%1$s को वॉइस कॉल करें</string>
+    <string name="preview_clipboard_label">संपर्क</string>
+    <plurals name="preview_mobile_number">
+        <item quantity="one">मोबाइल %1$d</item>
+        <item quantity="other">मोबाइल %1$d</item>
+    </plurals>
+</resources>

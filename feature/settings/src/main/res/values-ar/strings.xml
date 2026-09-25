@@ -1,0 +1,115 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="language">اللغة</string>
+    <string name="language_system">النظام</string>
+    <string name="close">إغلاق</string>
+    <string name="settings_title">الإعدادات</string>
+    <string name="settings_back">رجوع</string>
+    <string name="settings_general">عام</string>
+    <string name="settings_show_incoming_popup">إظهار نافذة المكالمة الواردة</string>
+    <string name="settings_show_outgoing_popup">إظهار نافذة المكالمة الصادرة</string>
+    <string name="settings_call_detection">اكتشاف المكالمات</string>
+    <string name="settings_call_screening_role">دور فحص المكالمات</string>
+    <string name="settings_request">طلب</string>
+    <string name="settings_display_over_other_apps">العرض فوق التطبيقات الأخرى</string>
+    <string name="settings_grant">منح</string>
+    <string name="settings_phone_state_permission">إذن حالة الهاتف</string>
+    <string name="settings_granted">ممنوح</string>
+    <string name="settings_not_granted">غير ممنوح</string>
+    <string name="settings_theme">المظهر</string>
+    <string name="settings_theme_light">فاتح</string>
+    <string name="settings_theme_dark">داكن</string>
+    <string name="settings_theme_system">النظام</string>
+    <string name="settings_dynamic_colors">الألوان الديناميكية</string>
+    <string name="settings_android_12_plus_only">Android 12+ فقط</string>
+    <string name="settings_pure_black_amoled">الأسود الخالص (AMOLED)</string>
+    <string name="settings_dark_theme_only">المظهر الداكن فقط</string>
+    <string name="settings_security">الأمان</string>
+    <string name="settings_passcode_lock">قفل رمز الدخول</string>
+    <string name="settings_on">تشغيل</string>
+    <string name="settings_off">إيقاف</string>
+    <string name="settings_remove">إزالة</string>
+    <string name="settings_change">تغيير</string>
+    <string name="settings_set_up">إعداد</string>
+    <string name="settings_auto_lock">القفل التلقائي</string>
+    <string name="settings_set_passcode_first">اضبط رمز الدخول أولًا</string>
+    <string name="settings_unlock_with_biometrics">فتح القفل بالمصادقة الحيوية</string>
+    <string name="settings_not_available_on_device">غير متاح على هذا الجهاز</string>
+    <string name="settings_number_parsing">تحليل الأرقام</string>
+    <string name="settings_default_region">المنطقة الافتراضية</string>
+    <string name="settings_default_region_automatic">تلقائي (SIM)</string>
+    <string name="settings_contacts_backup">نسخة احتياطية لجهات الاتصال</string>
+    <string name="settings_import_vcf">استيراد VCF</string>
+    <string name="settings_export_vcf">تصدير VCF</string>
+    <plurals name="settings_contacts_available">
+        <item quantity="zero">%1$d جهة اتصال متاحة</item>
+        <item quantity="one">%1$d جهة اتصال متاحة</item>
+        <item quantity="two">%1$d جهة اتصال متاحة</item>
+        <item quantity="few">%1$d جهة اتصال متاحة</item>
+        <item quantity="many">%1$d جهة اتصال متاحة</item>
+        <item quantity="other">%1$d جهة اتصال متاحة</item>
+    </plurals>
+    <string name="settings_delete_all_contacts">حذف كل جهات الاتصال</string>
+    <string name="settings_about">حول</string>
+    <string name="settings_app_name" translatable="false">Privnum</string>
+    <string name="settings_version">الإصدار %1$s</string>
+    <string name="settings_version_unknown">غير معروف</string>
+    <string name="settings_based_on">استنادًا إلى Alternate by BioHazard786</string>
+    <string name="settings_readme" translatable="false">README</string>
+    <string name="settings_report_issue">الإبلاغ عن مشكلة</string>
+    <string name="settings_support">الدعم</string>
+    <string name="settings_legal">الشؤون القانونية</string>
+    <string name="settings_privacy">الخصوصية</string>
+    <string name="settings_terms">الشروط</string>
+    <string name="settings_developed_by">تم التطوير بواسطة</string>
+    <string name="settings_author" translatable="false">Hcmdz</string>
+    <string name="settings_contact">جهة الاتصال</string>
+    <string name="settings_github" translatable="false">Github</string>
+    <string name="settings_auto_lock_disabled">معطّل</string>
+    <string name="settings_auto_lock_immediately">فورًا</string>
+    <string name="settings_auto_lock_minute">دقيقة واحدة</string>
+    <string name="settings_auto_lock_minutes">5 دقائق</string>
+    <string name="settings_auto_lock_hour">ساعة واحدة</string>
+    <string name="settings_auto_lock_hours">5 ساعات</string>
+    <string name="settings_error_invalid_pin">رمز الدخول غير صالح</string>
+    <string name="settings_error_too_many_attempts">محاولات كثيرة، حاول مرة أخرى لاحقًا</string>
+    <string name="settings_pin_export_title">أدخل رمز الدخول للتصدير</string>
+    <string name="settings_pin_remove_title">أدخل رمز الدخول للإزالة</string>
+    <string name="settings_overlay_message">يحتاج Privnum إلى هذا الإذن لعرض نافذة المتصل أثناء المكالمات الواردة.</string>
+    <string name="settings_continue">متابعة</string>
+    <string name="settings_cancel">إلغاء</string>
+    <string name="settings_delete_contacts_title">حذف كل جهات الاتصال؟</string>
+    <plurals name="settings_delete_contacts_message">
+        <item quantity="zero">سيتم حذف %1$d جهة اتصال نهائيًا. لا يمكن التراجع عن هذا الإجراء.</item>
+        <item quantity="one">سيتم حذف %1$d جهة اتصال نهائيًا. لا يمكن التراجع عن هذا الإجراء.</item>
+        <item quantity="two">سيتم حذف %1$d جهة اتصال نهائيًا. لا يمكن التراجع عن هذا الإجراء.</item>
+        <item quantity="few">سيتم حذف %1$d جهة اتصال نهائيًا. لا يمكن التراجع عن هذا الإجراء.</item>
+        <item quantity="many">سيتم حذف %1$d جهة اتصال نهائيًا. لا يمكن التراجع عن هذا الإجراء.</item>
+        <item quantity="other">سيتم حذف %1$d جهة اتصال نهائيًا. لا يمكن التراجع عن هذا الإجراء.</item>
+    </plurals>
+    <string name="settings_delete">حذف</string>
+    <string name="settings_pin_label">رمز الدخول</string>
+    <string name="settings_confirm">تأكيد</string>
+    <string name="settings_message_cannot_read_file">تعذّرت قراءة الملف المحدد</string>
+    <string name="settings_message_no_contacts_found">لم يتم العثور على جهات الاتصال في الملف المحدد</string>
+    <plurals name="settings_contacts_imported">
+        <item quantity="zero">تم استيراد %1$d جهة اتصال</item>
+        <item quantity="one">تم استيراد %1$d جهة اتصال</item>
+        <item quantity="two">تم استيراد %1$d جهة اتصال</item>
+        <item quantity="few">تم استيراد %1$d جهة اتصال</item>
+        <item quantity="many">تم استيراد %1$d جهة اتصال</item>
+        <item quantity="other">تم استيراد %1$d جهة اتصال</item>
+    </plurals>
+    <string name="settings_message_no_contacts_to_export">لا توجد جهات اتصال للتصدير</string>
+    <plurals name="settings_contacts_exported">
+        <item quantity="zero">تم تصدير %1$d جهة اتصال</item>
+        <item quantity="one">تم تصدير %1$d جهة اتصال</item>
+        <item quantity="two">تم تصدير %1$d جهة اتصال</item>
+        <item quantity="few">تم تصدير %1$d جهة اتصال</item>
+        <item quantity="many">تم تصدير %1$d جهة اتصال</item>
+        <item quantity="other">تم تصدير %1$d جهة اتصال</item>
+    </plurals>
+    <string name="settings_message_export_failed">فشل التصدير</string>
+    <string name="settings_message_contacts_deleted">تم حذف جميع جهات الاتصال</string>
+    <string name="settings_message_passcode_removed">تمت إزالة رمز الدخول</string>
+</resources>

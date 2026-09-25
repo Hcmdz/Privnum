@@ -1,0 +1,99 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="language">言語</string>
+    <string name="language_system">システム</string>
+    <string name="close">閉じる</string>
+    <string name="settings_title">設定</string>
+    <string name="settings_back">戻る</string>
+    <string name="settings_general">一般</string>
+    <string name="settings_show_incoming_popup">着信ポップアップを表示</string>
+    <string name="settings_show_outgoing_popup">発信ポップアップを表示</string>
+    <string name="settings_call_detection">着信検出</string>
+    <string name="settings_call_screening_role">通話スクリーニング機能</string>
+    <string name="settings_request">リクエスト</string>
+    <string name="settings_display_over_other_apps">他のアプリの上に表示</string>
+    <string name="settings_grant">許可</string>
+    <string name="settings_phone_state_permission">電話状態権限</string>
+    <string name="settings_granted">許可済み</string>
+    <string name="settings_not_granted">未許可</string>
+    <string name="settings_theme">テーマ</string>
+    <string name="settings_theme_light">ライト</string>
+    <string name="settings_theme_dark">ダーク</string>
+    <string name="settings_theme_system">システム</string>
+    <string name="settings_dynamic_colors">ダイナミックカラー</string>
+    <string name="settings_android_12_plus_only">Android 12+ のみ</string>
+    <string name="settings_pure_black_amoled">純黒 (AMOLED)</string>
+    <string name="settings_dark_theme_only">ダークテーマのみ</string>
+    <string name="settings_security">セキュリティ</string>
+    <string name="settings_passcode_lock">パスコードロック</string>
+    <string name="settings_on">オン</string>
+    <string name="settings_off">オフ</string>
+    <string name="settings_remove">削除</string>
+    <string name="settings_change">変更</string>
+    <string name="settings_set_up">設定</string>
+    <string name="settings_auto_lock">自動ロック</string>
+    <string name="settings_set_passcode_first">先にパスコードを設定してください</string>
+    <string name="settings_unlock_with_biometrics">生体認証でロック解除</string>
+    <string name="settings_not_available_on_device">この端末では利用できません</string>
+    <string name="settings_number_parsing">電話番号の解析</string>
+    <string name="settings_default_region">既定の地域</string>
+    <string name="settings_default_region_automatic">自動 (SIM)</string>
+    <string name="settings_contacts_backup">連絡先のバックアップ</string>
+    <string name="settings_import_vcf">VCFをインポート</string>
+    <string name="settings_export_vcf">VCFをエクスポート</string>
+    <plurals name="settings_contacts_available">
+        <item quantity="one">%1$d 件の連絡先があります</item>
+        <item quantity="other">%1$d 件の連絡先があります</item>
+    </plurals>
+    <string name="settings_delete_all_contacts">すべての連絡先を削除</string>
+    <string name="settings_about">このアプリについて</string>
+    <string name="settings_app_name" translatable="false">Privnum</string>
+    <string name="settings_version">バージョン %1$s</string>
+    <string name="settings_version_unknown">不明</string>
+    <string name="settings_based_on">BioHazard786 による Alternate をベースに</string>
+    <string name="settings_readme" translatable="false">README</string>
+    <string name="settings_report_issue">問題を報告</string>
+    <string name="settings_support">サポート</string>
+    <string name="settings_legal">法的情報</string>
+    <string name="settings_privacy">プライバシー</string>
+    <string name="settings_terms">利用規約</string>
+    <string name="settings_developed_by">開発元</string>
+    <string name="settings_author" translatable="false">Hcmdz</string>
+    <string name="settings_contact">お問い合わせ</string>
+    <string name="settings_github" translatable="false">Github</string>
+    <string name="settings_auto_lock_disabled">無効</string>
+    <string name="settings_auto_lock_immediately">直ちに</string>
+    <string name="settings_auto_lock_minute">1分</string>
+    <string name="settings_auto_lock_minutes">5分</string>
+    <string name="settings_auto_lock_hour">1時間</string>
+    <string name="settings_auto_lock_hours">5時間</string>
+    <string name="settings_error_invalid_pin">PINが無効です</string>
+    <string name="settings_error_too_many_attempts">試行回数が多すぎます。しばらくしてからもう一度お試しください</string>
+    <string name="settings_pin_export_title">エクスポート用PINを入力</string>
+    <string name="settings_pin_remove_title">削除用PINを入力</string>
+    <string name="settings_overlay_message">Privnumには、着信中に発信者ポップアップを表示するためにこの権限が必要です。</string>
+    <string name="settings_continue">続行</string>
+    <string name="settings_cancel">キャンセル</string>
+    <string name="settings_delete_contacts_title">すべての連絡先を削除しますか？</string>
+    <plurals name="settings_delete_contacts_message">
+        <item quantity="one">%1$d 件の連絡先が完全に削除されます。この操作は元に戻せません。</item>
+        <item quantity="other">%1$d 件の連絡先が完全に削除されます。この操作は元に戻せません。</item>
+    </plurals>
+    <string name="settings_delete">削除</string>
+    <string name="settings_pin_label">PIN</string>
+    <string name="settings_confirm">確認</string>
+    <string name="settings_message_cannot_read_file">選択したファイルを読み取れません</string>
+    <string name="settings_message_no_contacts_found">選択したファイルに連絡先が見つかりません</string>
+    <plurals name="settings_contacts_imported">
+        <item quantity="one">%1$d 件の連絡先をインポートしました</item>
+        <item quantity="other">%1$d 件の連絡先をインポートしました</item>
+    </plurals>
+    <string name="settings_message_no_contacts_to_export">エクスポートする連絡先がありません</string>
+    <plurals name="settings_contacts_exported">
+        <item quantity="one">%1$d 件の連絡先をエクスポートしました</item>
+        <item quantity="other">%1$d 件の連絡先をエクスポートしました</item>
+    </plurals>
+    <string name="settings_message_export_failed">エクスポートに失敗しました</string>
+    <string name="settings_message_contacts_deleted">すべての連絡先を削除しました</string>
+    <string name="settings_message_passcode_removed">パスコードを削除しました</string>
+</resources>

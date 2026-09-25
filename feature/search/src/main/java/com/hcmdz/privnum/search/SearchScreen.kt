@@ -23,8 +23,10 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalLocale
 import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.focus.focusRequester
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
@@ -39,6 +41,7 @@ fun SearchScreen(
     var text by remember { mutableStateOf("") }
     val results by viewModel.results.collectAsStateWithLifecycle()
     val searching by viewModel.isSearching.collectAsStateWithLifecycle()
+    val locale = LocalLocale.current.platformLocale
     val focus = remember { FocusRequester() }
 
     LaunchedEffect(Unit) { focus.requestFocus() }
@@ -55,7 +58,7 @@ fun SearchScreen(
                     text = it
                     viewModel.onQueryChange(it)
                 },
-                label = { Text("Search contacts") },
+                label = { Text(stringResource(R.string.search_field_label)) },
                 leadingIcon = { Icon(Icons.Default.Search, contentDescription = null) },
                 trailingIcon = {
                     if (searching) CircularProgressIndicator(modifier = Modifier.padding(8.dp))
@@ -68,15 +71,18 @@ fun SearchScreen(
             )
             if (!searching && results.isEmpty()) {
                 Text(
-                    if (text.isBlank()) "Type a name or email to search"
-                    else "No contacts found",
+                    if (text.isBlank()) {
+                        stringResource(R.string.search_empty_prompt)
+                    } else {
+                        stringResource(R.string.search_no_results)
+                    },
                     modifier = Modifier.padding(horizontal = 16.dp)
                 )
             }
             var lastLetter = ""
             LazyColumn(modifier = Modifier.fillMaxWidth()) {
                 results.forEach { contact ->
-                    val letter = contact.displayName().firstOrNull()?.uppercase() ?: "#"
+                    val letter = contact.displayName().firstOrNull()?.uppercase(locale) ?: "#"
                     if (letter != lastLetter) {
                         lastLetter = letter
                         stickyHeader {

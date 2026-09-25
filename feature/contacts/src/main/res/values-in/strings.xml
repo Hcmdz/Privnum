@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="contacts_title">Kontak</string>
+    <plurals name="contacts_selected_count">
+        <item quantity="one">%d kontak dipilih</item>
+        <item quantity="other">%d kontak dipilih</item>
+    </plurals>
+    <string name="contacts_clipboard_label">kontak</string>
+    <string name="contacts_copied_to_clipboard">Disalin ke papan klip</string>
+    <string name="contacts_share_chooser_title">Bagikan kontak</string>
+    <string name="contacts_copy_selected_description">Salin yang dipilih</string>
+    <string name="contacts_share_selected_description">Bagikan yang dipilih</string>
+    <string name="contacts_delete_selected_description">Hapus yang dipilih</string>
+    <string name="contacts_lock_now_description">Kunci sekarang</string>
+    <string name="contacts_search_description">Cari</string>
+    <string name="contacts_settings_description">Pengaturan</string>
+    <string name="contacts_add_contact_description">Tambah kontak</string>
+    <string name="contacts_empty_title">Kontak tidak ditemukan</string>
+    <string name="contacts_empty_subtitle">Tambahkan kontak pertama Anda</string>
+    <string name="contacts_call_detection_off">Deteksi panggilan nonaktif</string>
+    <string name="contacts_enable_in_settings">Aktifkan di Pengaturan</string>
+    <string name="contacts_delete_dialog_title">Hapus kontak?</string>
+    <plurals name="contacts_delete_count">
+        <item quantity="one">%d kontak akan dihapus permanen.</item>
+        <item quantity="other">%d kontak akan dihapus permanen.</item>
+    </plurals>
+    <string name="contacts_delete">Hapus</string>
+    <string name="contacts_cancel">Batal</string>
+    <string name="contacts_clipboard_name">Nama</string>
+    <string name="contacts_clipboard_phone">Telepon</string>
+    <string name="contacts_clipboard_additional_phone">Telepon %1$d</string>
+    <string name="contacts_clipboard_email">Email</string>
+    <string name="contacts_clipboard_appointment">Janji</string>
+    <string name="contacts_clipboard_location">Lokasi</string>
+    <string name="contacts_clipboard_notes">Catatan</string>
+    <string name="contacts_clipboard_nickname">Nama panggilan</string>
+    <string name="contacts_clipboard_website">Situs web</string>
+    <string name="contacts_clipboard_birthday">Ulang tahun</string>
+    <string name="contacts_clipboard_labels">Label</string>
+    <string name="contacts_clipboard_prefix">Awalan</string>
+    <string name="contacts_clipboard_suffix">Akiran</string>
+</resources>

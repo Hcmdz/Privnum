@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="contacts_title">संपर्क</string>
+    <plurals name="contacts_selected_count">
+        <item quantity="one">%d चयनित</item>
+        <item quantity="other">%d चयनित</item>
+    </plurals>
+    <string name="contacts_clipboard_label">संपर्क</string>
+    <string name="contacts_copied_to_clipboard">क्लिपबोर्ड पर कॉपी किया गया</string>
+    <string name="contacts_share_chooser_title">संपर्क साझा करें</string>
+    <string name="contacts_copy_selected_description">चयनित कॉपी करें</string>
+    <string name="contacts_share_selected_description">चयनित साझा करें</string>
+    <string name="contacts_delete_selected_description">चयनित हटाएँ</string>
+    <string name="contacts_lock_now_description">अभी लॉक करें</string>
+    <string name="contacts_search_description">खोजें</string>
+    <string name="contacts_settings_description">सेटिंग्स</string>
+    <string name="contacts_add_contact_description">संपर्क जोड़ें</string>
+    <string name="contacts_empty_title">कोई संपर्क नहीं मिला</string>
+    <string name="contacts_empty_subtitle">अपना पहला संपर्क जोड़ें</string>
+    <string name="contacts_call_detection_off">कॉल पहचान बंद है</string>
+    <string name="contacts_enable_in_settings">सेटिंग्स में सक्षम करें</string>
+    <string name="contacts_delete_dialog_title">संपर्क हटाएँ?</string>
+    <plurals name="contacts_delete_count">
+        <item quantity="one">%d संपर्क स्थायी रूप से हटाया जाएगा।</item>
+        <item quantity="other">%d संपर्क स्थायी रूप से हटाए जाएंगे।</item>
+    </plurals>
+    <string name="contacts_delete">हटाएँ</string>
+    <string name="contacts_cancel">रद्द करें</string>
+    <string name="contacts_clipboard_name">नाम</string>
+    <string name="contacts_clipboard_phone">फ़ोन</string>
+    <string name="contacts_clipboard_additional_phone">फ़ोन %1$d</string>
+    <string name="contacts_clipboard_email">ईमेल</string>
+    <string name="contacts_clipboard_appointment">अपॉइंटमेंट</string>
+    <string name="contacts_clipboard_location">स्थान</string>
+    <string name="contacts_clipboard_notes">नोट्स</string>
+    <string name="contacts_clipboard_nickname">उपनाम</string>
+    <string name="contacts_clipboard_website">वेबसाइट</string>
+    <string name="contacts_clipboard_birthday">जन्मदिन</string>
+    <string name="contacts_clipboard_labels">लेबल</string>
+    <string name="contacts_clipboard_prefix">उपसर्ग</string>
+    <string name="contacts_clipboard_suffix">प्रत्यय</string>
+</resources>

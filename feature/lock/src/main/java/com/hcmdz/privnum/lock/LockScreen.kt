@@ -21,11 +21,13 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.FragmentActivity
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import com.hcmdz.privnum.ui.resolveText
 
 @Composable
 fun LockScreen(
@@ -35,6 +37,9 @@ fun LockScreen(
 ) {
     val state by viewModel.state.collectAsStateWithLifecycle()
     val context = LocalContext.current
+    val errorText = state.error?.resolveText()
+    val biometricTitle = stringResource(R.string.lock_biometric_prompt_title)
+    val usePinText = stringResource(R.string.lock_biometric_prompt_negative)
 
     if (startSetup) {
         // Setup flow: enter SETUP mode on entry, complete via setupDone.
@@ -47,9 +52,13 @@ fun LockScreen(
         }
         if (!state.setupComplete) {
             PinPad(
-                title = if (state.mode == LockMode.CONFIRM) "Confirm PIN" else "Choose a 4-digit PIN",
+                title = if (state.mode == LockMode.CONFIRM) {
+                    stringResource(R.string.lock_confirm_pin)
+                } else {
+                    stringResource(R.string.lock_choose_pin)
+                },
                 pin = state.pin,
-                error = state.error,
+                error = errorText,
                 onDigit = { viewModel.digit(it) },
                 onBackspace = { viewModel.backspace() },
                 biometricRow = null
@@ -88,16 +97,16 @@ fun LockScreen(
         if (crypto != null) {
             prompt.authenticate(
                 BiometricPrompt.PromptInfo.Builder()
-                    .setTitle("Unlock Privnum")
-                    .setNegativeButtonText("Use PIN")
+                    .setTitle(biometricTitle)
+                    .setNegativeButtonText(usePinText)
                     .build(),
                 crypto
             )
         } else {
             prompt.authenticate(
                 BiometricPrompt.PromptInfo.Builder()
-                    .setTitle("Unlock Privnum")
-                    .setNegativeButtonText("Use PIN")
+                    .setTitle(biometricTitle)
+                    .setNegativeButtonText(usePinText)
                     .build()
             )
         }
@@ -114,15 +123,15 @@ fun LockScreen(
     if (state.unlocked) return
 
     PinPad(
-        title = "Enter PIN",
+        title = stringResource(R.string.lock_enter_pin),
         pin = state.pin,
-        error = state.error,
+        error = errorText,
         onDigit = { viewModel.digit(it) },
         onBackspace = { viewModel.backspace() },
         biometricRow = {
             if (state.biometricAvailable && state.biometricEnabled) {
                 Button(onClick = { launchBiometric() }) {
-                    Text("Unlock with biometrics")
+                    Text(stringResource(R.string.lock_unlock_with_biometrics))
                 }
             }
         }

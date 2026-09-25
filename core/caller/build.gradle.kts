@@ -23,6 +23,7 @@ dependencies {
     implementation(project(":core:data"))
 
     implementation(libs.activity)
+    implementation(libs.androidx.core)
 
     implementation(libs.room.runtime)
     implementation(libs.room.ktx)

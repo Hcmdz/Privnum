@@ -37,6 +37,7 @@ dependencies {
     implementation(libs.compose.ui)
     implementation(libs.compose.ui.tooling.preview)
     implementation(libs.activity.compose)
+    implementation(libs.androidx.core)
     implementation(libs.lifecycle.runtime.compose)
     implementation(libs.navigation3.runtime)
     implementation(libs.navigation3.ui)

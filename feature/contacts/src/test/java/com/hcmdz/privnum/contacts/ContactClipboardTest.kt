@@ -8,6 +8,22 @@ import org.junit.Test
 
 class ContactClipboardTest {
 
+    private val clipboardLabels = ContactClipboardLabels(
+        name = "Name",
+        phone = "Phone",
+        additionalPhone = "Phone %1\$d",
+        email = "Email",
+        appointment = "Appointment",
+        location = "Location",
+        notes = "Notes",
+        nickname = "Nickname",
+        website = "Website",
+        birthday = "Birthday",
+        labels = "Labels",
+        prefix = "Prefix",
+        suffix = "Suffix"
+    )
+
     private fun contact(
         name: String = "Ann",
         email: String = "a@b.c",
@@ -24,7 +40,7 @@ class ContactClipboardTest {
 
     @Test
     fun `non-empty fields only`() {
-        val lines = contactClipboardLines(listOf(contact()))
+        val lines = contactClipboardLines(listOf(contact()), clipboardLabels)
         assertTrue(lines.contains("Name - Ann"))
         assertTrue(lines.contains("Phone - +336000000"))
         assertTrue(lines.contains("Phone 2 - +1650"))
@@ -35,7 +51,10 @@ class ContactClipboardTest {
 
     @Test
     fun `contacts separated by blank line`() {
-        val lines = contactClipboardLines(listOf(contact("Ann"), contact("Bob")))
+        val lines = contactClipboardLines(
+            listOf(contact("Ann"), contact("Bob")),
+            clipboardLabels
+        )
         assertEquals(2, lines.split("\n\n").size)
     }
 }

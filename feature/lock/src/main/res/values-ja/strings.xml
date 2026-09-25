@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="lock_confirm_pin">PINを確認</string>
+    <string name="lock_choose_pin">4桁のPINを設定</string>
+    <string name="lock_enter_pin">PINを入力</string>
+    <string name="lock_unlock_with_biometrics">生体認証でロック解除</string>
+    <string name="lock_biometric_prompt_title">Privnumのロックを解除</string>
+    <string name="lock_biometric_prompt_negative">PINを使用</string>
+    <string name="lock_error_too_many_attempts">試行回数が多すぎます。しばらくしてからもう一度お試しください</string>
+    <string name="lock_error_invalid_pin">PINが無効です</string>
+    <string name="lock_error_pins_do_not_match">PINが一致しません</string>
+    <string name="lock_error_biometric_failed">生体認証に失敗しました</string>
+</resources>

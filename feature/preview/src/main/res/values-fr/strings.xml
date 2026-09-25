@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="preview_back">Retour</string>
+    <string name="preview_call">Appeler</string>
+    <string name="preview_cancel">Annuler</string>
+    <string name="preview_copied_to_clipboard">Copié dans le presse-papiers</string>
+    <string name="preview_contact_info">Informations sur le contact</string>
+    <string name="preview_contact_not_found">Contact introuvable</string>
+    <string name="preview_delete">Supprimer</string>
+    <string name="preview_delete_contact_action">Supprimer le contact</string>
+    <string name="preview_delete_contact_message">Ce contact sera définitivement supprimé de votre appareil</string>
+    <string name="preview_delete_contact_title">Supprimer le contact ?</string>
+    <string name="preview_delete_failed">Échec de la suppression</string>
+    <string name="preview_edit_contact">Modifier le contact</string>
+    <string name="preview_email">E-mail</string>
+    <string name="preview_message">Message</string>
+    <string name="preview_share_contact_action">Partager le contact</string>
+    <string name="preview_share_contact_chooser">Partager le contact</string>
+    <string name="preview_share_failed">Échec du partage</string>
+    <string name="preview_connected_apps">Applications connectées</string>
+    <string name="preview_about_contact">À propos de %1$s</string>
+    <string name="preview_birthday">Date de naissance</string>
+    <string name="preview_message_number">Message à %1$s</string>
+    <string name="preview_voice_call_number">Appel vocal %1$s</string>
+    <string name="preview_clipboard_label">Contact</string>
+    <plurals name="preview_mobile_number">
+        <item quantity="one">Mobile %1$d</item>
+        <item quantity="other">Mobile %1$d</item>
+    </plurals>
+</resources>

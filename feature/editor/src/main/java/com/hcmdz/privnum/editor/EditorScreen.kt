@@ -58,7 +58,9 @@ import androidx.compose.ui.focus.FocusDirection
 import androidx.compose.ui.focus.focusProperties
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalFocusManager
+import androidx.compose.ui.platform.LocalLocale
 import androidx.compose.ui.platform.testTag
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.semantics.contentDescription
 import androidx.compose.ui.semantics.semantics
@@ -70,10 +72,13 @@ import androidx.core.content.FileProvider
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.hcmdz.privnum.data.Country
+import com.hcmdz.privnum.data.displayName
 import com.hcmdz.privnum.data.PhoneNumberUtils
 import com.hcmdz.privnum.data.filterCountries
 import com.hcmdz.privnum.data.suggestCountryFor
 import com.hcmdz.privnum.ui.ContactAvatar
+import com.hcmdz.privnum.ui.UiText
+import com.hcmdz.privnum.ui.resolveText
 
 @OptIn(ExperimentalMaterial3Api::class, ExperimentalFoundationApi::class)
 @Composable
@@ -86,6 +91,7 @@ fun EditorScreen(
 ) {
     val state by viewModel.state.collectAsStateWithLifecycle()
     val context = LocalContext.current
+    val locale = LocalLocale.current.platformLocale
     val recents by viewModel.recentCountries.collectAsStateWithLifecycle()
     var showCountries by remember { mutableStateOf(false) }
     var countryRowTarget by remember { mutableStateOf(0) }
@@ -95,6 +101,9 @@ fun EditorScreen(
     val snackbar = remember { SnackbarHostState() }
     val focus = LocalFocusManager.current
     val dirty = remember(state) { viewModel.isDirty() }
+    val message = state.message?.resolveText()
+    val nameError = state.nameError?.resolveText()
+    val numberError = state.numberError?.resolveText()
 
     BackHandler(enabled = dirty && !state.saved) { abandonConfirm = true }
 
@@ -104,9 +113,9 @@ fun EditorScreen(
     LaunchedEffect(state.saved) {
         if (state.saved) onSaved()
     }
-    LaunchedEffect(state.message) {
-        state.message?.let {
-            snackbar.showSnackbar(it)
+    LaunchedEffect(message) {
+        if (message != null) {
+            snackbar.showSnackbar(message)
             viewModel.consumeMessage()
         }
     }
@@ -136,12 +145,23 @@ fun EditorScreen(
     Scaffold(
         topBar = {
             TopAppBar(
-                title = { Text(if (contactId == null) "New contact" else "Edit contact") },
+                title = {
+                    Text(
+                        if (contactId == null) {
+                            stringResource(R.string.editor_new_contact)
+                        } else {
+                            stringResource(R.string.editor_edit_contact)
+                        }
+                    )
+                },
                 navigationIcon = {
                     IconButton(onClick = {
                         if (dirty && !state.saved) abandonConfirm = true else onBack()
                     }) {
-                        Icon(Icons.AutoMirrored.Filled.ArrowBack, contentDescription = "Back")
+                        Icon(
+                            Icons.AutoMirrored.Filled.ArrowBack,
+                            contentDescription = stringResource(R.string.editor_back)
+                        )
                     }
                 }
             )
@@ -158,7 +178,7 @@ fun EditorScreen(
             if (state.notFound) {
                 item {
                     Text(
-                        "Contact not found",
+                        stringResource(R.string.editor_contact_not_found),
                         color = MaterialTheme.colorScheme.error
                     )
                 }
@@ -177,11 +197,17 @@ fun EditorScreen(
                     )
                     Column(verticalArrangement = Arrangement.spacedBy(4.dp)) {
                         TextButton(onClick = { photoChoice = true }) {
-                            Text(if (photoModel == null) "Add photo" else "Change photo")
+                            Text(
+                                if (photoModel == null) {
+                                    stringResource(R.string.editor_add_photo)
+                                } else {
+                                    stringResource(R.string.editor_change_photo)
+                                }
+                            )
                         }
                         if (photoModel != null) {
                             TextButton(onClick = { viewModel.removePhoto() }) {
-                                Text("Remove")
+                                Text(stringResource(R.string.editor_remove))
                             }
                         }
                     }
@@ -193,14 +219,14 @@ fun EditorScreen(
                     onValueChange = { value ->
                         viewModel.update { s -> s.copy(name = value, nameError = null) }
                     },
-                    label = { Text("Name *") },
+                    label = { Text(stringResource(R.string.editor_name)) },
                     keyboardOptions = KeyboardOptions(
                         capitalization = KeyboardCapitalization.Words,
                         imeAction = ImeAction.Next
                     ),
                     keyboardActions = next,
                     isError = state.nameError != null,
-                    supportingText = { state.nameError?.let { Text(it) } },
+                    supportingText = { nameError?.let { Text(it) } },
                     singleLine = true,
                     modifier = Modifier
                         .fillMaxWidth()
@@ -211,6 +237,10 @@ fun EditorScreen(
                 item(key = "number_$index") {
                     Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
                         val country = row.country
+                        val countryDescription = stringResource(
+                            R.string.editor_selected_country_description,
+                             country?.displayName(locale) ?: stringResource(R.string.editor_no_country)
+                        )
                         // Transparent overlay first in tap dispatch: the text field
                         // consumes taps even when read-only and unfocusable.
                         Box(modifier = Modifier.weight(0.55f)) {
@@ -218,7 +248,7 @@ fun EditorScreen(
                                 value = country?.let { "${it.flag} +${it.dialCode}" }
                                     ?: "",
                                 onValueChange = {},
-                                label = { Text("Country *") },
+                                label = { Text(stringResource(R.string.editor_country)) },
                                 trailingIcon = {
                                     Icon(
                                         Icons.Filled.ArrowDropDown,
@@ -236,8 +266,7 @@ fun EditorScreen(
                                     .matchParentSize()
                                     .testTag(if (index == 0) "editor_country" else "editor_country_$index")
                                     .semantics {
-                                        contentDescription =
-                                            "Selected country: ${country?.name ?: "none"}"
+                                        contentDescription = countryDescription
                                     }
                                     .clickable(
                                         role = Role.DropdownList,
@@ -255,7 +284,7 @@ fun EditorScreen(
                                     r.copy(nationalNumber = PhoneNumberUtils.trimPhoneInput(it))
                                 }
                             },
-                            label = { Text("Phone number *") },
+                            label = { Text(stringResource(R.string.editor_phone_number)) },
                             keyboardOptions = KeyboardOptions(
                                 keyboardType = KeyboardType.Phone,
                                 imeAction = ImeAction.Next
@@ -264,9 +293,11 @@ fun EditorScreen(
                             isError = state.numberErrorRow == index,
                             supportingText = {
                                 if (state.numberErrorRow == index) {
-                                    state.numberError?.let { Text(it) }
+                                    numberError?.let { Text(it) }
                                 } else if (index == 0) {
-                                    preview?.let { Text("Will be saved as $it") }
+                                    preview?.let {
+                                        Text(stringResource(R.string.editor_will_be_saved_as, it))
+                                    }
                                 }
                             },
                             singleLine = true,
@@ -284,13 +315,13 @@ fun EditorScreen(
                             onClick = { viewModel.setPrimaryRow(index) }
                         )
                         Text(
-                            "Primary",
+                            stringResource(R.string.editor_primary),
                             modifier = Modifier.clickable { viewModel.setPrimaryRow(index) }
                         )
                         Spacer(modifier = Modifier.weight(1f))
                         if (state.numbers.size > 1) {
                             TextButton(onClick = { viewModel.removeNumberRow(index) }) {
-                                Text("Remove")
+                                Text(stringResource(R.string.editor_remove))
                             }
                         }
                     }
@@ -298,7 +329,7 @@ fun EditorScreen(
             }
             item {
                 TextButton(onClick = { viewModel.addNumberRow() }) {
-                    Text("Add another number")
+                    Text(stringResource(R.string.editor_add_another_number))
                 }
             }
             if (suggestion != null) {
@@ -306,14 +337,20 @@ fun EditorScreen(
                     AssistChip(
                         onClick = { viewModel.setRowCountry(0, suggestion) },
                         label = {
-                            Text("Switch to +${suggestion.dialCode} (${suggestion.name})?")
+                            Text(
+                                stringResource(
+                                    R.string.editor_switch_country,
+                                    suggestion.dialCode,
+                                    suggestion.displayName(locale)
+                                )
+                            )
                         }
                     )
                 }
             }
             item {
                 Field(
-                    "Appointment", state.appointment,
+                    stringResource(R.string.editor_appointment), state.appointment,
                     KeyboardOptions(imeAction = ImeAction.Next), next
                 ) {
                     viewModel.update { s -> s.copy(appointment = it) }
@@ -321,7 +358,7 @@ fun EditorScreen(
             }
             item {
                 Field(
-                    "Location", state.location,
+                    stringResource(R.string.editor_location), state.location,
                     KeyboardOptions(
                         capitalization = KeyboardCapitalization.Words,
                         imeAction = ImeAction.Next
@@ -332,7 +369,7 @@ fun EditorScreen(
             }
             item {
                 Field(
-                    "Email", state.email,
+                    stringResource(R.string.editor_email), state.email,
                     KeyboardOptions(keyboardType = KeyboardType.Email, imeAction = ImeAction.Next),
                     next
                 ) {
@@ -341,7 +378,7 @@ fun EditorScreen(
             }
             item {
                 Field(
-                    "Notes", state.notes,
+                    stringResource(R.string.editor_notes), state.notes,
                     KeyboardOptions(imeAction = ImeAction.Done),
                     KeyboardActions(onDone = { focus.clearFocus() })
                 ) {
@@ -350,28 +387,34 @@ fun EditorScreen(
             }
             item {
                 TextButton(onClick = { moreExpanded = !moreExpanded }) {
-                    Text(if (moreExpanded) "Fewer fields" else "More fields")
+                    Text(
+                        if (moreExpanded) {
+                            stringResource(R.string.editor_fewer_fields)
+                        } else {
+                            stringResource(R.string.editor_more_fields)
+                        }
+                    )
                 }
             }
             if (moreExpanded) {
                 item {
-                    Field("Nickname", state.nickname) {
+                    Field(stringResource(R.string.editor_nickname), state.nickname) {
                         viewModel.update { s -> s.copy(nickname = it) }
                     }
                 }
                 item {
-                    Field("Prefix", state.prefix) {
+                    Field(stringResource(R.string.editor_prefix), state.prefix) {
                         viewModel.update { s -> s.copy(prefix = it) }
                     }
                 }
                 item {
-                    Field("Suffix", state.suffix) {
+                    Field(stringResource(R.string.editor_suffix), state.suffix) {
                         viewModel.update { s -> s.copy(suffix = it) }
                     }
                 }
                 item {
                     Field(
-                        "Website", state.website,
+                        stringResource(R.string.editor_website), state.website,
                         KeyboardOptions(keyboardType = KeyboardType.Uri)
                     ) {
                         viewModel.update { s -> s.copy(website = it) }
@@ -381,14 +424,14 @@ fun EditorScreen(
                     OutlinedTextField(
                         value = state.birthday,
                         onValueChange = {},
-                        label = { Text("Birthday") },
+                        label = { Text(stringResource(R.string.editor_birthday)) },
                         readOnly = true,
                         singleLine = true,
                         trailingIcon = {
                             IconButton(onClick = { birthdayDialog = true }) {
                                 Icon(
                                     Icons.Filled.DateRange,
-                                    contentDescription = "Pick birthday"
+                                    contentDescription = stringResource(R.string.editor_pick_birthday)
                                 )
                             }
                         },
@@ -401,7 +444,7 @@ fun EditorScreen(
                     )
                 }
                 item {
-                    Field("Labels", state.labels) {
+                    Field(stringResource(R.string.editor_labels), state.labels) {
                         viewModel.update { s -> s.copy(labels = it) }
                     }
                 }
@@ -414,7 +457,13 @@ fun EditorScreen(
                         .fillMaxWidth()
                         .testTag("editor_save")
                 ) {
-                    Text(if (contactId == null) "Save contact" else "Save changes")
+                    Text(
+                        if (contactId == null) {
+                            stringResource(R.string.editor_save_contact)
+                        } else {
+                            stringResource(R.string.editor_save_changes)
+                        }
+                    )
                 }
             }
         }
@@ -429,7 +478,7 @@ fun EditorScreen(
                 OutlinedTextField(
                     value = countryQuery,
                     onValueChange = { countryQuery = it },
-                    label = { Text("Search countries") },
+                    label = { Text(stringResource(R.string.editor_search_countries)) },
                     singleLine = true,
                     modifier = Modifier.fillMaxWidth()
                 )
@@ -441,24 +490,24 @@ fun EditorScreen(
                                     viewModel.setRowCountry(countryRowTarget, country)
                                     showCountries = false
                                 },
-                                label = { Text("${country.flag} ${country.name}") }
+                                label = { Text("${country.flag} ${country.displayName(locale)}") }
                             )
                         }
                     }
                 }
-                val filtered = remember(countryQuery) { filterCountries(countryQuery) }
+                val filtered = remember(countryQuery, locale) { filterCountries(countryQuery, locale) }
                 LazyColumn(modifier = Modifier.weight(1f, fill = false)) {
                     items(filtered, key = { it.code }) { country: Country ->
                         val selected = country.code ==
                             state.numbers.getOrNull(countryRowTarget)?.country?.code
                         ListItem(
-                            headlineContent = { Text("${country.flag} ${country.name}") },
+                            headlineContent = { Text("${country.flag} ${country.displayName(locale)}") },
                             supportingContent = { Text("+${country.dialCode}") },
                             trailingContent = {
                                 if (selected) {
                                     Icon(
                                         Icons.Filled.Check,
-                                        contentDescription = "Selected"
+                                        contentDescription = stringResource(R.string.editor_selected)
                                     )
                                 }
                             },
@@ -476,15 +525,15 @@ fun EditorScreen(
     if (photoChoice) {
         AlertDialog(
             onDismissRequest = { photoChoice = false },
-            title = { Text("Contact photo") },
-            text = { Text("Take a new picture or choose one from the gallery.") },
+            title = { Text(stringResource(R.string.editor_contact_photo)) },
+            text = { Text(stringResource(R.string.editor_photo_choice_message)) },
             confirmButton = {
                 TextButton(
                     onClick = {
                         photoChoice = false
                         photoLauncher.launch("image/*")
                     }
-                ) { Text("Gallery") }
+                ) { Text(stringResource(R.string.editor_gallery)) }
             },
             dismissButton = {
                 Row {
@@ -506,11 +555,15 @@ fun EditorScreen(
                             if (cameraIntent.resolveActivity(context.packageManager) != null) {
                                 cameraUri?.let { cameraLauncher.launch(it) }
                             } else {
-                                viewModel.showMessage("No camera app found")
+                                viewModel.showMessage(
+                                    UiText.Resource(R.string.editor_no_camera_app)
+                                )
                             }
                         }
-                    ) { Text("Camera") }
-                    TextButton(onClick = { photoChoice = false }) { Text("Cancel") }
+                    ) { Text(stringResource(R.string.editor_camera)) }
+                    TextButton(onClick = { photoChoice = false }) {
+                        Text(stringResource(R.string.editor_cancel))
+                    }
                 }
             }
         )
@@ -539,10 +592,12 @@ fun EditorScreen(
                         }
                         birthdayDialog = false
                     }
-                ) { Text("OK") }
+                ) { Text(stringResource(R.string.editor_ok)) }
             },
             dismissButton = {
-                TextButton(onClick = { birthdayDialog = false }) { Text("Cancel") }
+                TextButton(onClick = { birthdayDialog = false }) {
+                    Text(stringResource(R.string.editor_cancel))
+                }
             }
         ) {
             DatePicker(state = dateState)
@@ -552,13 +607,17 @@ fun EditorScreen(
     if (abandonConfirm) {
         AlertDialog(
             onDismissRequest = { abandonConfirm = false },
-            title = { Text("Discard changes?") },
-            text = { Text("Your unsaved changes will be lost.") },
+            title = { Text(stringResource(R.string.editor_discard_changes_title)) },
+            text = { Text(stringResource(R.string.editor_discard_changes_message)) },
             confirmButton = {
-                TextButton(onClick = { abandonConfirm = false; onBack() }) { Text("Discard") }
+                TextButton(onClick = { abandonConfirm = false; onBack() }) {
+                    Text(stringResource(R.string.editor_discard))
+                }
             },
             dismissButton = {
-                TextButton(onClick = { abandonConfirm = false }) { Text("Keep editing") }
+                TextButton(onClick = { abandonConfirm = false }) {
+                    Text(stringResource(R.string.editor_keep_editing))
+                }
             }
         )
     }

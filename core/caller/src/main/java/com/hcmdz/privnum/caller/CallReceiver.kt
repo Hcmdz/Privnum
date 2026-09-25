@@ -146,7 +146,8 @@ class CallReceiver : BroadcastReceiver() {
         callerNameSuffix: String,
         callerPhoto: String
     ) {
-        val appName = getApplicationName(context)
+        val localizedContext = createLocalizedContext(context)
+        val appName = getApplicationName(localizedContext)
 
         Handler(Looper.getMainLooper()).postDelayed({
             // Check if device is locked and wake it up if needed
@@ -156,7 +157,7 @@ class CallReceiver : BroadcastReceiver() {
 
             val windowManager = context.getSystemService(Context.WINDOW_SERVICE) as WindowManager
             if (overlay?.get() == null) {
-                val inflater = LayoutInflater.from(context)
+                val inflater = LayoutInflater.from(localizedContext)
                 val overlayView = inflater.inflate(R.layout.caller_info_dialog, null)
                 overlay = WeakReference(overlayView)
             }
@@ -203,7 +204,7 @@ class CallReceiver : BroadcastReceiver() {
             overlay?.get()?.let { overlayView ->
                 // Fill layout with data first
                 fillLayout(
-                    context,
+                    localizedContext,
                     appName,
                     callerName,
                     callerAppointment,

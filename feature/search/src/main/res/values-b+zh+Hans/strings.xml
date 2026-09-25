@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="search_field_label">搜索联系人</string>
+    <string name="search_empty_prompt">输入姓名或电子邮件进行搜索</string>
+    <string name="search_no_results">未找到联系人</string>
+</resources>

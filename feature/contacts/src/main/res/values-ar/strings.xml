@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="contacts_title">جهات الاتصال</string>
+    <plurals name="contacts_selected_count">
+        <item quantity="zero">تم تحديد %d</item>
+        <item quantity="one">تم تحديد %d</item>
+        <item quantity="two">تم تحديد %d</item>
+        <item quantity="few">تم تحديد %d</item>
+        <item quantity="many">تم تحديد %d</item>
+        <item quantity="other">تم تحديد %d</item>
+    </plurals>
+    <string name="contacts_clipboard_label">جهات الاتصال</string>
+    <string name="contacts_copied_to_clipboard">تم النسخ إلى الحافظة</string>
+    <string name="contacts_share_chooser_title">مشاركة جهات الاتصال</string>
+    <string name="contacts_copy_selected_description">نسخ المحدد</string>
+    <string name="contacts_share_selected_description">مشاركة المحدد</string>
+    <string name="contacts_delete_selected_description">حذف المحدد</string>
+    <string name="contacts_lock_now_description">قفل الآن</string>
+    <string name="contacts_search_description">بحث</string>
+    <string name="contacts_settings_description">الإعدادات</string>
+    <string name="contacts_add_contact_description">إضافة جهة اتصال</string>
+    <string name="contacts_empty_title">لم يتم العثور على جهات الاتصال</string>
+    <string name="contacts_empty_subtitle">أضف أول جهة اتصال</string>
+    <string name="contacts_call_detection_off">اكتشاف المكالمات متوقف</string>
+    <string name="contacts_enable_in_settings">تفعيله في الإعدادات</string>
+    <string name="contacts_delete_dialog_title">حذف جهات الاتصال؟</string>
+    <plurals name="contacts_delete_count">
+        <item quantity="zero">سيتم حذف %d جهة اتصال نهائيًا.</item>
+        <item quantity="one">سيتم حذف %d جهة اتصال نهائيًا.</item>
+        <item quantity="two">سيتم حذف %d جهة اتصال نهائيًا.</item>
+        <item quantity="few">سيتم حذف %d جهة اتصال نهائيًا.</item>
+        <item quantity="many">سيتم حذف %d جهة اتصال نهائيًا.</item>
+        <item quantity="other">سيتم حذف %d جهة اتصال نهائيًا.</item>
+    </plurals>
+    <string name="contacts_delete">حذف</string>
+    <string name="contacts_cancel">إلغاء</string>
+    <string name="contacts_clipboard_name">الاسم</string>
+    <string name="contacts_clipboard_phone">الهاتف</string>
+    <string name="contacts_clipboard_additional_phone">الهاتف %1$d</string>
+    <string name="contacts_clipboard_email">البريد الإلكتروني</string>
+    <string name="contacts_clipboard_appointment">موعد</string>
+    <string name="contacts_clipboard_location">الموقع</string>
+    <string name="contacts_clipboard_notes">ملاحظات</string>
+    <string name="contacts_clipboard_nickname">الاسم المستعار</string>
+    <string name="contacts_clipboard_website">الموقع الإلكتروني</string>
+    <string name="contacts_clipboard_birthday">تاريخ الميلاد</string>
+    <string name="contacts_clipboard_labels">التصنيفات</string>
+    <string name="contacts_clipboard_prefix">بادئة</string>
+    <string name="contacts_clipboard_suffix">لاحقة</string>
+</resources>

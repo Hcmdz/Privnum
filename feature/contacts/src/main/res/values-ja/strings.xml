@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="contacts_title">連絡先</string>
+    <plurals name="contacts_selected_count">
+        <item quantity="one">%d 件の連絡先を選択</item>
+        <item quantity="other">%d 件の連絡先を選択</item>
+    </plurals>
+    <string name="contacts_clipboard_label">連絡先</string>
+    <string name="contacts_copied_to_clipboard">クリップボードにコピーしました</string>
+    <string name="contacts_share_chooser_title">連絡先を共有</string>
+    <string name="contacts_copy_selected_description">選択項目をコピー</string>
+    <string name="contacts_share_selected_description">選択項目を共有</string>
+    <string name="contacts_delete_selected_description">選択項目を削除</string>
+    <string name="contacts_lock_now_description">今すぐロック</string>
+    <string name="contacts_search_description">検索</string>
+    <string name="contacts_settings_description">設定</string>
+    <string name="contacts_add_contact_description">連絡先を追加</string>
+    <string name="contacts_empty_title">連絡先が見つかりません</string>
+    <string name="contacts_empty_subtitle">最初の連絡先を追加してください</string>
+    <string name="contacts_call_detection_off">着信検出はオフです</string>
+    <string name="contacts_enable_in_settings">設定で有効にする</string>
+    <string name="contacts_delete_dialog_title">連絡先を削除しますか？</string>
+    <plurals name="contacts_delete_count">
+        <item quantity="one">%d 件の連絡先が完全に削除されます。</item>
+        <item quantity="other">%d 件の連絡先が完全に削除されます。</item>
+    </plurals>
+    <string name="contacts_delete">削除</string>
+    <string name="contacts_cancel">キャンセル</string>
+    <string name="contacts_clipboard_name">名前</string>
+    <string name="contacts_clipboard_phone">電話番号</string>
+    <string name="contacts_clipboard_additional_phone">電話番号 %1$d</string>
+    <string name="contacts_clipboard_email">メール</string>
+    <string name="contacts_clipboard_appointment">予定</string>
+    <string name="contacts_clipboard_location">場所</string>
+    <string name="contacts_clipboard_notes">メモ</string>
+    <string name="contacts_clipboard_nickname">ニックネーム</string>
+    <string name="contacts_clipboard_website">ウェブサイト</string>
+    <string name="contacts_clipboard_birthday">誕生日</string>
+    <string name="contacts_clipboard_labels">ラベル</string>
+    <string name="contacts_clipboard_prefix">接頭辞</string>
+    <string name="contacts_clipboard_suffix">接尾辞</string>
+</resources>

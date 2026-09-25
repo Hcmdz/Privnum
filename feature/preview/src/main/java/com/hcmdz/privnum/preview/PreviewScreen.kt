@@ -65,6 +65,9 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.LocalLocale
+import androidx.compose.ui.res.pluralStringResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
@@ -73,7 +76,9 @@ import com.hcmdz.privnum.data.Contact
 import com.hcmdz.privnum.data.PhoneNumberRef
 import com.hcmdz.privnum.data.PhoneNumberUtils
 import com.hcmdz.privnum.ui.ContactAvatar
+import com.hcmdz.privnum.ui.resolveText
 import kotlinx.coroutines.launch
+import java.util.Locale
 
 fun isAppInstalled(context: Context, packageName: String): Boolean =
     runCatching {
@@ -110,23 +115,29 @@ fun PreviewScreen(
 ) {
     val state by viewModel.state.collectAsStateWithLifecycle()
     val context = LocalContext.current
+    val locale = LocalLocale.current.platformLocale
     val snackbar = remember { SnackbarHostState() }
     val scope = rememberCoroutineScope()
     var deleteConfirm by remember { mutableStateOf(false) }
+    val message = state.message?.resolveText()
+    val clipboardLabel = stringResource(R.string.preview_clipboard_label)
+    val copiedMessage = stringResource(R.string.preview_copied_to_clipboard)
+    val shareContactChooserTitle = stringResource(R.string.preview_share_contact_chooser)
+    val shareFailedMessage = stringResource(R.string.preview_share_failed)
 
     LaunchedEffect(contactId) { viewModel.load(contactId) }
     LaunchedEffect(state.deleted) { if (state.deleted) onBack() }
-    LaunchedEffect(state.message) {
-        state.message?.let {
-            snackbar.showSnackbar(it)
+    LaunchedEffect(message) {
+        if (message != null) {
+            snackbar.showSnackbar(message)
             viewModel.consumeMessage()
         }
     }
 
     fun copy(text: String) {
         val clipboard = context.getSystemService(ClipboardManager::class.java) ?: return
-        clipboard.setPrimaryClip(ClipData.newPlainText("contact", text))
-        scope.launch { snackbar.showSnackbar("Copied to clipboard") }
+        clipboard.setPrimaryClip(ClipData.newPlainText(clipboardLabel, text))
+        scope.launch { snackbar.showSnackbar(copiedMessage) }
     }
 
     fun openUri(uri: String) {
@@ -141,13 +152,19 @@ fun PreviewScreen(
                 title = {},
                 navigationIcon = {
                     IconButton(onClick = onBack) {
-                        Icon(Icons.AutoMirrored.Filled.ArrowBack, contentDescription = "Back")
+                        Icon(
+                            Icons.AutoMirrored.Filled.ArrowBack,
+                            contentDescription = stringResource(R.string.preview_back)
+                        )
                     }
                 },
                 actions = {
                     state.contact?.let { contact ->
                         IconButton(onClick = { onEdit(contact) }) {
-                            Icon(Icons.Filled.Edit, contentDescription = "Edit contact")
+                            Icon(
+                                Icons.Filled.Edit,
+                                contentDescription = stringResource(R.string.preview_edit_contact)
+                            )
                         }
                     }
                 }
@@ -163,7 +180,7 @@ fun PreviewScreen(
                         .fillMaxSize()
                         .padding(padding),
                     contentAlignment = Alignment.Center
-                ) { Text("Contact not found") }
+                ) { Text(stringResource(R.string.preview_contact_not_found)) }
             }
 
             contact == null -> {
@@ -178,6 +195,7 @@ fun PreviewScreen(
             else -> {
                 ContactDetails(
                     contact = contact,
+                    locale = locale,
                     photoModel = viewModel.photoModel(contact.photo),
                     modifier = Modifier
                         .fillMaxSize()
@@ -204,10 +222,10 @@ fun PreviewScreen(
                                     addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION)
                                 }
                                 context.startActivity(
-                                    Intent.createChooser(intent, "Share contact")
+                                    Intent.createChooser(intent, shareContactChooserTitle)
                                 )
                             } ?: scope.launch {
-                                snackbar.showSnackbar("Share failed")
+                                snackbar.showSnackbar(shareFailedMessage)
                             }
                         }
                     },
@@ -220,18 +238,25 @@ fun PreviewScreen(
     if (deleteConfirm) {
         AlertDialog(
             onDismissRequest = { deleteConfirm = false },
-            title = { Text("Delete contact?") },
-            text = { Text("This contact will be permanently deleted from your device") },
+            title = { Text(stringResource(R.string.preview_delete_contact_title)) },
+            text = { Text(stringResource(R.string.preview_delete_contact_message)) },
             confirmButton = {
                 TextButton(
                     onClick = {
                         viewModel.delete()
                         deleteConfirm = false
                     }
-                ) { Text("Delete", color = MaterialTheme.colorScheme.error) }
+                ) {
+                    Text(
+                        stringResource(R.string.preview_delete),
+                        color = MaterialTheme.colorScheme.error
+                    )
+                }
             },
             dismissButton = {
-                TextButton(onClick = { deleteConfirm = false }) { Text("Cancel") }
+                TextButton(onClick = { deleteConfirm = false }) {
+                    Text(stringResource(R.string.preview_cancel))
+                }
             }
         )
     }
@@ -240,6 +265,7 @@ fun PreviewScreen(
 @Composable
 private fun ContactDetails(
     contact: Contact,
+    locale: Locale,
     photoModel: Any?,
     modifier: Modifier = Modifier,
     onCall: () -> Unit,
@@ -251,7 +277,8 @@ private fun ContactDetails(
     onDelete: () -> Unit
 ) {
     val context = LocalContext.current
-    val letter = contact.displayName().firstOrNull()?.uppercaseChar() ?: '#'
+    val letter = contact.displayName().firstOrNull()
+        ?.let { it.toString().uppercase(locale).firstOrNull() } ?: '#'
 
     Column(modifier = modifier, verticalArrangement = Arrangement.spacedBy(8.dp)) {
         val (container, onContainer) = when (avatarRoleIndex(letter)) {
@@ -318,17 +345,17 @@ private fun ContactDetails(
                 .padding(vertical = 16.dp),
             horizontalArrangement = Arrangement.SpaceEvenly
         ) {
-            ActionButton("Call", Icons.Filled.Phone, onCall)
-            ActionButton("Message", Icons.Filled.Message, onMessage)
+            ActionButton(stringResource(R.string.preview_call), Icons.Filled.Phone, onCall)
+            ActionButton(stringResource(R.string.preview_message), Icons.Filled.Message, onMessage)
             if (contact.email.isNotBlank()) {
-                ActionButton("Email", Icons.Filled.Email, onEmail)
+                ActionButton(stringResource(R.string.preview_email), Icons.Filled.Email, onEmail)
             }
         }
 
         Card {
             Column {
                 Text(
-                    "Contact info",
+                    stringResource(R.string.preview_contact_info),
                     style = MaterialTheme.typography.titleMedium,
                     modifier = Modifier.padding(16.dp)
                 )
@@ -340,7 +367,13 @@ private fun ContactDetails(
                     ListItem(
                         headlineContent = { Text(formatted) },
                         supportingContent = {
-                            Text(if (index == 0) "Mobile" else "Mobile ${index + 1}")
+                            Text(
+                                pluralStringResource(
+                                    R.plurals.preview_mobile_number,
+                                    index + 1,
+                                    index + 1
+                                )
+                            )
                         },
                         leadingContent = {
                             Icon(Icons.Filled.Phone, contentDescription = null)
@@ -381,7 +414,7 @@ private fun ContactDetails(
         Card {
             Column {
                 Text(
-                    "Connected Apps",
+                    stringResource(R.string.preview_connected_apps),
                     style = MaterialTheme.typography.titleMedium,
                     modifier = Modifier.padding(16.dp)
                 )
@@ -421,7 +454,10 @@ private fun ContactDetails(
             Card {
                 Column {
                     Text(
-                        "About ${contact.name.split(" ").firstOrNull().orEmpty()}",
+                        stringResource(
+                            R.string.preview_about_contact,
+                            contact.name.split(" ").firstOrNull().orEmpty()
+                        ),
                         style = MaterialTheme.typography.titleMedium,
                         modifier = Modifier.padding(16.dp)
                     )
@@ -444,15 +480,19 @@ private fun ContactDetails(
                     }
                     if (contact.birthday.isNotBlank()) {
                         ListItem(
-                            headlineContent = { Text(formatContactDate(contact.birthday)) },
-                            supportingContent = { Text("Birthday") },
+                            headlineContent = {
+                                Text(formatContactDate(contact.birthday, locale))
+                            },
+                            supportingContent = {
+                                Text(stringResource(R.string.preview_birthday))
+                            },
                             leadingContent = {
                                 Icon(Icons.Filled.Cake, contentDescription = null)
                             },
                             modifier = Modifier.combinedClickable(
                                 onClick = {},
                                 onLongClick = {
-                                    onCopy(formatContactDate(contact.birthday))
+                                    onCopy(formatContactDate(contact.birthday, locale))
                                 }
                             )
                         )
@@ -477,7 +517,7 @@ private fun ContactDetails(
             FilledTonalButton(
                 onClick = onShare,
                 modifier = Modifier.fillMaxWidth()
-            ) { Text("Share Contact") }
+            ) { Text(stringResource(R.string.preview_share_contact_action)) }
             Button(
                 onClick = onDelete,
                 colors = ButtonDefaults.buttonColors(
@@ -485,7 +525,7 @@ private fun ContactDetails(
                     contentColor = MaterialTheme.colorScheme.onError
                 ),
                 modifier = Modifier.fillMaxWidth()
-            ) { Text("Delete Contact") }
+            ) { Text(stringResource(R.string.preview_delete_contact_action)) }
         }
     }
 }
@@ -524,11 +564,15 @@ private fun ExpandableAppRow(
             numbers.forEach { number ->
                 val formatted = "+${number.full}"
                 ListItem(
-                    headlineContent = { Text("Message  $formatted") },
+                    headlineContent = {
+                        Text(stringResource(R.string.preview_message_number, formatted))
+                    },
                     modifier = Modifier.clickable { onAction(number.full, false) }
                 )
                 ListItem(
-                    headlineContent = { Text("Voice call  $formatted") },
+                    headlineContent = {
+                        Text(stringResource(R.string.preview_voice_call_number, formatted))
+                    },
                     modifier = Modifier.clickable { onAction(number.full, true) }
                 )
             }

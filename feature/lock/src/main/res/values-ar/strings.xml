@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="lock_confirm_pin">تأكيد رمز الدخول</string>
+    <string name="lock_choose_pin">اختر رمز دخول مكونًا من 4 أرقام</string>
+    <string name="lock_enter_pin">أدخل رمز الدخول</string>
+    <string name="lock_unlock_with_biometrics">فتح القفل بالمصادقة الحيوية</string>
+    <string name="lock_biometric_prompt_title">فتح قفل Privnum</string>
+    <string name="lock_biometric_prompt_negative">استخدام رمز الدخول</string>
+    <string name="lock_error_too_many_attempts">محاولات كثيرة، حاول مرة أخرى لاحقًا</string>
+    <string name="lock_error_invalid_pin">رمز الدخول غير صالح</string>
+    <string name="lock_error_pins_do_not_match">رمزا الدخول غير متطابقين</string>
+    <string name="lock_error_biometric_failed">فشلت المصادقة الحيوية</string>
+</resources>

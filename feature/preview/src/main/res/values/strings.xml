@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="preview_back">Back</string>
+    <string name="preview_call">Call</string>
+    <string name="preview_cancel">Cancel</string>
+    <string name="preview_copied_to_clipboard">Copied to clipboard</string>
+    <string name="preview_contact_info">Contact info</string>
+    <string name="preview_contact_not_found">Contact not found</string>
+    <string name="preview_delete">Delete</string>
+    <string name="preview_delete_contact_action">Delete Contact</string>
+    <string name="preview_delete_contact_message">This contact will be permanently deleted from your device</string>
+    <string name="preview_delete_contact_title">Delete contact?</string>
+    <string name="preview_delete_failed">Delete failed</string>
+    <string name="preview_edit_contact">Edit contact</string>
+    <string name="preview_email">Email</string>
+    <string name="preview_message">Message</string>
+    <string name="preview_share_contact_action">Share Contact</string>
+    <string name="preview_share_contact_chooser">Share contact</string>
+    <string name="preview_share_failed">Share failed</string>
+    <string name="preview_connected_apps">Connected Apps</string>
+    <string name="preview_about_contact">About %1$s</string>
+    <string name="preview_birthday">Birthday</string>
+    <string name="preview_message_number">Message %1$s</string>
+    <string name="preview_voice_call_number">Voice call %1$s</string>
+    <string name="preview_clipboard_label">Contact</string>
+    <plurals name="preview_mobile_number">
+        <item quantity="one">Mobile</item>
+        <item quantity="other">Mobile %1$d</item>
+    </plurals>
+</resources>

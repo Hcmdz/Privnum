@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_icon_description">Ikon aplikasi</string>
+    <string name="close_button_description">Tutup</string>
+    <string name="minimize_button_description">Perkecil</string>
+    <string name="unknown_caller">Penelepon tidak dikenal</string>
+    <string name="close_button_icon" translatable="false">✕</string>
+    <string name="minimize_button_icon" translatable="false">_</string>
+    <string name="app_name" translatable="false">Privnum</string>
+    <string name="caller_photo_description">Foto penelepon</string>
+    <string name="appointment">janji</string>
+    <string name="city">kota</string>
+    <string name="mobile_label">Seluler</string>
+</resources>

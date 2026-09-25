@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="search_field_label">연락처 검색</string>
+    <string name="search_empty_prompt">이름 또는 이메일을 입력해 검색하세요</string>
+    <string name="search_no_results">연락처를 찾을 수 없음</string>
+</resources>

@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="preview_back">Kembali</string>
+    <string name="preview_call">Panggil</string>
+    <string name="preview_cancel">Batal</string>
+    <string name="preview_copied_to_clipboard">Disalin ke papan klip</string>
+    <string name="preview_contact_info">Informasi kontak</string>
+    <string name="preview_contact_not_found">Kontak tidak ditemukan</string>
+    <string name="preview_delete">Hapus</string>
+    <string name="preview_delete_contact_action">Hapus kontak</string>
+    <string name="preview_delete_contact_message">Kontak ini akan dihapus permanen dari perangkat Anda</string>
+    <string name="preview_delete_contact_title">Hapus kontak?</string>
+    <string name="preview_delete_failed">Gagal menghapus</string>
+    <string name="preview_edit_contact">Edit kontak</string>
+    <string name="preview_email">Email</string>
+    <string name="preview_message">Pesan</string>
+    <string name="preview_share_contact_action">Bagikan kontak</string>
+    <string name="preview_share_contact_chooser">Bagikan kontak</string>
+    <string name="preview_share_failed">Gagal membagikan</string>
+    <string name="preview_connected_apps">Aplikasi terhubung</string>
+    <string name="preview_about_contact">Tentang %1$s</string>
+    <string name="preview_birthday">Ulang tahun</string>
+    <string name="preview_message_number">Pesan %1$s</string>
+    <string name="preview_voice_call_number">Panggilan suara %1$s</string>
+    <string name="preview_clipboard_label">Kontak</string>
+    <plurals name="preview_mobile_number">
+        <item quantity="one">Seluler</item>
+        <item quantity="other">Seluler %1$d</item>
+    </plurals>
+</resources>

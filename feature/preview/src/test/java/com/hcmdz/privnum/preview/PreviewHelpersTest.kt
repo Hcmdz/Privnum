@@ -3,22 +3,28 @@ package com.hcmdz.privnum.preview
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertTrue
 import org.junit.Test
+import java.util.Locale
 
 class PreviewHelpersTest {
 
     @Test
     fun `month-day formats without year`() {
-        assertEquals("May 4", formatContactDate("--05-04"))
+        assertEquals("May 4", formatContactDate("--05-04", Locale.ENGLISH))
     }
 
     @Test
     fun `full date formats with year`() {
-        assertEquals("May 4, 2023", formatContactDate("2023-05-04"))
+        assertEquals("May 4, 2023", formatContactDate("2023-05-04", Locale.ENGLISH))
+    }
+
+    @Test
+    fun `date uses requested locale`() {
+        assertEquals("mai 4", formatContactDate("--05-04", Locale.FRENCH))
     }
 
     @Test
     fun `garbage date passes through`() {
-        assertEquals("soon", formatContactDate("soon"))
+        assertEquals("soon", formatContactDate("soon", Locale.ENGLISH))
     }
 
     @Test

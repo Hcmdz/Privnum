@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="preview_back">返回</string>
+    <string name="preview_call">拨打</string>
+    <string name="preview_cancel">取消</string>
+    <string name="preview_copied_to_clipboard">已复制到剪贴板</string>
+    <string name="preview_contact_info">联系人信息</string>
+    <string name="preview_contact_not_found">未找到联系人</string>
+    <string name="preview_delete">删除</string>
+    <string name="preview_delete_contact_action">删除联系人</string>
+    <string name="preview_delete_contact_message">此联系人将从您的设备中永久删除。</string>
+    <string name="preview_delete_contact_title">删除联系人？</string>
+    <string name="preview_delete_failed">删除失败</string>
+    <string name="preview_edit_contact">编辑联系人</string>
+    <string name="preview_email">发送邮件</string>
+    <string name="preview_message">发消息</string>
+    <string name="preview_share_contact_action">分享联系人</string>
+    <string name="preview_share_contact_chooser">分享联系人</string>
+    <string name="preview_share_failed">分享失败</string>
+    <string name="preview_connected_apps">已连接的应用</string>
+    <string name="preview_about_contact">关于 %1$s</string>
+    <string name="preview_birthday">生日</string>
+    <string name="preview_message_number">发消息至 %1$s</string>
+    <string name="preview_voice_call_number">语音通话 %1$s</string>
+    <string name="preview_clipboard_label">联系人</string>
+    <plurals name="preview_mobile_number">
+        <item quantity="one">手机</item>
+        <item quantity="other">手机 %1$d</item>
+    </plurals>
+</resources>

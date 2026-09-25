@@ -13,6 +13,7 @@ import com.hcmdz.privnum.data.PasscodeStore
 import com.hcmdz.privnum.data.SettingsStore
 import com.hcmdz.privnum.data.ThemeMode
 import com.hcmdz.privnum.data.VcfMapper
+import com.hcmdz.privnum.ui.UiText
 import dagger.hilt.android.lifecycle.HiltViewModel
 import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.Dispatchers
@@ -37,7 +38,7 @@ data class SettingsUiState(
     val defaultRegion: String? = null,
     val dynamicColor: Boolean = true,
     val amoledBlack: Boolean = false,
-    val message: String? = null
+    val message: UiText? = null
 )
 
 enum class PinCheck { OK, INVALID, LOCKED_OUT }
@@ -45,13 +46,13 @@ enum class PinCheck { OK, INVALID, LOCKED_OUT }
 /** ISO regions offered as parsing default (null = automatic from SIM). */
 val DEFAULT_REGION_OPTIONS = listOf("DZ", "FR", "MA", "TN", "ES", "IT", "DE", "GB", "US", "CA")
 
-fun AutoLockTimeout.label(): String = when (this) {
-    AutoLockTimeout.DISABLED -> "Disabled"
-    AutoLockTimeout.IMMEDIATELY -> "Immediately"
-    AutoLockTimeout.MIN_1 -> "1 minute"
-    AutoLockTimeout.MIN_5 -> "5 minutes"
-    AutoLockTimeout.HOUR_1 -> "1 hour"
-    AutoLockTimeout.HOUR_5 -> "5 hours"
+fun AutoLockTimeout.label(): UiText = when (this) {
+    AutoLockTimeout.DISABLED -> UiText.Resource(R.string.settings_auto_lock_disabled)
+    AutoLockTimeout.IMMEDIATELY -> UiText.Resource(R.string.settings_auto_lock_immediately)
+    AutoLockTimeout.MIN_1 -> UiText.Resource(R.string.settings_auto_lock_minute)
+    AutoLockTimeout.MIN_5 -> UiText.Resource(R.string.settings_auto_lock_minutes)
+    AutoLockTimeout.HOUR_1 -> UiText.Resource(R.string.settings_auto_lock_hour)
+    AutoLockTimeout.HOUR_5 -> UiText.Resource(R.string.settings_auto_lock_hours)
 }
 
 private data class SecurityState(
@@ -64,7 +65,7 @@ private data class AuxState(
     val lock: AutoLockTimeout = AutoLockTimeout.MIN_5,
     val region: String? = null,
     val sec: SecurityState = SecurityState(),
-    val msg: String? = null,
+    val msg: UiText? = null,
     val dynamicColor: Boolean = true,
     val amoledBlack: Boolean = false
 )
@@ -87,7 +88,7 @@ class SettingsViewModel @Inject constructor(
 ) : ViewModel() {
     private val autoLock = MutableStateFlow(passcode.autoLockTimeout)
     private val security = MutableStateFlow(readSecurity())
-    private val message = MutableStateFlow<String?>(null)
+    private val message = MutableStateFlow<UiText?>(null)
 
     val uiState: StateFlow<SettingsUiState> =
         combine(
@@ -170,12 +171,12 @@ class SettingsViewModel @Inject constructor(
                 }.getOrNull()
             }
             if (text.isNullOrBlank()) {
-                message.value = "Cannot read the selected file"
+                message.value = UiText.Resource(R.string.settings_message_cannot_read_file)
                 return@launch
             }
             val contacts = VcfMapper.parseVcf(text, defaultRegion)
             if (contacts.isEmpty()) {
-                message.value = "No contacts found in the selected file"
+                message.value = UiText.Resource(R.string.settings_message_no_contacts_found)
                 return@launch
             }
             val normalized = withContext(Dispatchers.IO) {
@@ -187,7 +188,11 @@ class SettingsViewModel @Inject constructor(
                 }
             }
             val added = repository.addAll(normalized)
-            message.value = "$added contacts imported"
+            message.value = UiText.Plural(
+                R.plurals.settings_contacts_imported,
+                added,
+                listOf(added)
+            )
         }
     }
 
@@ -195,7 +200,7 @@ class SettingsViewModel @Inject constructor(
         viewModelScope.launch {
             val contacts = repository.getAll()
             if (contacts.isEmpty()) {
-                message.value = "No contacts to export"
+                message.value = UiText.Resource(R.string.settings_message_no_contacts_to_export)
                 return@launch
             }
             val ok = withContext(Dispatchers.IO) {
@@ -208,14 +213,22 @@ class SettingsViewModel @Inject constructor(
                     } != null
                 }.getOrDefault(false)
             }
-            message.value = if (ok) "${contacts.size} contacts exported" else "Export failed"
+            message.value = if (ok) {
+                UiText.Plural(
+                    R.plurals.settings_contacts_exported,
+                    contacts.size,
+                    listOf(contacts.size)
+                )
+            } else {
+                UiText.Resource(R.string.settings_message_export_failed)
+            }
         }
     }
 
     fun clearAllContacts() {
         viewModelScope.launch {
             repository.clearAll()
-            message.value = "All contacts deleted"
+            message.value = UiText.Resource(R.string.settings_message_contacts_deleted)
         }
     }
 
@@ -241,7 +254,7 @@ class SettingsViewModel @Inject constructor(
             }
             passcode.clear()
             security.value = readSecurity()
-            message.value = "Passcode removed"
+            message.value = UiText.Resource(R.string.settings_message_passcode_removed)
             done(PinCheck.OK)
         }
     }

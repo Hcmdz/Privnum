@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_icon_description">أيقونة التطبيق</string>
+    <string name="close_button_description">إغلاق</string>
+    <string name="minimize_button_description">تصغير</string>
+    <string name="unknown_caller">متصل غير معروف</string>
+    <string name="close_button_icon" translatable="false">✕</string>
+    <string name="minimize_button_icon" translatable="false">_</string>
+    <string name="app_name" translatable="false">Privnum</string>
+    <string name="caller_photo_description">صورة المتصل</string>
+    <string name="appointment">موعد</string>
+    <string name="city">مدينة</string>
+    <string name="mobile_label">الهاتف المحمول</string>
+</resources>

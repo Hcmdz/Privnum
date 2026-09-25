@@ -23,6 +23,22 @@ android {
         }
     }
 
+    androidResources {
+        localeFilters += listOf(
+            "en",
+            "fr",
+            "es",
+            "de",
+            "pt-rBR",
+            "ar",
+            "hi",
+            "in",
+            "ja",
+            "ko",
+            "b+zh+Hans"
+        )
+    }
+
     signingConfigs {
         create("release") {
             val storeFilePath = providers.gradleProperty("RELEASE_STORE_FILE").getOrElse("")
@@ -102,6 +118,7 @@ dependencies {
     implementation(libs.compose.material.icons.extended)
 
     implementation(libs.activity.compose)
+    implementation(libs.appcompat)
     implementation(libs.fragment.ktx)
     implementation(libs.lifecycle.runtime.compose)
     implementation(libs.lifecycle.runtime.ktx)

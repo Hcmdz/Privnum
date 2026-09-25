@@ -9,6 +9,7 @@ import com.hcmdz.privnum.data.Contact
 import com.hcmdz.privnum.data.ContactPhotoStore
 import com.hcmdz.privnum.data.ContactRepository
 import com.hcmdz.privnum.data.VcfMapper
+import com.hcmdz.privnum.ui.UiText
 import dagger.hilt.android.lifecycle.HiltViewModel
 import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.Dispatchers
@@ -28,18 +29,17 @@ import javax.inject.Inject
 data class PreviewUiState(
     val contact: Contact? = null,
     val notFound: Boolean = false,
-    val message: String? = null,
+    val message: UiText? = null,
     val deleted: Boolean = false
 )
 
-/** "--MM-DD" -> "May 4"; full ISO date -> "May 4, 2026"; anything else untouched. */
-fun formatContactDate(raw: String): String {
+fun formatContactDate(raw: String, locale: Locale): String {
     val trimmed = raw.trim()
     return runCatching {
         if (trimmed.startsWith("--")) {
-            MonthDay.parse(trimmed).format(DateTimeFormatter.ofPattern("MMMM d", Locale.US))
+            MonthDay.parse(trimmed).format(DateTimeFormatter.ofPattern("MMMM d", locale))
         } else {
-            LocalDate.parse(trimmed).format(DateTimeFormatter.ofPattern("MMMM d, yyyy", Locale.US))
+            LocalDate.parse(trimmed).format(DateTimeFormatter.ofPattern("MMMM d, yyyy", locale))
         }
     }.getOrDefault(trimmed)
 }
@@ -96,7 +96,9 @@ class PreviewViewModel @Inject constructor(
             if (repository.delete(contact.id)) {
                 _state.update { it.copy(deleted = true) }
             } else {
-                _state.update { it.copy(message = "Delete failed") }
+                _state.update {
+                    it.copy(message = UiText.Resource(R.string.preview_delete_failed))
+                }
             }
         }
     }

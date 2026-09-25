@@ -52,7 +52,8 @@ fun AppNav(
     dynamicColor: Boolean,
     amoledBlack: Boolean,
     passcode: PasscodeStore,
-    onUnlocked: () -> Unit
+    onUnlocked: () -> Unit,
+    onLanguageSelected: (String?) -> Unit
 ) {
     val backStack = rememberNavBackStack(if (startLocked) LockSetup else Contacts)
     var newContactNonce by remember { mutableIntStateOf(0) }
@@ -128,7 +129,8 @@ fun AppNav(
                 entry<Settings> {
                     SettingsScreen(
                         onBack = { backStack.removeLastOrNull() },
-                        onOpenLock = { backStack.add(LockSetup) }
+                        onOpenLock = { backStack.add(LockSetup) },
+                        onLanguageSelected = onLanguageSelected
                     )
                 }
                 entry<LockSetup> {

@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="lock_confirm_pin">Konfirmasi PIN</string>
+    <string name="lock_choose_pin">Pilih PIN 4 digit</string>
+    <string name="lock_enter_pin">Masukkan PIN</string>
+    <string name="lock_unlock_with_biometrics">Buka dengan biometrik</string>
+    <string name="lock_biometric_prompt_title">Buka Privnum</string>
+    <string name="lock_biometric_prompt_negative">Gunakan PIN</string>
+    <string name="lock_error_too_many_attempts">Terlalu banyak percobaan, coba lagi nanti</string>
+    <string name="lock_error_invalid_pin">PIN tidak valid</string>
+    <string name="lock_error_pins_do_not_match">PIN tidak cocok</string>
+    <string name="lock_error_biometric_failed">Biometrik gagal</string>
+</resources>

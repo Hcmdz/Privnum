@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="preview_back">뒤로</string>
+    <string name="preview_call">전화 걸기</string>
+    <string name="preview_cancel">취소</string>
+    <string name="preview_copied_to_clipboard">클립보드에 복사됨</string>
+    <string name="preview_contact_info">연락처 정보</string>
+    <string name="preview_contact_not_found">연락처를 찾을 수 없음</string>
+    <string name="preview_delete">삭제</string>
+    <string name="preview_delete_contact_action">연락처 삭제</string>
+    <string name="preview_delete_contact_message">이 연락처는 기기에서 영구히 삭제됩니다</string>
+    <string name="preview_delete_contact_title">연락처를 삭제할까요?</string>
+    <string name="preview_delete_failed">삭제 실패</string>
+    <string name="preview_edit_contact">연락처 편집</string>
+    <string name="preview_email">이메일</string>
+    <string name="preview_message">메시지</string>
+    <string name="preview_share_contact_action">연락처 공유</string>
+    <string name="preview_share_contact_chooser">연락처 공유</string>
+    <string name="preview_share_failed">공유 실패</string>
+    <string name="preview_connected_apps">연결된 앱</string>
+    <string name="preview_about_contact">%1$s 정보</string>
+    <string name="preview_birthday">생일</string>
+    <string name="preview_message_number">%1$s에게 메시지</string>
+    <string name="preview_voice_call_number">%1$s에게 음성 통화</string>
+    <string name="preview_clipboard_label">연락처</string>
+    <plurals name="preview_mobile_number">
+        <item quantity="one">모바일</item>
+        <item quantity="other">모바일 %1$d</item>
+    </plurals>
+</resources>

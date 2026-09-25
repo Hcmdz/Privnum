@@ -7,6 +7,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.hcmdz.privnum.data.AutoLockTimeout
 import com.hcmdz.privnum.data.PasscodeStore
+import com.hcmdz.privnum.ui.UiText
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -19,7 +20,7 @@ import javax.inject.Inject
 data class LockUiState(
     val mode: LockMode = LockMode.VERIFY,
     val pin: String = "",
-    val error: String? = null,
+    val error: UiText? = null,
     val biometricAvailable: Boolean = false,
     val unlocked: Boolean = false,
     val autoLockTimeout: AutoLockTimeout = AutoLockTimeout.MIN_5,
@@ -79,7 +80,7 @@ class LockViewModel @Inject constructor(
         when (current.mode) {
             LockMode.VERIFY -> {
                 if (store.isLockedOut()) {
-                    _state.update { it.copy(error = "Too many attempts, try again later", pin = "") }
+                    _state.update { it.copy(error = UiText.Resource(R.string.lock_error_too_many_attempts), pin = "") }
                     return
                 }
                 viewModelScope.launch {
@@ -87,7 +88,7 @@ class LockViewModel @Inject constructor(
                         store.lastUnlockedAt = System.currentTimeMillis()
                         _state.update { it.copy(unlocked = true, pin = "") }
                     } else {
-                        _state.update { it.copy(error = "Invalid PIN", pin = "") }
+                        _state.update { it.copy(error = UiText.Resource(R.string.lock_error_invalid_pin), pin = "") }
                     }
                 }
             }
@@ -110,7 +111,7 @@ class LockViewModel @Inject constructor(
                     }
                 } else {
                     firstPin = ""
-                    _state.update { it.copy(error = "PINs do not match", pin = "", mode = LockMode.SETUP) }
+                    _state.update { it.copy(error = UiText.Resource(R.string.lock_error_pins_do_not_match), pin = "", mode = LockMode.SETUP) }
                 }
             }
         }
@@ -182,7 +183,7 @@ class LockViewModel @Inject constructor(
                 store.lastUnlockedAt = System.currentTimeMillis()
                 _state.update { it.copy(unlocked = true) }
             } else {
-                _state.update { it.copy(error = "Biometric failed", pin = "") }
+                _state.update { it.copy(error = UiText.Resource(R.string.lock_error_biometric_failed), pin = "") }
             }
         }
     }

@@ -1,6 +1,7 @@
 package com.hcmdz.privnum.editor
 
 import com.hcmdz.privnum.data.Countries
+import com.hcmdz.privnum.ui.UiText
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertFalse
 import org.junit.Assert.assertTrue
@@ -31,7 +32,15 @@ class EditorStateTest {
             name = "Ann",
             numbers = listOf(NumberRow(country = Countries.getByCode("DZ")))
         )
-        assertTrue(base.inputsEqual(base.copy(message = "hi", saved = true, notFound = true)))
+        assertTrue(
+            base.inputsEqual(
+                base.copy(
+                    message = UiText.Resource(R.string.editor_error_name_too_short),
+                    saved = true,
+                    notFound = true
+                )
+            )
+        )
         assertFalse(base.inputsEqual(base.copy(name = "Bob")))
         assertFalse(
             base.inputsEqual(

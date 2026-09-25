@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="preview_back">رجوع</string>
+    <string name="preview_call">مكالمة</string>
+    <string name="preview_cancel">إلغاء</string>
+    <string name="preview_copied_to_clipboard">تم النسخ إلى الحافظة</string>
+    <string name="preview_contact_info">معلومات جهة الاتصال</string>
+    <string name="preview_contact_not_found">لم يتم العثور على جهة الاتصال</string>
+    <string name="preview_delete">حذف</string>
+    <string name="preview_delete_contact_action">حذف جهة الاتصال</string>
+    <string name="preview_delete_contact_message">سيتم حذف جهة الاتصال هذه نهائيًا من جهازك</string>
+    <string name="preview_delete_contact_title">حذف جهة الاتصال؟</string>
+    <string name="preview_delete_failed">تعذر الحذف</string>
+    <string name="preview_edit_contact">تحرير جهة الاتصال</string>
+    <string name="preview_email">البريد الإلكتروني</string>
+    <string name="preview_message">رسالة</string>
+    <string name="preview_share_contact_action">مشاركة جهة الاتصال</string>
+    <string name="preview_share_contact_chooser">مشاركة جهة الاتصال</string>
+    <string name="preview_share_failed">تعذرت المشاركة</string>
+    <string name="preview_connected_apps">التطبيقات المتصلة</string>
+    <string name="preview_about_contact">نبذة عن %1$s</string>
+    <string name="preview_birthday">تاريخ الميلاد</string>
+    <string name="preview_message_number">رسالة %1$s</string>
+    <string name="preview_voice_call_number">مكالمة صوتية %1$s</string>
+    <string name="preview_clipboard_label">جهة الاتصال</string>
+    <plurals name="preview_mobile_number">
+        <item quantity="zero">الهاتف المحمول %1$d</item>
+        <item quantity="one">الهاتف المحمول</item>
+        <item quantity="two">الهاتف المحمول %1$d</item>
+        <item quantity="few">الهاتف المحمول %1$d</item>
+        <item quantity="many">الهاتف المحمول %1$d</item>
+        <item quantity="other">الهاتف المحمول %1$d</item>
+    </plurals>
+</resources>

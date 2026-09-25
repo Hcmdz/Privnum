@@ -44,6 +44,9 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.LocalLocale
+import androidx.compose.ui.res.pluralStringResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.core.content.FileProvider
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
@@ -69,11 +72,42 @@ fun ContactsScreen(
 ) {
     val state by viewModel.uiState.collectAsStateWithLifecycle()
     val context = LocalContext.current
+    val locale = LocalLocale.current.platformLocale
     val snackbar = remember { SnackbarHostState() }
     val scope = rememberCoroutineScope()
     var deleteConfirm by remember { mutableStateOf(false) }
     var passcodeSet by remember { mutableStateOf(false) }
     var screeningHeld by remember { mutableStateOf(true) }
+
+    val contactsTitle = stringResource(R.string.contacts_title)
+    val selectedTitle = pluralStringResource(
+        R.plurals.contacts_selected_count,
+        state.selectedCount,
+        state.selectedCount
+    )
+    val clipboardLabel = stringResource(R.string.contacts_clipboard_label)
+    val copiedMessage = stringResource(R.string.contacts_copied_to_clipboard)
+    val shareChooserTitle = stringResource(R.string.contacts_share_chooser_title)
+    val deleteMessage = pluralStringResource(
+        R.plurals.contacts_delete_count,
+        state.selectedCount,
+        state.selectedCount
+    )
+    val clipboardLabels = ContactClipboardLabels(
+        name = stringResource(R.string.contacts_clipboard_name),
+        phone = stringResource(R.string.contacts_clipboard_phone),
+        additionalPhone = stringResource(R.string.contacts_clipboard_additional_phone),
+        email = stringResource(R.string.contacts_clipboard_email),
+        appointment = stringResource(R.string.contacts_clipboard_appointment),
+        location = stringResource(R.string.contacts_clipboard_location),
+        notes = stringResource(R.string.contacts_clipboard_notes),
+        nickname = stringResource(R.string.contacts_clipboard_nickname),
+        website = stringResource(R.string.contacts_clipboard_website),
+        birthday = stringResource(R.string.contacts_clipboard_birthday),
+        labels = stringResource(R.string.contacts_clipboard_labels),
+        prefix = stringResource(R.string.contacts_clipboard_prefix),
+        suffix = stringResource(R.string.contacts_clipboard_suffix)
+    )
 
     LifecycleEventEffect(Lifecycle.Event.ON_RESUME) {
         passcodeSet = viewModel.isPasscodeSet()
@@ -90,9 +124,12 @@ fun ContactsScreen(
         val clipboard =
             context.getSystemService(ClipboardManager::class.java) ?: return
         clipboard.setPrimaryClip(
-            ClipData.newPlainText("contacts", contactClipboardLines(selectedContacts()))
+            ClipData.newPlainText(
+                clipboardLabel,
+                contactClipboardLines(selectedContacts(), clipboardLabels)
+            )
         )
-        scope.launch { snackbar.showSnackbar("Copied to clipboard") }
+        scope.launch { snackbar.showSnackbar(copiedMessage) }
     }
 
     fun shareSelected() {
@@ -109,7 +146,7 @@ fun ContactsScreen(
                 putExtra(Intent.EXTRA_STREAM, uri)
                 addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION)
             }
-            context.startActivity(Intent.createChooser(intent, "Share contacts"))
+            context.startActivity(Intent.createChooser(intent, shareChooserTitle))
         }
     }
 
@@ -117,30 +154,30 @@ fun ContactsScreen(
         topBar = {
             TopAppBar(
                 title = {
-                    Text(if (state.selectionMode) "${state.selectedCount} selected" else "Contacts")
+                    Text(if (state.selectionMode) selectedTitle else contactsTitle)
                 },
                 actions = {
                     if (state.selectionMode) {
                         IconButton(onClick = { copySelected() }) {
-                            Icon(Icons.Default.ContentCopy, contentDescription = "Copy selected")
+                            Icon(Icons.Default.ContentCopy, contentDescription = stringResource(R.string.contacts_copy_selected_description))
                         }
                         IconButton(onClick = { shareSelected() }) {
-                            Icon(Icons.Default.Share, contentDescription = "Share selected")
+                            Icon(Icons.Default.Share, contentDescription = stringResource(R.string.contacts_share_selected_description))
                         }
                         IconButton(onClick = { deleteConfirm = true }) {
-                            Icon(Icons.Default.Delete, contentDescription = "Delete selected")
+                            Icon(Icons.Default.Delete, contentDescription = stringResource(R.string.contacts_delete_selected_description))
                         }
                     } else {
                         if (passcodeSet) {
                             IconButton(onClick = onLockNow) {
-                                Icon(Icons.Default.Lock, contentDescription = "Lock now")
+                                Icon(Icons.Default.Lock, contentDescription = stringResource(R.string.contacts_lock_now_description))
                             }
                         }
                         IconButton(onClick = onOpenSearch) {
-                            Icon(Icons.Default.Search, contentDescription = "Search")
+                            Icon(Icons.Default.Search, contentDescription = stringResource(R.string.contacts_search_description))
                         }
                         IconButton(onClick = onOpenSettings) {
-                            Icon(Icons.Default.Settings, contentDescription = "Settings")
+                            Icon(Icons.Default.Settings, contentDescription = stringResource(R.string.contacts_settings_description))
                         }
                     }
                 }
@@ -150,7 +187,7 @@ fun ContactsScreen(
             FloatingActionButton(onClick = {
                 if (state.selectionMode) viewModel.clearSelection() else onAdd()
             }) {
-                Icon(Icons.Default.Add, contentDescription = "Add contact")
+                Icon(Icons.Default.Add, contentDescription = stringResource(R.string.contacts_add_contact_description))
             }
         },
         snackbarHost = { SnackbarHost(snackbar) }
@@ -163,12 +200,12 @@ fun ContactsScreen(
                     .padding(32.dp),
                 verticalArrangement = Arrangement.spacedBy(8.dp)
             ) {
-                Text("No contacts found")
-                Text("Add your first contact")
+                Text(stringResource(R.string.contacts_empty_title))
+                Text(stringResource(R.string.contacts_empty_subtitle))
                 if (!screeningHeld) {
-                    Text("Call detection is off")
+                    Text(stringResource(R.string.contacts_call_detection_off))
                     OutlinedButton(onClick = onOpenSettings) {
-                        Text("Enable in Settings")
+                        Text(stringResource(R.string.contacts_enable_in_settings))
                     }
                 }
             }
@@ -180,7 +217,7 @@ fun ContactsScreen(
             ) {
                 var lastLetter = ""
                 state.items.forEach { item ->
-                    val letter = item.contact.name.firstOrNull()?.uppercase() ?: "#"
+                    val letter = item.contact.displayName().firstOrNull()?.uppercase(locale) ?: "#"
                     if (letter != lastLetter) {
                         lastLetter = letter
                         stickyHeader {
@@ -216,20 +253,20 @@ fun ContactsScreen(
     if (deleteConfirm) {
         AlertDialog(
             onDismissRequest = { deleteConfirm = false },
-            title = { Text("Delete contacts?") },
-            text = {
-                Text("${state.selectedCount} contacts will be permanently deleted.")
-            },
+            title = { Text(stringResource(R.string.contacts_delete_dialog_title)) },
+            text = { Text(deleteMessage) },
             confirmButton = {
                 TextButton(
                     onClick = {
                         viewModel.deleteSelected()
                         deleteConfirm = false
                     }
-                ) { Text("Delete") }
+                ) { Text(stringResource(R.string.contacts_delete)) }
             },
             dismissButton = {
-                TextButton(onClick = { deleteConfirm = false }) { Text("Cancel") }
+                TextButton(onClick = { deleteConfirm = false }) {
+                    Text(stringResource(R.string.contacts_cancel))
+                }
             }
         )
     }

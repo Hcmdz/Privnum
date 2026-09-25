@@ -1,0 +1,99 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="language">Sprache</string>
+    <string name="language_system">System</string>
+    <string name="close">Schließen</string>
+    <string name="settings_title">Einstellungen</string>
+    <string name="settings_back">Zurück</string>
+    <string name="settings_general">Allgemein</string>
+    <string name="settings_show_incoming_popup">Popup für eingehende Anrufe anzeigen</string>
+    <string name="settings_show_outgoing_popup">Popup für ausgehende Anrufe anzeigen</string>
+    <string name="settings_call_detection">Anruferkennung</string>
+    <string name="settings_call_screening_role">Rolle für Anrufscreening</string>
+    <string name="settings_request">Anfragen</string>
+    <string name="settings_display_over_other_apps">Über anderen Apps anzeigen</string>
+    <string name="settings_grant">Erlauben</string>
+    <string name="settings_phone_state_permission">Berechtigung für Telefonstatus</string>
+    <string name="settings_granted">Erteilt</string>
+    <string name="settings_not_granted">Nicht erteilt</string>
+    <string name="settings_theme">Design</string>
+    <string name="settings_theme_light">Hell</string>
+    <string name="settings_theme_dark">Dunkel</string>
+    <string name="settings_theme_system">System</string>
+    <string name="settings_dynamic_colors">Dynamische Farben</string>
+    <string name="settings_android_12_plus_only">Nur Android 12+</string>
+    <string name="settings_pure_black_amoled">Reines Schwarz (AMOLED)</string>
+    <string name="settings_dark_theme_only">Nur dunkles Design</string>
+    <string name="settings_security">Sicherheit</string>
+    <string name="settings_passcode_lock">Codesperre</string>
+    <string name="settings_on">Ein</string>
+    <string name="settings_off">Aus</string>
+    <string name="settings_remove">Entfernen</string>
+    <string name="settings_change">Ändern</string>
+    <string name="settings_set_up">Einrichten</string>
+    <string name="settings_auto_lock">Automatische Sperre</string>
+    <string name="settings_set_passcode_first">Legen Sie zuerst einen Code fest</string>
+    <string name="settings_unlock_with_biometrics">Mit biometrischer Authentifizierung entsperren</string>
+    <string name="settings_not_available_on_device">Auf diesem Gerät nicht verfügbar</string>
+    <string name="settings_number_parsing">Nummernanalyse</string>
+    <string name="settings_default_region">Standardregion</string>
+    <string name="settings_default_region_automatic">Automatisch (SIM)</string>
+    <string name="settings_contacts_backup">Kontaktsicherung</string>
+    <string name="settings_import_vcf">VCF importieren</string>
+    <string name="settings_export_vcf">VCF exportieren</string>
+    <plurals name="settings_contacts_available">
+        <item quantity="one">%1$d Kontakt verfügbar</item>
+        <item quantity="other">%1$d Kontakte verfügbar</item>
+    </plurals>
+    <string name="settings_delete_all_contacts">Alle Kontakte löschen</string>
+    <string name="settings_about">Über</string>
+    <string name="settings_app_name" translatable="false">Privnum</string>
+    <string name="settings_version">Version %1$s</string>
+    <string name="settings_version_unknown">unbekannt</string>
+    <string name="settings_based_on">Basierend auf Alternate von BioHazard786</string>
+    <string name="settings_readme" translatable="false">README</string>
+    <string name="settings_report_issue">Problem melden</string>
+    <string name="settings_support">Support</string>
+    <string name="settings_legal">Rechtliche Hinweise</string>
+    <string name="settings_privacy">Datenschutz</string>
+    <string name="settings_terms">Bedingungen</string>
+    <string name="settings_developed_by">Entwickelt von</string>
+    <string name="settings_author" translatable="false">Hcmdz</string>
+    <string name="settings_contact">Kontakt</string>
+    <string name="settings_github" translatable="false">Github</string>
+    <string name="settings_auto_lock_disabled">Deaktiviert</string>
+    <string name="settings_auto_lock_immediately">Sofort</string>
+    <string name="settings_auto_lock_minute">1 Minute</string>
+    <string name="settings_auto_lock_minutes">5 Minuten</string>
+    <string name="settings_auto_lock_hour">1 Stunde</string>
+    <string name="settings_auto_lock_hours">5 Stunden</string>
+    <string name="settings_error_invalid_pin">Ungültige PIN</string>
+    <string name="settings_error_too_many_attempts">Zu viele Versuche, später erneut versuchen</string>
+    <string name="settings_pin_export_title">PIN zum Exportieren eingeben</string>
+    <string name="settings_pin_remove_title">PIN zum Entfernen eingeben</string>
+    <string name="settings_overlay_message">Privnum benötigt diese Berechtigung, um während eingehender Anrufe das Anruffenster anzuzeigen.</string>
+    <string name="settings_continue">Weiter</string>
+    <string name="settings_cancel">Abbrechen</string>
+    <string name="settings_delete_contacts_title">Alle Kontakte löschen?</string>
+    <plurals name="settings_delete_contacts_message">
+        <item quantity="one">%1$d Kontakt wird dauerhaft gelöscht. Dies kann nicht rückgängig gemacht werden.</item>
+        <item quantity="other">%1$d Kontakte werden dauerhaft gelöscht. Dies kann nicht rückgängig gemacht werden.</item>
+    </plurals>
+    <string name="settings_delete">Löschen</string>
+    <string name="settings_pin_label">PIN</string>
+    <string name="settings_confirm">Bestätigen</string>
+    <string name="settings_message_cannot_read_file">Die ausgewählte Datei kann nicht gelesen werden</string>
+    <string name="settings_message_no_contacts_found">In der ausgewählten Datei wurden keine Kontakte gefunden</string>
+    <plurals name="settings_contacts_imported">
+        <item quantity="one">%1$d Kontakt importiert</item>
+        <item quantity="other">%1$d Kontakte importiert</item>
+    </plurals>
+    <string name="settings_message_no_contacts_to_export">Keine Kontakte zum Exportieren vorhanden</string>
+    <plurals name="settings_contacts_exported">
+        <item quantity="one">%1$d Kontakt exportiert</item>
+        <item quantity="other">%1$d Kontakte exportiert</item>
+    </plurals>
+    <string name="settings_message_export_failed">Export fehlgeschlagen</string>
+    <string name="settings_message_contacts_deleted">Alle Kontakte gelöscht</string>
+    <string name="settings_message_passcode_removed">Code entfernt</string>
+</resources>

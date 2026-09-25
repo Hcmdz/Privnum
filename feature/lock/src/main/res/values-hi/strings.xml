@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="lock_confirm_pin">पिन की पुष्टि करें</string>
+    <string name="lock_choose_pin">4 अंकों का पिन चुनें</string>
+    <string name="lock_enter_pin">पिन दर्ज करें</string>
+    <string name="lock_unlock_with_biometrics">बायोमेट्रिक से अनलॉक करें</string>
+    <string name="lock_biometric_prompt_title">Privnum अनलॉक करें</string>
+    <string name="lock_biometric_prompt_negative">पिन का उपयोग करें</string>
+    <string name="lock_error_too_many_attempts">बहुत अधिक प्रयास, बाद में पुनः प्रयास करें</string>
+    <string name="lock_error_invalid_pin">अमान्य पिन</string>
+    <string name="lock_error_pins_do_not_match">पिन मेल नहीं खाते</string>
+    <string name="lock_error_biometric_failed">बायोमेट्रिक प्रमाणीकरण विफल</string>
+</resources>

@@ -107,7 +107,7 @@
                 android:drawableStart="@drawable/ic_work_24"
                 android:drawablePadding="5dp"
                 android:paddingBottom="4dp"
-                android:text="appointment"
+                android:text="@string/appointment"
                 android:textColor="@color/secondary_text_color"
                 android:textSize="14sp" />
 
@@ -117,7 +117,7 @@
                 android:layout_height="wrap_content"
                 android:drawableStart="@drawable/ic_location_24"
                 android:drawablePadding="5dp"
-                android:text="city"
+                android:text="@string/city"
                 android:textColor="@color/secondary_text_color"
                 android:textSize="14sp" />
         </LinearLayout>

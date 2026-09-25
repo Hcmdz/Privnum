@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="contacts_title">Contactos</string>
+    <plurals name="contacts_selected_count">
+        <item quantity="one">%d seleccionado</item>
+        <item quantity="other">%d seleccionados</item>
+    </plurals>
+    <string name="contacts_clipboard_label">contactos</string>
+    <string name="contacts_copied_to_clipboard">Copiado al portapapeles</string>
+    <string name="contacts_share_chooser_title">Compartir contactos</string>
+    <string name="contacts_copy_selected_description">Copiar selección</string>
+    <string name="contacts_share_selected_description">Compartir selección</string>
+    <string name="contacts_delete_selected_description">Eliminar selección</string>
+    <string name="contacts_lock_now_description">Bloquear ahora</string>
+    <string name="contacts_search_description">Buscar</string>
+    <string name="contacts_settings_description">Ajustes</string>
+    <string name="contacts_add_contact_description">Añadir contacto</string>
+    <string name="contacts_empty_title">No se encontraron contactos</string>
+    <string name="contacts_empty_subtitle">Añade tu primer contacto</string>
+    <string name="contacts_call_detection_off">La detección de llamadas está desactivada</string>
+    <string name="contacts_enable_in_settings">Activar en Ajustes</string>
+    <string name="contacts_delete_dialog_title">¿Eliminar contactos?</string>
+    <plurals name="contacts_delete_count">
+        <item quantity="one">%d contacto se eliminará permanentemente.</item>
+        <item quantity="other">%d contactos se eliminarán permanentemente.</item>
+    </plurals>
+    <string name="contacts_delete">Eliminar</string>
+    <string name="contacts_cancel">Cancelar</string>
+    <string name="contacts_clipboard_name">Nombre</string>
+    <string name="contacts_clipboard_phone">Teléfono</string>
+    <string name="contacts_clipboard_additional_phone">Teléfono %1$d</string>
+    <string name="contacts_clipboard_email">Correo electrónico</string>
+    <string name="contacts_clipboard_appointment">Cita</string>
+    <string name="contacts_clipboard_location">Ubicación</string>
+    <string name="contacts_clipboard_notes">Notas</string>
+    <string name="contacts_clipboard_nickname">Apodo</string>
+    <string name="contacts_clipboard_website">Sitio web</string>
+    <string name="contacts_clipboard_birthday">Fecha de nacimiento</string>
+    <string name="contacts_clipboard_labels">Etiquetas</string>
+    <string name="contacts_clipboard_prefix">Prefijo</string>
+    <string name="contacts_clipboard_suffix">Sufijo</string>
+</resources>

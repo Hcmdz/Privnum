@@ -2,6 +2,7 @@ package com.hcmdz.privnum.data
 
 import android.content.Context
 import android.telephony.TelephonyManager
+import java.util.Locale
 
 data class Country(
     val name: String,
@@ -9,6 +10,11 @@ data class Country(
     val dialCode: String,
     val flag: String
 )
+
+fun Country.displayName(locale: Locale): String =
+    runCatching {
+        Locale.Builder().setRegion(code).build().getDisplayCountry(locale)
+    }.getOrNull()?.takeIf { it.isNotBlank() } ?: name
 
 object Countries {
     val all: List<Country> = listOf(
@@ -227,12 +233,15 @@ object Countries {
     }
 }
 
-/** Filter the country list by name, ISO code, or dial code ("+213", "dz" both match). */
-fun filterCountries(query: String): List<Country> {
+/** Filter the country list by localized name, ISO code, or dial code. */
+fun filterCountries(
+    query: String,
+    locale: Locale = Locale.getDefault()
+): List<Country> {
     val q = query.trim().replace(Regex("[+\\s-]"), "")
     if (q.isEmpty()) return Countries.all
     return Countries.all.filter { country ->
-        country.name.contains(query.trim(), ignoreCase = true) ||
+        country.displayName(locale).contains(query.trim(), ignoreCase = true) ||
             country.code.equals(q, ignoreCase = true) ||
             country.dialCode.contains(q)
     }

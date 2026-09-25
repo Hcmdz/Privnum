@@ -4,9 +4,12 @@
     <string name="close_button_description">Close</string>
     <string name="minimize_button_description">Minimize</string>
     <string name="unknown_caller">Unknown Caller</string>
-    <string name="close_button_icon">✕</string>
-    <string name="minimize_button_icon">_</string>
-    <string name="app_name">Privnum</string>
-    <string name="callerid_authority">com.hcmdz.privnum.directory</string>
+    <string name="close_button_icon" translatable="false">✕</string>
+    <string name="minimize_button_icon" translatable="false">_</string>
+    <string name="app_name" translatable="false">Privnum</string>
+    <string name="callerid_authority" translatable="false">com.hcmdz.privnum.directory</string>
     <string name="caller_photo_description">Caller Photo</string>
+    <string name="appointment">appointment</string>
+    <string name="city">city</string>
+    <string name="mobile_label">Mobile</string>
 </resources>

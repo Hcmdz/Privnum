@@ -14,6 +14,7 @@ import com.hcmdz.privnum.data.PhoneNumberRef
 import com.hcmdz.privnum.data.PhoneNumberUtils
 import com.hcmdz.privnum.data.SaveResult
 import com.hcmdz.privnum.data.SettingsStore
+import com.hcmdz.privnum.ui.UiText
 import dagger.hilt.android.lifecycle.HiltViewModel
 import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.Dispatchers
@@ -50,10 +51,10 @@ data class EditorUiState(
     val birthday: String = "",
     val nickname: String = "",
     val labels: String = "",
-    val nameError: String? = null,
-    val numberError: String? = null,
+    val nameError: UiText? = null,
+    val numberError: UiText? = null,
     val numberErrorRow: Int = -1,
-    val message: String? = null,
+    val message: UiText? = null,
     val notFound: Boolean = false,
     val saved: Boolean = false
 )
@@ -263,7 +264,7 @@ class EditorViewModel @Inject constructor(
         _state.update { it.copy(message = null) }
     }
 
-    fun showMessage(text: String) {
+    fun showMessage(text: UiText) {
         _state.update { it.copy(message = text) }
     }
 
@@ -276,10 +277,10 @@ class EditorViewModel @Inject constructor(
             return
         }
         val name = s.name.trim()
-        var nameError: String? = null
-        var numberError: String? = null
+        var nameError: UiText? = null
+        var numberError: UiText? = null
         var numberErrorRow = -1
-        if (name.length < 2) nameError = "Name must be at least 2 characters"
+        if (name.length < 2) nameError = UiText.Resource(R.string.editor_error_name_too_short)
         val parsedRows = mutableListOf<PhoneNumberRef>()
         s.numbers.forEachIndexed { index, row ->
             val error = parseRow(row)
@@ -335,8 +336,15 @@ class EditorViewModel @Inject constructor(
                     onDone(true)
                 }
                 is SaveResult.DuplicateNumber -> {
-                    val owner = result.ownerName.ifBlank { "another contact" }
-                    _state.update { it.copy(message = "Number already used by $owner") }
+                    val message = if (result.ownerName.isBlank()) {
+                        UiText.Resource(R.string.editor_error_duplicate_number_unknown)
+                    } else {
+                        UiText.Resource(
+                            R.string.editor_error_duplicate_number,
+                            listOf(result.ownerName)
+                        )
+                    }
+                    _state.update { it.copy(message = message) }
                     onDone(false)
                 }
                 is SaveResult.NotFound -> {
@@ -348,16 +356,17 @@ class EditorViewModel @Inject constructor(
     }
 
     /** Error message for an invalid row, null when the row parses. */
-    private fun parseRow(row: NumberRow): String? {
+    private fun parseRow(row: NumberRow): UiText? {
         val country = row.country
         val digits = row.nationalNumber.filter { it.isDigit() }
         val parsed = country?.let { PhoneNumberUtils.parseForSave(row.nationalNumber, it.code) }
         return when {
-            country == null -> "Select a country"
-            digits.length < PhoneNumberUtils.MIN_PHONE_DIGITS -> "Too short"
+            country == null -> UiText.Resource(R.string.editor_error_select_country)
+            digits.length < PhoneNumberUtils.MIN_PHONE_DIGITS ->
+                UiText.Resource(R.string.editor_error_too_short)
             parsed == null ||
                 !PhoneNumberUtils.isValid("+" + parsed.fullNumber, parsed.countryIso) ->
-                "Invalid phone number"
+                UiText.Resource(R.string.editor_error_invalid_phone_number)
             else -> null
         }
     }

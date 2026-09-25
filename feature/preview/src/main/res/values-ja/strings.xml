@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="preview_back">戻る</string>
+    <string name="preview_call">発信</string>
+    <string name="preview_cancel">キャンセル</string>
+    <string name="preview_copied_to_clipboard">クリップボードにコピーしました</string>
+    <string name="preview_contact_info">連絡先情報</string>
+    <string name="preview_contact_not_found">連絡先が見つかりません</string>
+    <string name="preview_delete">削除</string>
+    <string name="preview_delete_contact_action">連絡先を削除</string>
+    <string name="preview_delete_contact_message">この連絡先は端末から完全に削除されます</string>
+    <string name="preview_delete_contact_title">連絡先を削除しますか？</string>
+    <string name="preview_delete_failed">削除に失敗しました</string>
+    <string name="preview_edit_contact">連絡先を編集</string>
+    <string name="preview_email">メール</string>
+    <string name="preview_message">メッセージ</string>
+    <string name="preview_share_contact_action">連絡先を共有</string>
+    <string name="preview_share_contact_chooser">連絡先を共有</string>
+    <string name="preview_share_failed">共有に失敗しました</string>
+    <string name="preview_connected_apps">接続済みアプリ</string>
+    <string name="preview_about_contact">%1$s について</string>
+    <string name="preview_birthday">誕生日</string>
+    <string name="preview_message_number">%1$s にメッセージ</string>
+    <string name="preview_voice_call_number">%1$s に音声通話</string>
+    <string name="preview_clipboard_label">連絡先</string>
+    <plurals name="preview_mobile_number">
+        <item quantity="one">携帯番号</item>
+        <item quantity="other">携帯番号 %1$d</item>
+    </plurals>
+</resources>

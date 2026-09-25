@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="search_field_label">संपर्क खोजें</string>
+    <string name="search_empty_prompt">खोजने के लिए नाम या ईमेल लिखें</string>
+    <string name="search_no_results">कोई संपर्क नहीं मिला</string>
+</resources>
