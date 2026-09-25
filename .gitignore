@@ -25,3 +25,6 @@ keystore.properties
 
 # Kotlin
 .kotlin/
+
+# Local machine
+/AGENTS.md
