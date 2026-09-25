@@ -28,3 +28,5 @@ keystore.properties
 
 # Local machine
 /AGENTS.md
+.opencode/
+*.log
