@@ -8,7 +8,9 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Button
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedButton
+import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -136,32 +138,38 @@ private fun PinPad(
     onBackspace: () -> Unit,
     biometricRow: (@Composable () -> Unit)?
 ) {
-    Column(
-        modifier = Modifier
-            .fillMaxSize()
-            .padding(32.dp),
-        horizontalAlignment = Alignment.CenterHorizontally,
-        verticalArrangement = Arrangement.spacedBy(16.dp, Alignment.CenterVertically)
+    Surface(
+        modifier = Modifier.fillMaxSize(),
+        color = MaterialTheme.colorScheme.background,
+        contentColor = MaterialTheme.colorScheme.onBackground
     ) {
-        Text(title)
-        Row(horizontalArrangement = Arrangement.spacedBy(12.dp)) {
-            repeat(4) { index ->
-                Text(if (index < pin.length) "●" else "○")
-            }
-        }
-        error?.let { Text(it) }
-        val digits = listOf("1", "2", "3", "4", "5", "6", "7", "8", "9", "", "0", "⌫")
-        digits.chunked(3).forEach { row ->
+        Column(
+            modifier = Modifier
+                .fillMaxSize()
+                .padding(32.dp),
+            horizontalAlignment = Alignment.CenterHorizontally,
+            verticalArrangement = Arrangement.spacedBy(16.dp, Alignment.CenterVertically)
+        ) {
+            Text(title)
             Row(horizontalArrangement = Arrangement.spacedBy(12.dp)) {
-                row.forEach { key ->
-                    when (key) {
-                        "" -> OutlinedButton(onClick = {}, enabled = false) { Text("") }
-                        "⌫" -> OutlinedButton(onClick = onBackspace) { Text("⌫") }
-                        else -> OutlinedButton(onClick = { onDigit(key) }) { Text(key) }
+                repeat(4) { index ->
+                    Text(if (index < pin.length) "●" else "○")
+                }
+            }
+            error?.let { Text(it) }
+            val digits = listOf("1", "2", "3", "4", "5", "6", "7", "8", "9", "", "0", "⌫")
+            digits.chunked(3).forEach { row ->
+                Row(horizontalArrangement = Arrangement.spacedBy(12.dp)) {
+                    row.forEach { key ->
+                        when (key) {
+                            "" -> OutlinedButton(onClick = {}, enabled = false) { Text("") }
+                            "⌫" -> OutlinedButton(onClick = onBackspace) { Text("⌫") }
+                            else -> OutlinedButton(onClick = { onDigit(key) }) { Text(key) }
+                        }
                     }
                 }
             }
+            biometricRow?.invoke()
         }
-        biometricRow?.invoke()
     }
 }
