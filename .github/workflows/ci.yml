@@ -18,6 +18,8 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
       - name: Set up JDK 17
         uses: actions/setup-java@de7274f081f381c8f8158605e0321c36c376e2e6 # v4.8.0
         with:
@@ -37,3 +39,26 @@ jobs:
           curl -sSL -o .detekt/detekt-cli.jar https://github.com/detekt/detekt/releases/download/v1.23.8/detekt-cli-1.23.8-all.jar
       - name: Detekt
         run: ./gradlew detekt
+
+  secret-gate:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    permissions:
+      contents: read
+    steps:
+      - name: Checkout (full history for secret scan)
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          fetch-depth: 0
+          persist-credentials: false
+      - name: Run gitleaks
+        uses: gitleaks/gitleaks-action@ff98106e4c7b2bc287b24eaf42907196329070c7 # v2
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GITLEAKS_CONFIG: .gitleaks.toml
+      - name: No sensitive filenames tracked
+        run: |
+          ! git ls-files \
+            | grep -iE "(^|/)\.env(\.|$)|^id_rsa$|^id_ed25519$|^id_ecdsa$|\.pem$|\.key$|\.p12$|\.pfx$|\.jks$|\.keystore$|\.mobileprovision$|google-services\.json$|GoogleService-Info\.plist$" \
+            | grep -q .
+          echo "filenames clean"
