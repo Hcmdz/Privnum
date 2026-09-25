@@ -52,6 +52,7 @@ requests **zero network permissions**.
 <details>
 <summary>Table of Contents</summary>
 <ol>
+<li><a href="#-downloads">Downloads</a></li>
 <li><a href="#-screenshots">Screenshots</a></li>
 <li><a href="#-key-features">Key Features</a></li>
 <li><a href="#️-tech-stack--architecture">Tech Stack &amp; Architecture</a></li>
@@ -60,10 +61,29 @@ requests **zero network permissions**.
 <li><a href="#-signing">Signing</a></li>
 <li><a href="#-apk-size">APK Size</a></li>
 <li><a href="#-changelog">Changelog</a></li>
+<li><a href="#-legal">Legal</a></li>
 <li><a href="#-license">License</a></li>
 <li><a href="#-related-docs">Related Docs</a></li>
 </ol>
 </details>
+
+---
+
+## 📦 Downloads
+
+The latest GitHub release is **v1.1.0** (published September 24, 2026):
+
+- [Download `Privnum-release.apk`](https://github.com/Hcmdz/Privnum/releases/download/v1.1.0/Privnum-release.apk) — 5,011,578 bytes (about 5.0 MB), `arm64-v8a`
+- [Download the SHA-256 checksum](https://github.com/Hcmdz/Privnum/releases/download/v1.1.0/Privnum-release.apk.sha256)
+- [Install from Obtainium](https://apps.obtainium.imranr.dev/redirect?r=obtainium://add/https://github.com/Hcmdz/Privnum/) to track future GitHub releases.
+
+Install the APK on an Android device or emulator running Android 10 (API 29) or later. Android may ask you to allow installation from the browser or file manager.
+
+```bash
+sha256sum -c Privnum-release.apk.sha256
+```
+
+<p align="right">(<a href="#readme-top">back to top</a>)</p>
 
 ---
 
@@ -91,6 +111,10 @@ requests **zero network permissions**.
   (a taken number names its owner instead of merging); caller lookup,
   preview actions, WhatsApp/Telegram rows and VCF backup all cover
   every number.
+- **Use the app in your language.** Choose **System** or one of 11 app languages
+  in Settings: English, French, Spanish, German, Brazilian Portuguese, Arabic,
+  Hindi, Indonesian, Japanese, Korean, or Simplified Chinese. UI labels, country
+  names, and dates follow the active locale, including RTL layouts.
 - **Lock it down.** Optional passcode (5-attempt lockout), biometrics,
   auto-lock timeouts, instant lock, encrypted storage.
 - **Yours to theme.** Dynamic (Material You) colors with toggle, pure-black
@@ -107,14 +131,19 @@ requests **zero network permissions**.
 
 ## 🛠️ Tech Stack & Architecture
 
-Multi-module `:app` + `core/*` + `feature/*`, Nav3 graph, MVI screens with
-Hilt ViewModels and StateFlow; Room repository pattern; no network layer.
+Multi-module `:app` + `core/*` + `feature/*` with a Jetpack Compose and
+Navigation 3 UI, Hilt ViewModels, StateFlow, and a Room repository pattern.
+AppCompat per-app locales provide the in-app language selector; there is no
+network layer.
 
 ### Core Libraries & Tools
 
 | Category | Library | Version |
 |---|---|---|
 | UI | Jetpack Compose + Material 3 | BOM 2026.09.00 |
+| App language | AndroidX AppCompat | 1.8.0 |
+| AndroidX Core | core-ktx | 1.18.0 |
+| Navigation | Navigation 3 | 1.1.7 |
 | Async | Kotlin Coroutines & Flow | 1.11.0 |
 | DI | Hilt | 2.60.1 |
 | Database | Room (+FTS4) | 2.8.5 |
@@ -145,13 +174,14 @@ Hilt ViewModels and StateFlow; Room repository pattern; no network layer.
 - `DISABLE_KEYGUARD` — show the popup over the lock screen
 - `CAMERA` — not requested; photos come from the gallery picker or capture intent (no permission needed)
 
-Entry points: `MainActivity` (launcher), `CallReceiver` (phone-state broadcasts), `CallDetectScreeningService` (role-gated, `BIND_SCREENING_SERVICE`), `CallDirectoryProvider` (`READ_CONTACTS`-guarded lookup).
+Entry points: `MainActivity` (launcher), `CallReceiver` (phone-state broadcasts), `CallDetectScreeningService` (role-gated, `BIND_SCREENING_SERVICE`), `CallDirectoryProvider` (external lookup guarded by `READ_CONTACTS`).
 
 ### CI & Quality
 
-- GitHub Actions: `.github/workflows/ci.yml` (unit tests + lint + debug build), CodeQL (java-kotlin, weekly), Dependabot (gradle + actions, weekly)
-- Static analysis: detekt (`./gradlew detekt`, config in `config/detekt/`)
-- Gate: `./gradlew testDebugUnitTest lintDebug`
+- Repository CI: no `.github/workflows` files are present in this checkout; run the local checks before opening a pull request.
+- Static analysis: the root `detekt` task uses the configuration in `config/detekt/`.
+- Local gate: `./gradlew testDebugUnitTest lintDebug`.
+- Device tests: `./gradlew :core:data:connectedDebugAndroidTest` with an emulator or device attached.
 
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
 
@@ -196,7 +226,9 @@ app/src/main/java/com/hcmdz/privnum/
 ├── MainActivity.kt              # Entry point, lock gate, theme
 ├── AppNav.kt                    # Nav3 graph (contacts/search/editor/preview/settings/lock)
 ├── PrivnumApplication.kt        # Hilt application
-└── res/xml/file_paths.xml       # FileProvider paths (VCF/photo sharing)
+├── res/xml/file_paths.xml       # FileProvider paths (VCF/photo sharing)
+├── res/values-*/                # Localized UI resources
+└── res/xml/locale_config.xml    # Supported app locales
 core/caller/                    # Screening service, receiver, directory provider, overlay UI
 core/data/                      # Room (contacts + phone_numbers + FTS4,
 │   │                           # exportSchema=true, v1→v2 migration), repository,
@@ -206,10 +238,9 @@ core/ui/                        # Material 3 theme + shared ContactAvatar
 feature/contacts|editor|        # MVI screens + Hilt ViewModels + unit tests
   search|settings|lock|preview/
 gradle/libs.versions.toml       # Single source for dependency versions
-.github/workflows/ci.yml        # test + lint + debug build
 screenshots/                    # Light- and dark-mode captures used above
 docs/privacy|terms/             # Published Privacy Policy and Terms of Service
-config/detekt/                  # Static-analysis rules
+config/detekt/                  # Static-analysis configuration
 ```
 
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
@@ -241,13 +272,19 @@ apksigner verify --print-certs app/build/outputs/apk/release/Privnum-release.apk
 
 ## 📏 APK Size
 
-Current release APK: **~5.0 MB** (universal, single APK, R8 + shrink enabled, V3-signed).
+Latest GitHub release asset: **5,011,578 bytes** (about 5.0 MB), `arm64-v8a`;
+R8 and resource shrinking are enabled for release builds.
 
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
 
 ---
 
 ## 📝 Changelog
+
+### Unreleased
+
+- Added an in-app language selector with System plus 11 supported app languages.
+- Localized UI resources, country names, and dates, including RTL layouts for Arabic.
 
 ### v1.1.0
 - Multiple phone numbers per contact (Room v1→v2 migration, primary flag, per-number actions, multi-TEL VCF)
