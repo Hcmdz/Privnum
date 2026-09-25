@@ -116,7 +116,7 @@ object VcfMapper {
         val suffix = structuredName?.suffixes?.firstOrNull().orEmpty()
 
         val parsedNumbers = vcard.telephoneNumbers.mapNotNull { tel ->
-            PhoneNumberUtils.parse(tel.text, defaultRegion)?.let { parsed ->
+            PhoneNumberUtils.parseForSave(tel.text, defaultRegion)?.let { parsed ->
                 PhoneNumberRef(
                     full = parsed.fullNumber,
                     national = parsed.nationalNumber,

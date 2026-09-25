@@ -63,6 +63,13 @@ class PhoneNumberUtilsTest {
     }
 
     @Test
+    fun `save parsing rejects the removed Israeli country code`() {
+        val unsupported = "+" + digits('9', '7', '2', '5', '0', '1', '2', '3', '4', '5', '6', '7')
+        assertNull(PhoneNumberUtils.parseForSave(unsupported, "US"))
+        assertNull(PhoneNumberUtils.previewNumber(unsupported, "US"))
+    }
+
+    @Test
     fun `previewNumber formats plus input and nulls garbage`() {
         assertEquals("+$frFull", PhoneNumberUtils.previewNumber(frIntl, "DZ"))
         assertNull(PhoneNumberUtils.previewNumber("abc", "DZ"))

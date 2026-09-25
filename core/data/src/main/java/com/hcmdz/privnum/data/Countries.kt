@@ -89,7 +89,6 @@ object Countries {
     Country("Iran", "IR", "98", "🇮🇷"),
     Country("Iraq", "IQ", "964", "🇮🇶"),
     Country("Ireland", "IE", "353", "🇮🇪"),
-    Country("Israel", "IL", "972", "🇮🇱"),
     Country("Italy", "IT", "39", "🇮🇹"),
     Country("Ivory Coast", "CI", "225", "🇨🇮"),
     Country("Jamaica", "JM", "1876", "🇯🇲"),
@@ -220,10 +219,12 @@ object Countries {
         all.groupBy { it.dialCode }.filterValues { it.size == 1 }
             .mapValues { it.value.single() }
 
-    /** SIM country ISO, or "US" when unavailable. Single source for all features. */
-    fun simRegion(context: Context): String =
-        (context.getSystemService(Context.TELEPHONY_SERVICE) as TelephonyManager)
-            .simCountryIso?.uppercase().orEmpty().ifEmpty { "US" }
+    /** SIM country ISO, or "US" when unavailable or unsupported. Single source for all features. */
+    fun simRegion(context: Context): String {
+        val iso = (context.getSystemService(Context.TELEPHONY_SERVICE) as TelephonyManager)
+            .simCountryIso?.uppercase().orEmpty()
+        return if (iso.isEmpty() || iso == "IL") "US" else iso
+    }
 }
 
 /** Filter the country list by name, ISO code, or dial code ("+213", "dz" both match). */

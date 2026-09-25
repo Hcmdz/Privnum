@@ -61,11 +61,12 @@ object PhoneNumberUtils {
      */
     fun parseForSave(rawInput: String, region: String): ParsedNumber? {
         val raw = trimPhoneInput(rawInput)
-        return if (raw.startsWith("+")) {
+        val parsed = if (raw.startsWith("+")) {
             parse(raw, "US")
         } else {
             parse(raw, region)
         }
+        return parsed?.takeIf { it.countryIso != "IL" }
     }
 
     /** International display preview of raw editor input, or null when unparseable. */

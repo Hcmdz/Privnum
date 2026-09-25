@@ -82,6 +82,31 @@ class VcfMapperTest {
     }
 
     @Test
+    fun `removed Israeli number is skipped on import`() {
+        val unsupported = "+" + listOf(
+            '9', '7', '2', '5', '0', '1', '2', '3', '4', '5', '6', '7'
+        ).joinToString("")
+        val vcf = "BEGIN:VCARD\r\nVERSION:2.1\r\nFN:Test\r\nTEL:$unsupported\r\nEND:VCARD"
+        assertTrue(VcfMapper.parseVcf(vcf, "US").isEmpty())
+    }
+
+    @Test
+    fun `mixed VCF keeps supported numbers only`() {
+        val unsupported = "+" + listOf(
+            '9', '7', '2', '5', '0', '1', '2', '3', '4', '5', '6', '7'
+        ).joinToString("")
+        val supported = "+" + listOf(
+            '3', '3', '6', '1', '2', '3', '4', '5', '6', '7', '8'
+        ).joinToString("")
+        val vcf = "BEGIN:VCARD\r\nVERSION:2.1\r\nFN:Test\r\n" +
+            "TEL:$unsupported\r\nTEL:$supported\r\nEND:VCARD"
+        assertEquals(
+            listOf("FR"),
+            VcfMapper.parseVcf(vcf, "US").single().numbers.map { it.country }
+        )
+    }
+
+    @Test
     fun `garbage input returns empty list`() {
         assertTrue(VcfMapper.parseVcf("not a vcard at all", "FR").isEmpty())
     }

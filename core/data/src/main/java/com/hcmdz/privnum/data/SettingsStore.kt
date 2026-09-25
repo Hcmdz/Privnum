@@ -57,7 +57,7 @@ class SettingsStore @Inject constructor(
 
     /** ISO-3166 region for number parsing, or null for automatic (SIM). */
     val defaultRegion: Flow<String?> =
-        context.settingsDataStore.data.map { it[Keys.DEFAULT_REGION] }
+        context.settingsDataStore.data.map { it[Keys.DEFAULT_REGION]?.takeUnless { it == "IL" } }
 
     suspend fun setDefaultRegion(region: String?) {
         context.settingsDataStore.edit {
