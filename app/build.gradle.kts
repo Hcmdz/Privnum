@@ -1,9 +1,43 @@
+buildscript {
+    repositories {
+        mavenCentral()
+    }
+    dependencies {
+        classpath("app.cash.licensee:licensee-gradle-plugin:1.14.1")
+    }
+}
+
 plugins {
     alias(libs.plugins.android.application)
     alias(libs.plugins.kotlin.compose)
     alias(libs.plugins.hilt)
     alias(libs.plugins.ksp)
     alias(libs.plugins.serialization)
+}
+
+apply(plugin = "app.cash.licensee")
+
+// The allow list is the audit. Every SPDX identifier below was read from the
+// dependency's own metadata or licence file, never assumed; a `because` string
+// documents every exception and lands in reports/licensee/validation.txt.
+// The extension is configured through its type because a plugin applied with
+// `apply(plugin = ...)` gets no type-safe script accessor.
+extensions.configure<app.cash.licensee.LicenseeExtension> {
+    allow("Apache-2.0")
+    allow("BSD-3-Clause")
+    allow("MIT")
+
+    // Three artifacts ship a vendor URL instead of an SPDX id, so each is
+    // accepted with the licence that was read out of the artifact itself.
+    allowUrl("https://www.zetetic.net/sqlcipher/license/") {
+        because("BSD-3-Clause, verbatim in the AAR's LICENSE; the vendor page carries no SPDX id")
+    }
+    allowUrl("https://jsoup.org/license") {
+        because("MIT, read in META-INF/jsoup/LICENSE inside the jar; transitive via ez-vcard")
+    }
+    allowUrl("http://opensource.org/licenses/bsd-license.php") {
+        because("BSD-2-Clause, read in ezvcard/ez-vcard.license inside the jar: two conditions, no endorsement clause. Same jar also vendors Apache Commons Codec under ezvcard/commons-codec.license")
+    }
 }
 
 android {
