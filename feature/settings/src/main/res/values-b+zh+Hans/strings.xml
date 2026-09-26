@@ -82,6 +82,8 @@
     <string name="settings_delete">删除</string>
     <string name="settings_pin_label">PIN</string>
     <string name="settings_confirm">确认</string>
+    <string name="settings_open_source_notices">开源声明</string>
+    <string name="settings_open_source_notices_summary">随附组件的许可</string>
     <string name="settings_message_cannot_read_file">无法读取所选文件</string>
     <string name="settings_message_no_contacts_found">所选文件中未找到联系人</string>
     <plurals name="settings_contacts_imported">

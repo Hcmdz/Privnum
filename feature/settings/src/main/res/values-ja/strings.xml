@@ -82,6 +82,8 @@
     <string name="settings_delete">削除</string>
     <string name="settings_pin_label">PIN</string>
     <string name="settings_confirm">確認</string>
+    <string name="settings_open_source_notices">オープンソース通知</string>
+    <string name="settings_open_source_notices_summary">同嵌コンポーネントのライセンス</string>
     <string name="settings_message_cannot_read_file">選択したファイルを読み取れません</string>
     <string name="settings_message_no_contacts_found">選択したファイルに連絡先が見つかりません</string>
     <plurals name="settings_contacts_imported">

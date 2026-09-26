@@ -150,7 +150,7 @@ network layer.
 | Async | Kotlin Coroutines & Flow | 1.11.0 |
 | DI | Hilt | 2.60.1 |
 | Database | Room (+FTS4) | 2.8.5 |
-| Database encryption | SQLCipher | 4.9.0 |
+| Database encryption | SQLCipher | 4.19.0 |
 | Settings | DataStore Preferences | 1.1.3 |
 | Phone numbers | libphonenumber | 9.0.40 |
 | VCF | ez-vcard | 0.12.2 |
@@ -310,20 +310,24 @@ apksigner verify --print-certs app/build/outputs/apk/release/Privnum-release.apk
 ## 📏 APK Size
 
 Current release build (`versionCode 3`, `arm64-v8a` only, R8 + resource
-shrinking): **10,016,109 bytes** (9.55 MB).
+shrinking): **7,002,777 bytes** (6.68 MB).
+
+Compressed sizes as stored in the APK:
 
 | Component | Size |
 |---|---|
-| SQLCipher native engine | 4.94 MB |
-| Code (dex) | 3.87 MB |
-| Resources | 0.24 MB |
-| Everything else | 0.50 MB |
+| Code (dex) | 3.80 MB |
+| Native libraries | 2.02 MB |
+| Everything else | 0.44 MB |
+| Resources | 0.23 MB |
 
-The database engine roughly doubles the package: `libsqlcipher.so` alone is
-4.94 MB and ships unstripped by R8. Before at-rest encryption the same build was
-4,774,818 bytes (4.77 MB). The published
-[v1.1.0](https://github.com/Hcmdz/Privnum/releases/tag/v1.1.0) asset is
-5,011,578 bytes (5.01 MB).
+The database engine is the whole of the native line: `libsqlcipher.so` is
+2.00 MB and ships unstripped by R8. It was 4.94 MB on 4.9.0, which linked
+OpenSSL as its cryptographic provider; since 4.14.0 the Android build uses
+LibTomCrypt, and the engine lost 59% of its size. At-rest encryption still
+costs real weight: before it, the same build was 4,774,818 bytes (4.77 MB). The
+published [v1.1.0](https://github.com/Hcmdz/Privnum/releases/tag/v1.1.0) asset
+is 5,011,578 bytes (5.01 MB).
 
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
 
@@ -333,7 +337,7 @@ The database engine roughly doubles the package: `libsqlcipher.so` alone is
 
 ### Unreleased
 
-- **The contact database is now encrypted at rest.** SQLCipher, with the key held in the platform keystore. An existing database is converted on first open with no action from you. The package roughly doubles in size, to 9.55 MB, because the database engine ships as a native library.
+- **The contact database is now encrypted at rest.** SQLCipher, with the key held in the platform keystore. An existing database is converted on first open with no action from you. The package grows by about 2 MB, the database engine shipping as a native library.
 - Added an in-app language selector with System plus 11 supported app languages.
 - Localized UI resources, country names, and dates, including RTL layouts for Arabic.
 
@@ -369,7 +373,7 @@ see the [LICENSE](LICENSE) file for details.
 
 ## 🔗 Related Docs
 
-- [Contributing](CONTRIBUTING.md) · [Code of Conduct](CODE_OF_CONDUCT.md) · [Third-Party Components](THIRD_PARTY.md) · [Security](SECURITY.md)
+- [Contributing](CONTRIBUTING.md) · [Code of Conduct](CODE_OF_CONDUCT.md) · [Third-Party Components](THIRD_PARTY.md) · [Third-Party Notices](NOTICE) · [Security](SECURITY.md)
 
 ## 📬 Contact
 
@@ -382,3 +386,4 @@ Project link: [https://github.com/Hcmdz/Privnum](https://github.com/Hcmdz/Privnu
 - [Alternate](https://github.com/BioHazard786/Alternate) by BioHazard786 — the converted project (caller native module adapted from its Kotlin code)
 - [dmkvsk](https://github.com/dmkvsk/react-native-detect-caller-id) — native-module inspiration (via upstream)
 - [SimpleNexus](https://github.com/SimpleNexus/simplecallerid) — call-directory implementation (via upstream)
+- SQLCipher by Zetetic, LLC — the on-device database encryption engine, used under the BSD-style licence reproduced in [NOTICE](NOTICE) and shown in Settings → About → Open source notices

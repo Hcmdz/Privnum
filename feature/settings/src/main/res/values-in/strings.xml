@@ -82,6 +82,8 @@
     <string name="settings_delete">Hapus</string>
     <string name="settings_pin_label">PIN</string>
     <string name="settings_confirm">Konfirmasi</string>
+    <string name="settings_open_source_notices">Pemberitahuan sumber terbuka</string>
+    <string name="settings_open_source_notices_summary">Lisensi komponen yang disertakan</string>
     <string name="settings_message_cannot_read_file">Tidak dapat membaca file yang dipilih</string>
     <string name="settings_message_no_contacts_found">Kontak tidak ditemukan di file yang dipilih</string>
     <plurals name="settings_contacts_imported">

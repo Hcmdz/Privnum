@@ -82,6 +82,8 @@
     <string name="settings_delete">삭제</string>
     <string name="settings_pin_label">PIN</string>
     <string name="settings_confirm">확인</string>
+    <string name="settings_open_source_notices">오포소 소스 고지</string>
+    <string name="settings_open_source_notices_summary">번들 구성 요소 라이선스</string>
     <string name="settings_message_cannot_read_file">선택한 파일을 읽을 수 없습니다</string>
     <string name="settings_message_no_contacts_found">선택한 파일에 연락처가 없습니다</string>
     <plurals name="settings_contacts_imported">

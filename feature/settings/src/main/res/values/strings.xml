@@ -82,6 +82,8 @@
     <string name="settings_delete">Delete</string>
     <string name="settings_pin_label">PIN</string>
     <string name="settings_confirm">Confirm</string>
+    <string name="settings_open_source_notices">Open source notices</string>
+    <string name="settings_open_source_notices_summary">Licences of bundled components</string>
     <string name="settings_message_cannot_read_file">Cannot read the selected file</string>
     <string name="settings_message_no_contacts_found">No contacts found in the selected file</string>
     <plurals name="settings_contacts_imported">

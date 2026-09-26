@@ -1,0 +1,102 @@
+# Third-party notices
+
+This application bundles the components below. Privnum itself is licensed under
+the GNU General Public License v3.0 or later; the components keep their own
+terms, reproduced in full here as their licences require.
+
+The same texts are shown in the application under Settings → About → Open
+source notices, because the SQLCipher licence requires them to be reachable
+where users can find them.
+
+---
+
+## SQLCipher for Android
+
+`net.zetetic:sqlcipher-android` 4.19.0 — BSD-3-Clause.
+Source: https://github.com/sqlcipher/sqlcipher-android
+
+SQLCipher encrypts the contact database at rest. The licence requires the
+copyright notice, the conditions and the disclaimer to be reproduced in the
+distribution, and requires the notice to live somewhere users can reach.
+
+```
+Copyright (c) 2008-2023, ZETETIC LLC
+All rights reserved.
+
+Redistribution and use in source and binary forms, with or without
+modification, are permitted provided that the following conditions are met:
+ * Redistributions of source code must retain the above copyright
+ notice, this list of conditions and the following disclaimer.
+ * Redistributions in binary form must reproduce the above copyright
+ notice, this list of conditions and the following disclaimer in the
+ documentation and/or other materials provided with the distribution.
+ * Neither the name of the ZETETIC LLC nor the
+ names of its contributors may be used to endorse or promote products
+ derived from this software without specific prior written permission.
+
+THIS SOFTWARE IS PROVIDED BY ZETETIC LLC ''AS IS'' AND ANY
+EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
+WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
+DISCLAIMED. IN NO EVENT SHALL ZETETIC LLC BE LIABLE FOR ANY
+DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES
+(INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES;
+LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND
+ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
+(INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
+SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+```
+
+SQLCipher is a registered trademark of Zetetic, LLC. Privnum uses the upstream
+library unmodified; "SQLCipher" here refers to that library, not to this
+application.
+
+---
+
+## LibTomCrypt
+
+Distributed inside `libsqlcipher.so` as the cryptographic provider, and
+dedicated to the public domain. Source: https://github.com/libtom/libtomcrypt
+
+```
+The LibTom license
+This is free and unencumbered software released into the public domain.
+Anyone is free to copy, modify, publish, use, compile, sell, or
+distribute this software, either in source code form or as a compiled
+binary, for any purpose, commercial or non-commercial, and by any
+means.
+
+In jurisdictions that recognize copyright laws, the author or authors
+of this software dedicate any and all copyright interest in the
+software to the public domain. We make this dedication for the benefit
+of the public at large and to the detriment of our heirs and
+successors. We intend this dedication to be an overt act of
+relinquishment in perpetuity of all present and future rights to this
+software under copyright law.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
+EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
+MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT.
+IN NO EVENT SHALL THE AUTHORS BE LIABLE FOR ANY CLAIM, DAMAGES OR
+OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE,
+ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR
+OTHER DEALINGS IN THE SOFTWARE.
+
+For more information, please refer to <http://unlicense.org/>
+```
+
+---
+
+## SQLite
+
+Linked statically into `libsqlcipher.so`, together with the SQLite Android
+bindings. Released to the public domain; the author disclaims copyright to it.
+
+```
+SQLite Is Public Domain
+The author disclaims copyright to this source code.
+```
+
+---
+
+A dependency inventory with licences and versions for every other library is
+in [THIRD_PARTY.md](THIRD_PARTY.md).

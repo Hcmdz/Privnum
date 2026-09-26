@@ -82,6 +82,8 @@
     <string name="settings_delete">हटाएँ</string>
     <string name="settings_pin_label">पिन</string>
     <string name="settings_confirm">पुष्टि करें</string>
+    <string name="settings_open_source_notices">मुक्त स्रोत सूचनाएँ</string>
+    <string name="settings_open_source_notices_summary">शामिल घटकों के लाइसेन्स</string>
     <string name="settings_message_cannot_read_file">चयनित फ़ाइल नहीं पढ़ी जा सकी</string>
     <string name="settings_message_no_contacts_found">चयनित फ़ाइल में कोई संपर्क नहीं मिला</string>
     <plurals name="settings_contacts_imported">

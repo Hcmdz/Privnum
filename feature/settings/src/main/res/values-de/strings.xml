@@ -82,6 +82,8 @@
     <string name="settings_delete">Löschen</string>
     <string name="settings_pin_label">PIN</string>
     <string name="settings_confirm">Bestätigen</string>
+    <string name="settings_open_source_notices">Open-Source-Hinweise</string>
+    <string name="settings_open_source_notices_summary">Lizenzen der enthaltenen Komponenten</string>
     <string name="settings_message_cannot_read_file">Die ausgewählte Datei kann nicht gelesen werden</string>
     <string name="settings_message_no_contacts_found">In der ausgewählten Datei wurden keine Kontakte gefunden</string>
     <plurals name="settings_contacts_imported">

@@ -82,6 +82,8 @@
     <string name="settings_delete">Excluir</string>
     <string name="settings_pin_label">PIN</string>
     <string name="settings_confirm">Confirmar</string>
+    <string name="settings_open_source_notices">Avisos de código aberto</string>
+    <string name="settings_open_source_notices_summary">Licenças dos componentes incluídos</string>
     <string name="settings_message_cannot_read_file">Não foi possível ler o arquivo selecionado</string>
     <string name="settings_message_no_contacts_found">Nenhum contato encontrado no arquivo selecionado</string>
     <plurals name="settings_contacts_imported">

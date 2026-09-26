@@ -27,7 +27,7 @@ implementation), per Alternate's acknowledgments.
 | libphonenumber (`com.googlecode.libphonenumber`) | 9.0.40 | Apache-2.0 | Number parsing, validation, formatting |
 | ez-vcard (`com.googlecode.ez-vcard`) | 0.12.2 | FreeBSD (BSD-2-clause style) | VCF import/export |
 | Coil 3 (`io.coil-kt.coil3:coil-compose`) | 3.6.3 | Apache-2.0 | Contact photo loading |
-| SQLCipher (`net.zetetic:sqlcipher-android`) | 4.9.0 | Vendor terms, no SPDX id in the POM — see [Zetetic's licence page](https://www.zetetic.net/sqlcipher/license/) | On-device database encryption; ships `libsqlcipher.so` (4.94 MB) per ABI |
+| SQLCipher (`net.zetetic:sqlcipher-android`) | 4.19.0 | BSD-3-Clause | On-device database encryption; ships `libsqlcipher.so` (2.00 MB) per ABI. Full licence text in [NOTICE](NOTICE) |
 | AndroidX libraries (room, datastore, biometric, security-crypto, activity, lifecycle, navigation3, exifinterface, core) | catalog | Apache-2.0 | Persistence, settings, crypto, UI, camera metadata |
 | Hilt / Dagger (`com.google.dagger`) | 2.60.1 | Apache-2.0 | Dependency injection |
 | kotlinx.coroutines / serialization / org.json | catalog | Apache-2.0 | Concurrency, JSON |

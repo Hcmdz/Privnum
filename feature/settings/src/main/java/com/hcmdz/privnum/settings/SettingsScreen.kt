@@ -19,6 +19,7 @@ import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
+import androidx.compose.material.icons.automirrored.filled.KeyboardArrowRight
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.AssistChip
 import androidx.compose.material3.Button
@@ -173,6 +174,7 @@ fun SettingsScreen(
     var deleteConfirm by remember { mutableStateOf(false) }
     var overlayRationale by remember { mutableStateOf(false) }
     var languageDialog by remember { mutableStateOf(false) }
+    var noticesDialog by remember { mutableStateOf(false) }
     var selectedLanguageTag by remember { mutableStateOf("") }
 
     LifecycleEventEffect(Lifecycle.Event.ON_RESUME) {
@@ -421,6 +423,21 @@ fun SettingsScreen(
                     }
                 }
             )
+            // The database engine's licence requires its notice to be reachable
+            // by users, not only in the repository. The labels below are
+            // translated; the notice body stays English because it is legal
+            // text, which is why it lives in res/raw rather than a string.
+            ListItem(
+                headlineContent = { Text(stringResource(R.string.settings_open_source_notices)) },
+                supportingContent = { Text(stringResource(R.string.settings_open_source_notices_summary)) },
+                trailingContent = {
+                    Icon(
+                        Icons.AutoMirrored.Filled.KeyboardArrowRight,
+                        contentDescription = null
+                    )
+                },
+                modifier = Modifier.clickable { noticesDialog = true }
+            )
             Row(horizontalArrangement = Arrangement.spacedBy(12.dp)) {
                 TextButton(onClick = { uriHandler.openUri("https://github.com/Hcmdz/Privnum?tab=readme-ov-file") }) {
                     Text(stringResource(R.string.settings_readme))
@@ -461,6 +478,32 @@ fun SettingsScreen(
                 }
             )
         }
+    }
+
+    if (noticesDialog) {
+        val notices = remember(noticesDialog) {
+            context.resources.openRawResource(R.raw.open_source_notices)
+                .bufferedReader()
+                .use { it.readText() }
+        }
+        AlertDialog(
+            onDismissRequest = { noticesDialog = false },
+            title = { Text(stringResource(R.string.settings_open_source_notices)) },
+            text = {
+                // The notice is a few screens long; without this the tail of the
+                // licence, which is the part users need, would be unreachable.
+                Text(
+                    notices,
+                    style = MaterialTheme.typography.bodySmall,
+                    modifier = Modifier.verticalScroll(rememberScrollState())
+                )
+            },
+            confirmButton = {
+                TextButton(onClick = { noticesDialog = false }) {
+                    Text(stringResource(R.string.close))
+                }
+            }
+        )
     }
 
     if (languageDialog) {

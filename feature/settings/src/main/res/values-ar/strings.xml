@@ -90,6 +90,8 @@
     <string name="settings_delete">حذف</string>
     <string name="settings_pin_label">رمز الدخول</string>
     <string name="settings_confirm">تأكيد</string>
+    <string name="settings_open_source_notices">إشعارات المصادر المفتوحة</string>
+    <string name="settings_open_source_notices_summary">تراخيص المكوّنات المضمّنة</string>
     <string name="settings_message_cannot_read_file">تعذّرت قراءة الملف المحدد</string>
     <string name="settings_message_no_contacts_found">لم يتم العثور على جهات الاتصال في الملف المحدد</string>
     <plurals name="settings_contacts_imported">
