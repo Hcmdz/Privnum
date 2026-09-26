@@ -6,6 +6,7 @@ import android.security.keystore.KeyProperties
 import android.util.Base64
 import java.io.File
 import java.security.KeyStore
+import java.security.SecureRandom
 import javax.crypto.Cipher
 import javax.crypto.KeyGenerator
 import javax.crypto.SecretKey
@@ -36,6 +37,10 @@ internal object DatabasePassphrase {
     private const val PREFS = "database_key"
     private const val ENTRY = "wrapped"
 
+    /** One shared instance, like the passcode store: building a new
+     * [SecureRandom] per call can stall while its entropy pool is seeded. */
+    private val secureRandom = SecureRandom()
+
     private val wrapKey: SecretKey by lazy {
         val keyStore = KeyStore.getInstance("AndroidKeyStore").apply { load(null) }
         (keyStore.getEntry(KEY_ALIAS, null) as? KeyStore.SecretKeyEntry)
@@ -61,7 +66,7 @@ internal object DatabasePassphrase {
         val prefs = context.getSharedPreferences(PREFS, Context.MODE_PRIVATE)
         val wrapped = prefs.getString(ENTRY, null)
         if (wrapped != null) return unwrap(wrapped)
-        val fresh = ByteArray(32).also { java.security.SecureRandom().nextBytes(it) }
+        val fresh = ByteArray(32).also { secureRandom.nextBytes(it) }
         prefs.edit().putString(ENTRY, wrap(fresh)).apply()
         return fresh
     }
