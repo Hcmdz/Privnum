@@ -5,23 +5,23 @@ plugins {
     alias(libs.plugins.kotlin.android) apply false
     alias(libs.plugins.hilt) apply false
     alias(libs.plugins.ksp) apply false
+    alias(libs.plugins.detekt)
 }
 
-tasks.register<Exec>("detekt") {
-    description = "Run detekt static analysis"
-    group = "verification"
-    workingDir = rootDir
-    isIgnoreExitValue = true
-    val sourceRoots = subprojects
-        .map { "${it.projectDir}/src/main/java" }
-        .filter { file(it).isDirectory }
-    commandLine(
-        "java", "-jar", "${rootDir}/.detekt/detekt-cli-1.23.8-all.jar",
-        "--input", sourceRoots.joinToString(","),
-        "--config", "config/detekt/detekt.yml",
-        "--jvm-target", "17",
-        "--report", "html:${rootDir}/build/reports/detekt/detekt.html",
-        "--report", "sarif:${rootDir}/build/reports/detekt/detekt.sarif",
-        "--baseline", "config/detekt/baseline.xml"
+// Detekt runs through its Gradle plugin instead of a downloaded jar: the jar
+// only ever existed inside CI, so the task could not run on a developer
+// machine. Applied at the root so one task covers every module source root.
+detekt {
+    source.setFrom(
+        fileTree(projectDir) {
+            include("*/src/main/java/**", "*/*/src/main/java/**")
+        }
     )
+    config.setFrom(file("config/detekt/detekt.yml"))
+    baseline = file("config/detekt/baseline.xml")
+    buildUponDefaultConfig = false
+}
+
+tasks.withType<io.gitlab.arturbosch.detekt.Detekt>().configureEach {
+    jvmTarget = "17"
 }

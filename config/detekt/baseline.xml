@@ -1,7 +1,11 @@
 <?xml version="1.0" ?>
-<baseline xmlns="https://detekt.github.io/schema"
-          xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-          xsi:schemaLocation="https://detekt.github.io/schema https://detekt.github.io/schema/baseline-1.23.xsd">
-    <CurrentIssues>
-    </CurrentIssues>
-</baseline>
+<SmellBaseline>
+  <ManuallySuppressedIssues/>
+  <CurrentIssues>
+    <ID>LateinitUsage:CallDirectoryProvider.kt$CallDirectoryProvider$private lateinit var authorityUri: Uri</ID>
+    <ID>LateinitUsage:MainActivity.kt$MainActivity$@Inject lateinit var passcode: PasscodeStore</ID>
+    <ID>LateinitUsage:MainActivity.kt$MainActivity$@Inject lateinit var settings: SettingsStore</ID>
+    <ID>SpreadOperator:UiText.kt$(id, *args.toTypedArray())</ID>
+    <ID>SpreadOperator:UiText.kt$(id, quantity, *args.toTypedArray())</ID>
+  </CurrentIssues>
+</SmellBaseline>
