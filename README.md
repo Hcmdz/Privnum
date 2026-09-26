@@ -47,7 +47,8 @@ touching the system contacts, WhatsApp, Telegram, or the network: the app
 requests **zero network permissions**.
 
 - **Package**: `com.hcmdz.privnum`
-- **Version**: 1.1.0 (versionCode 2)
+- **Version**: 1.1.0 (versionCode 3)
+- **Author**: HcmDZ &lt;[HcmDz.Dev@gmail.com]&gt;
 
 <details>
 <summary>Table of Contents</summary>
@@ -174,12 +175,14 @@ network layer.
 - `DISABLE_KEYGUARD` — show the popup over the lock screen
 - `CAMERA` — not requested; photos come from the gallery picker or capture intent (no permission needed)
 
-Entry points: `MainActivity` (launcher), `CallReceiver` (phone-state broadcasts), `CallDetectScreeningService` (role-gated, `BIND_SCREENING_SERVICE`), `CallDirectoryProvider` (external lookup guarded by `READ_CONTACTS`).
+Entry points: `MainActivity` (launcher), `CallReceiver` (phone-state broadcasts), `CallDetectScreeningService` (role-gated, `BIND_SCREENING_SERVICE`), `CallDirectoryProvider` (external lookup guarded by `READ_CONTACTS`), `FileProvider` (VCF and photo sharing, authority `com.hcmdz.privnum.fileprovider`).
 
 ### CI & Quality
 
-- Repository CI: no `.github/workflows` files are present in this checkout; run the local checks before opening a pull request.
-- Static analysis: the root `detekt` task uses the configuration in `config/detekt/`.
+- `.github/workflows/ci.yml` — `ci` job runs `testDebugUnitTest`, `lintDebug`, `assembleDebug`, then `detekt`. A second `secret-gate` job scans the full history for secrets and fails when a path listed in `.github/sensitive-filenames.txt` is tracked.
+- `.github/workflows/codeql.yml` — static analysis on every push and pull request, plus a weekly schedule.
+- `.github/dependabot.yml` — weekly grouped updates for Gradle dependencies and GitHub Actions.
+- Static analysis: the root `detekt` task (`config/detekt/detekt.yml` + `config/detekt/baseline.xml`) reports findings without failing the build.
 - Local gate: `./gradlew testDebugUnitTest lintDebug`.
 - Device tests: `./gradlew :core:data:connectedDebugAndroidTest` with an emulator or device attached.
 
@@ -233,7 +236,8 @@ core/caller/                    # Screening service, receiver, directory provide
 core/data/                      # Room (contacts + phone_numbers + FTS4,
 │   │                           # exportSchema=true, v1→v2 migration), repository,
 │   │                           # DataStore settings, encrypted passcode, VCF, photo store
-│   └── db/                      # Entities, DAO, database + schemas/
+│   ├── db/                      # Entities, DAO, database
+│   └── schemas/                 # Exported Room JSON schemas
 core/ui/                        # Material 3 theme + shared ContactAvatar
 feature/contacts|editor|        # MVI screens + Hilt ViewModels + unit tests
   search|settings|lock|preview/
@@ -302,6 +306,8 @@ R8 and resource shrinking are enabled for release builds.
 - [Terms of Service](docs/terms/)
 - [Privacy Policy](docs/privacy/)
 
+<p align="right">(<a href="#readme-top">back to top</a>)</p>
+
 ---
 
 ## 📄 License
@@ -316,7 +322,7 @@ see the [LICENSE](LICENSE) file for details.
 
 ## 🔗 Related Docs
 
-- [Contributing](CONTRIBUTING.md) · [Third-Party Components](THIRD_PARTY.md) · [Security](SECURITY.md)
+- [Contributing](CONTRIBUTING.md) · [Code of Conduct](CODE_OF_CONDUCT.md) · [Third-Party Components](THIRD_PARTY.md) · [Security](SECURITY.md)
 
 ## 📬 Contact
 
