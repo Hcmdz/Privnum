@@ -54,4 +54,7 @@ dependencies {
     androidTestImplementation(libs.androidx.test.runner)
     androidTestImplementation(libs.androidx.test.ext.junit)
     androidTestImplementation(libs.room.testing)
+    // The passcode store gates its key on a strong biometric; the device test
+    // needs the same API to skip when the device has none enrolled.
+    androidTestImplementation(libs.biometric)
 }

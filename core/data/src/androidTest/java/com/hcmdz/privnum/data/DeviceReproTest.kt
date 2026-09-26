@@ -193,6 +193,16 @@ class PasscodeLockoutDeviceTest {
             "Needs API 30+ auth-bound keys",
             android.os.Build.VERSION.SDK_INT >= 30
         )
+        // The keystore refuses to create an auth-bound key when no strong
+        // biometric is enrolled, so this only runs on a device that has one.
+        org.junit.Assume.assumeTrue(
+            "Needs an enrolled strong biometric",
+            androidx.biometric.BiometricManager
+                .from(ApplicationProvider.getApplicationContext())
+                .canAuthenticate(
+                    androidx.biometric.BiometricManager.Authenticators.BIOMETRIC_STRONG
+                ) == androidx.biometric.BiometricManager.BIOMETRIC_SUCCESS
+        )
         // An enroll cipher created but never authed through the prompt must
         // not yield a usable token: doFinal throws UserNotAuthenticatedException.
         val cipher = store.biometricCipherForEnroll()
