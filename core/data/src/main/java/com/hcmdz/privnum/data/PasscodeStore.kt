@@ -40,6 +40,15 @@ class PasscodeStore @Inject constructor(
         const val MAX_FAILED_ATTEMPTS = 5
         const val LOCKOUT_MS = 60_000L
         private val secureRandom = SecureRandom()
+
+        /**
+         * Fresh bytes from the single shared generator. One owner on purpose:
+         * a second inline `SecureRandom()` is what CodeQL rule
+         * `java/random-used-once` exists to catch.
+         */
+        internal fun freshRandom(size: Int): ByteArray =
+            ByteArray(size).also { secureRandom.nextBytes(it) }
+
         const val BIOMETRIC_KEY_ALIAS = "privnum_biometric_key"
         private const val BIOMETRIC_TOKEN_PREF = "biometric_token"
         private const val BIOMETRIC_HASH_PREF = "biometric_token_hash"
@@ -155,8 +164,7 @@ class PasscodeStore @Inject constructor(
      * use). Cipher init needs no prior auth; only doFinal() unlocks the key.
      */
     /** Fresh random bytes from the shared generator (single SecureRandom owner). */
-    fun freshEnrollBytes(): ByteArray =
-        ByteArray(32).also { secureRandom.nextBytes(it) }
+    fun freshEnrollBytes(): ByteArray = freshRandom(32)
 
     fun biometricCipherForEnroll(): Cipher? {
         if (!isCryptoBiometricSupported()) return null

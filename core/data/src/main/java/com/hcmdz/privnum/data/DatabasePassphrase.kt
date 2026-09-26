@@ -85,7 +85,7 @@ internal object DatabasePassphrase {
             return runCatching { unwrap(wrapped) }
                 .getOrElse { throw DatabaseKeyUnavailable(it) }
         }
-        val fresh = ByteArray(32).also { java.security.SecureRandom().nextBytes(it) }
+        val fresh = PasscodeStore.freshRandom(32)
         prefs.edit().putString(ENTRY, wrap(fresh)).apply()
         return fresh
     }
