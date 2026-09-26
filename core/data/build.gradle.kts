@@ -39,9 +39,6 @@ dependencies {
     implementation(libs.exifinterface)
 
     implementation(libs.datastore.preferences)
-    // Contacts are the app's whole value: the database is encrypted at rest
-    // with a key held in the platform keystore.
-    implementation(libs.sqlcipher.android)
 
     implementation(libs.security.crypto)
 

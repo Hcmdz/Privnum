@@ -75,21 +75,9 @@ class ContactRepository @Inject constructor(
     @ApplicationContext private val context: Context,
     private val photos: ContactPhotoStore
 ) {
-    private companion object {
-        const val DATABASE_NAME = "privnum.db"
-    }
-
     private val db: PrivnumDatabase by lazy {
-        loadSqlCipher()
-        val passphrase = DatabasePassphrase.get(context)
-        // An existing plaintext database is encrypted before Room opens it; the
-        // schema is unchanged, so this is a file rewrite and not a migration.
-        encryptDatabaseIfPlaintext(context, context.getDatabasePath(DATABASE_NAME), passphrase)
-        Room.databaseBuilder(context, PrivnumDatabase::class.java, DATABASE_NAME)
+        Room.databaseBuilder(context, PrivnumDatabase::class.java, "privnum.db")
             .addMigrations(com.hcmdz.privnum.data.db.MIGRATION_1_2)
-            .openHelperFactory(
-                net.zetetic.database.sqlcipher.SupportOpenHelperFactory(passphrase)
-            )
             .build()
     }
     private val dao: ContactDao get() = db.contactDao()

@@ -7,7 +7,6 @@ hilt = "2.60.1"
 composeBom = "2026.09.00"
 activityCompose = "1.13.0"
 room = "2.8.5"
-sqlcipher = "4.9.0"
 datastore = "1.1.3"
 biometric = "1.4.0-alpha07"
 lifecycleRuntimeCompose = "2.11.0"
@@ -52,7 +51,6 @@ core-testing = { group = "androidx.arch.core", name = "core-testing", version.re
 junit = { group = "junit", name = "junit", version.ref = "junit" }
 json = { group = "org.json", name = "json", version.ref = "json" }
 room-testing = { group = "androidx.room", name = "room-testing", version.ref = "room" }
-sqlcipher-android = { group = "net.zetetic", name = "sqlcipher-android", version.ref = "sqlcipher" }
 libphonenumber = { group = "com.googlecode.libphonenumber", name = "libphonenumber", version = "9.0.40" }
 ez-vcard = { group = "com.googlecode.ez-vcard", name = "ez-vcard", version = "0.12.2" }
 androidx-test-ext-junit = { group = "androidx.test.ext", name = "junit", version.ref = "androidxTestExtJunit" }
