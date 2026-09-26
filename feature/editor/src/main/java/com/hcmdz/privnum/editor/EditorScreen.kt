@@ -76,6 +76,7 @@ import com.hcmdz.privnum.data.displayName
 import com.hcmdz.privnum.data.PhoneNumberUtils
 import com.hcmdz.privnum.data.filterCountries
 import com.hcmdz.privnum.data.suggestCountryFor
+import com.hcmdz.privnum.data.shareFile
 import com.hcmdz.privnum.ui.ContactAvatar
 import com.hcmdz.privnum.ui.UiText
 import com.hcmdz.privnum.ui.resolveText
@@ -540,10 +541,7 @@ fun EditorScreen(
                     TextButton(
                         onClick = {
                             photoChoice = false
-                            val file = java.io.File(
-                                context.cacheDir,
-                                "camera_${System.currentTimeMillis()}.jpg"
-                            )
+                            val file = shareFile(context, "camera_capture.jpg")
                             cameraUri = FileProvider.getUriForFile(
                                 context,
                                 "com.hcmdz.privnum.fileprovider",

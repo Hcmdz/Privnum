@@ -9,6 +9,7 @@ import com.hcmdz.privnum.data.Contact
 import com.hcmdz.privnum.data.ContactPhotoStore
 import com.hcmdz.privnum.data.ContactRepository
 import com.hcmdz.privnum.data.VcfMapper
+import com.hcmdz.privnum.data.shareFile
 import com.hcmdz.privnum.ui.UiText
 import dagger.hilt.android.lifecycle.HiltViewModel
 import dagger.hilt.android.qualifiers.ApplicationContext
@@ -19,7 +20,6 @@ import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
-import java.io.File
 import java.time.LocalDate
 import java.time.MonthDay
 import java.time.format.DateTimeFormatter
@@ -106,7 +106,7 @@ class PreviewViewModel @Inject constructor(
     suspend fun makeShareUri(): Uri? = withContext(Dispatchers.IO) {
         val contact = _state.value.contact ?: return@withContext null
         runCatching {
-            val file = File(context.cacheDir, "shared_contact.vcf")
+            val file = shareFile(context, "shared_contact.vcf")
             file.writeText(VcfMapper.contactsToVcf(listOf(contact)))
             FileProvider.getUriForFile(context, "com.hcmdz.privnum.fileprovider", file)
         }.getOrNull()

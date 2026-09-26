@@ -1,4 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
+<!-- Only the export directory is shareable. cacheDir stays out of the
+     provider on purpose: it also holds the transient photo the system call
+     directory reads, which no other app has any business seeing. -->
 <paths>
-    <cache-path name="shared" path="." />
+    <files-path name="shared" path="shared_exports/" />
 </paths>

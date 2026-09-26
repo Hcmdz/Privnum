@@ -56,9 +56,9 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.hcmdz.privnum.caller.ScreeningRole
 import com.hcmdz.privnum.data.Contact
 import com.hcmdz.privnum.data.VcfMapper
+import com.hcmdz.privnum.data.shareFile
 import com.hcmdz.privnum.ui.ContactAvatar
 import kotlinx.coroutines.launch
-import java.io.File
 
 @OptIn(ExperimentalMaterial3Api::class, ExperimentalFoundationApi::class)
 @Composable
@@ -136,7 +136,7 @@ fun ContactsScreen(
         val vcf = VcfMapper.contactsToVcf(selectedContacts())
         if (vcf.isBlank()) return
         runCatching {
-            val file = File(context.cacheDir, "shared_contacts.vcf")
+            val file = shareFile(context, "shared_contacts.vcf")
             file.writeText(vcf)
             val uri = FileProvider.getUriForFile(
                 context, "com.hcmdz.privnum.fileprovider", file
