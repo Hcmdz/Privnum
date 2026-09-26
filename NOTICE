@@ -98,5 +98,110 @@ The author disclaims copyright to this source code.
 
 ---
 
+## Apache-2.0 attributions
+
+Apache-2.0 §4(d) requires the `NOTICE` file of a dependency to be reproduced
+when the dependency ships one. Three in the runtime graph do. All three arrive
+transitively through the VCF library.
+
+### Apache Commons Codec, vendored by ez-vcard
+
+Shipped inside `ez-vcard.jar` as `ezvcard/commons-codec.license`. The VCF
+library repackages Apache Commons Codec under its own directory; the licence
+travels with it.
+
+```
+Apache License
+Version 2.0, January 2004
+http://www.apache.org/licenses/
+```
+
+### Jackson core (`com.fasterxml.jackson.core:jackson-core`)
+
+```
+# Jackson JSON processor
+
+Jackson is a high-performance, Free/Open Source JSON processing library.
+It was originally written by Tatu Saloranta (tatu.saloranta@iki.fi), and has
+been in development since 2007.
+It is currently developed by a community of developers.
+
+## Copyright
+
+Copyright 2007-, Tatu Saloranta (tatu.saloranta@iki.fi)
+
+## Licensing
+
+Jackson 2.x core and extension components are licensed under Apache License 2.0
+To find the details that apply to this artifact see the accompanying LICENSE file.
+
+## Credits
+
+A list of contributors may be found from CREDITS(-2.x) file, which is included
+in some artifacts (usually source distributions); but is always available
+from the source code management (SCM) system project uses.
+
+## FastDoubleParser
+
+jackson-core bundles a shaded copy of FastDoubleParser <https://github.com/wrandelshofer/FastDoubleParser>.
+That code is available under an MIT license <https://github.com/wrandelshofer/FastDoubleParser/blob/main/LICENSE>
+under the following copyright.
+
+Copyright © 2023 Werner Randelshofer, Switzerland. MIT License.
+
+See FastDoubleParser-NOTICE for details of other source code included in FastDoubleParser
+and the licenses and copyrights that apply to that code.
+```
+
+### Jakarta Dependency Injection (`jakarta.inject:jakarta.inject-api`)
+
+```
+# Notices for Eclipse Jakarta Dependency Injection
+
+This content is produced and maintained by the Eclipse Jakarta Dependency Injection project.
+
+* Project home: https://projects.eclipse.org/projects/cdi.batch
+
+## Trademarks
+
+Jakarta Dependency Injection is a trademark of the Eclipse Foundation.
+
+## Copyright
+
+All content is the property of the respective authors or their employers. For
+more information regarding authorship of content, please consult the listed
+source code repository logs.
+
+## Declared Project Licenses
+
+This program and the accompanying materials are made available under the terms
+of the Apache License, Version 2.0 which is available at
+https://www.apache.org/licenses/LICENSE-2.0.
+
+SPDX-License-Identifier: Apache-2.0
+
+## Source Code
+
+The project maintains the following source code repositories:
+
+https://github.com/eclipse-ee4j/injection-api
+https://github.com/eclipse-ee4j/injection-spec
+https://github.com/eclipse-ee4j/injection-tck
+
+## Third-party Content
+
+This project leverages the following third party content.
+
+None
+
+## Cryptography
+
+None
+```
+
+---
+
 A dependency inventory with licences and versions for every other library is
-in [THIRD_PARTY.md](THIRD_PARTY.md).
+in [THIRD_PARTY.md](THIRD_PARTY.md). The graph is gated by
+`./gradlew :app:licensee`; the accepted exceptions and the reason for each are
+in `app/build.gradle.kts`.
