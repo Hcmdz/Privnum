@@ -148,6 +148,7 @@ network layer.
 | Async | Kotlin Coroutines & Flow | 1.11.0 |
 | DI | Hilt | 2.60.1 |
 | Database | Room (+FTS4) | 2.8.5 |
+| Database encryption | SQLCipher | 4.9.0 |
 | Settings | DataStore Preferences | 1.1.3 |
 | Phone numbers | libphonenumber | 9.0.40 |
 | VCF | ez-vcard | 0.12.2 |
@@ -162,11 +163,19 @@ network layer.
 | Control | Implementation |
 |---|---|
 | Passcode store | EncryptedSharedPreferences (AES256-GCM, Keystore-backed master key); the PIN is derived with PBKDF2-HMAC-SHA256 and compared in constant time |
+| Contact database at rest | SQLCipher, with a 32-byte key generated once and stored only wrapped under a non-exportable platform keystore key. A database written before encryption existed is converted on first open: rows are copied, the row count is verified, and only then does the plaintext file get replaced |
 | Contact photos at rest | AES-GCM per file under a non-exportable platform keystore key; photos written before encryption stay readable and are re-encrypted on their next write |
 | Backup and transfer | `allowBackup="false"` plus `dataExtractionRules` excluding every domain, so nothing leaves through a cloud backup or a device-to-device transfer |
 | Screenshot protection | `FLAG_SECURE` on every screen that shows contact data, search results or the passcode |
 | Log hygiene | Release builds strip `Log.d/v/e/w` (R8 + shrink) |
 | No network | Zero network permissions declared or requested |
+
+Encryption at rest has no recovery path by design. The database key lives only
+in the platform keystore, and there is no cloud backup to restore from, so if
+that key is ever lost the contacts are unrecoverable. Every event that destroys
+the key (uninstall, factory reset, wiping the device) also erases the app data
+holding the contacts, so the exposure is limited to keystore corruption, which
+surfaces as a clear error instead of an empty contact list.
 
 ### Permissions
 
@@ -238,6 +247,7 @@ core/caller/                    # Screening service, receiver, directory provide
 core/data/                      # Room (contacts + phone_numbers + FTS4,
 │   │                           # exportSchema=true, v1→v2 migration), repository,
 │   │                           # DataStore settings, encrypted passcode, VCF, photo store
+│   │                           # SQLCipher key store + plaintext→encrypted conversion
 │   ├── db/                      # Entities, DAO, database
 │   └── schemas/                 # Exported Room JSON schemas
 core/ui/                        # Material 3 theme + shared ContactAvatar
@@ -284,16 +294,20 @@ apksigner verify --print-certs app/build/outputs/apk/release/Privnum-release.apk
 ## 📏 APK Size
 
 Current release build (`versionCode 3`, `arm64-v8a` only, R8 + resource
-shrinking): **4,774,818 bytes** (4.77 MB).
+shrinking): **10,016,109 bytes** (9.55 MB).
 
 | Component | Size |
 |---|---|
+| SQLCipher native engine | 4.94 MB |
 | Code (dex) | 3.87 MB |
 | Resources | 0.24 MB |
-| Everything else | 0.46 MB |
+| Everything else | 0.50 MB |
 
-The published [v1.1.0](https://github.com/Hcmdz/Privnum/releases/tag/v1.1.0)
-asset is 5,011,578 bytes (5.01 MB).
+The database engine roughly doubles the package: `libsqlcipher.so` alone is
+4.94 MB and ships unstripped by R8. Before at-rest encryption the same build was
+4,774,818 bytes (4.77 MB). The published
+[v1.1.0](https://github.com/Hcmdz/Privnum/releases/tag/v1.1.0) asset is
+5,011,578 bytes (5.01 MB).
 
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
 
