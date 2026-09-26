@@ -148,6 +148,7 @@ network layer.
 | Async | Kotlin Coroutines & Flow | 1.11.0 |
 | DI | Hilt | 2.60.1 |
 | Database | Room (+FTS4) | 2.8.5 |
+| Database encryption | SQLCipher | 4.9.0 |
 | Settings | DataStore Preferences | 1.1.3 |
 | Phone numbers | libphonenumber | 9.0.40 |
 | VCF | ez-vcard | 0.12.2 |
@@ -161,9 +162,12 @@ network layer.
 
 | Control | Implementation |
 |---|---|
-| Encryption at rest | EncryptedSharedPreferences (AES256-GCM, Keystore-backed master key) for passcode store |
-| Backup disabled | `allowBackup="false"` |
-| Log hygiene | Release builds strip `Log.d/v` (R8 + shrink) |
+| Passcode store | EncryptedSharedPreferences (AES256-GCM, Keystore-backed master key); the PIN is derived with PBKDF2-HMAC-SHA256 and compared in constant time |
+| Database at rest | SQLCipher (AES-256), key generated once and stored wrapped under a non-exportable platform keystore key; a database written before encryption existed is converted on first open |
+| Contact photos at rest | AES-GCM per file under the same kind of non-exportable key; photos written before encryption stay readable and are re-encrypted on their next write |
+| Backup and transfer | `allowBackup="false"` plus `dataExtractionRules` excluding every domain, so nothing leaves through a cloud backup or a device-to-device transfer |
+| Screenshot protection | `FLAG_SECURE` on every screen that shows contact data, search results or the passcode |
+| Log hygiene | Release builds strip `Log.d/v/e/w` (R8 + shrink) |
 | No network | Zero network permissions declared or requested |
 
 ### Permissions
@@ -255,8 +259,13 @@ config/detekt/                  # Static-analysis configuration
 
 Release signing reads the shared `RELEASE_*` keys from
 `~/.gradle/gradle.properties` (same identity as the author's other
-apps, one rotation point). Unsigned/misconfigured builds fail loudly
-at `packageRelease` — never silently.
+apps, one rotation point).
+
+The signature is applied only when those properties are present. Without
+them `assembleRelease` still succeeds and writes an **unsigned** APK, which
+Android refuses to install - the failure shows up on the device, not in the
+build, so verify the artifact before publishing it. Debug builds are
+unaffected: they are always signed with the SDK's own debug key.
 
 ```properties
 RELEASE_STORE_FILE=/path/to/your/release.keystore
@@ -276,8 +285,22 @@ apksigner verify --print-certs app/build/outputs/apk/release/Privnum-release.apk
 
 ## 📏 APK Size
 
-Latest GitHub release asset: **5,011,578 bytes** (about 5.0 MB), `arm64-v8a`;
-R8 and resource shrinking are enabled for release builds.
+Current release build (`versionCode 3`, `arm64-v8a` only, R8 + resource
+shrinking): **10,016,109 bytes** (10.02 MB). The published
+[v1.1.0](https://github.com/Hcmdz/Privnum/releases/tag/v1.1.0) asset is
+**5,011,578 bytes** (5.01 MB) - the difference is the SQLCipher engine added
+since.
+
+| Component | Size |
+|---|---|
+| `libsqlcipher.so` (database encryption) | 5.18 MB |
+| Code (dex) | 3.92 MB |
+| Resources | 0.24 MB |
+| Everything else | 0.44 MB |
+
+The native engine is half the download: that is the cost of encrypting the
+contact database on the device. Release builds ship `arm64-v8a` only, so it is
+paid once.
 
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
 
