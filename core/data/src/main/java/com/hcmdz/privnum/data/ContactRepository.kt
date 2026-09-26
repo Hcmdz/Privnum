@@ -8,8 +8,11 @@ import com.hcmdz.privnum.data.db.PrivnumDatabase
 import dagger.hilt.android.qualifiers.ApplicationContext
 import android.content.Context
 import androidx.room.Room
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.runBlocking
+import net.zetetic.database.sqlcipher.SupportOpenHelperFactory
 import javax.inject.Inject
 import javax.inject.Singleton
 
@@ -75,9 +78,31 @@ class ContactRepository @Inject constructor(
     @ApplicationContext private val context: Context,
     private val photos: ContactPhotoStore
 ) {
+    private companion object {
+        const val DATABASE_NAME = "privnum.db"
+    }
+
     private val db: PrivnumDatabase by lazy {
-        Room.databaseBuilder(context, PrivnumDatabase::class.java, "privnum.db")
+        loadSqlCipher()
+        // An existing plaintext database is encrypted before Room opens it; the
+        // schema is unchanged, so this is a file rewrite and not a migration.
+        // Both the keystore round trip and the rewrite are pushed off the
+        // calling thread, which is main for the flows collected during startup.
+        // ponytail: a cold first launch after the update waits here for the copy
+        // to finish, bounded by the contact count; a visible wait would need the
+        // open to move behind a suspending gate in the callers.
+        val passphrase = runBlocking(Dispatchers.IO) {
+            DatabasePassphrase.get(context).also {
+                encryptDatabaseIfPlaintext(
+                    context,
+                    context.getDatabasePath(DATABASE_NAME),
+                    it
+                )
+            }
+        }
+        Room.databaseBuilder(context, PrivnumDatabase::class.java, DATABASE_NAME)
             .addMigrations(com.hcmdz.privnum.data.db.MIGRATION_1_2)
+            .openHelperFactory(SupportOpenHelperFactory(passphrase))
             .build()
     }
     private val dao: ContactDao get() = db.contactDao()
