@@ -17,7 +17,9 @@ import java.security.SecureRandom
 import javax.crypto.Cipher
 import javax.crypto.KeyGenerator
 import javax.crypto.SecretKey
+import javax.crypto.SecretKeyFactory
 import javax.crypto.spec.GCMParameterSpec
+import javax.crypto.spec.PBEKeySpec
 import javax.inject.Inject
 import javax.inject.Singleton
 
@@ -41,6 +43,7 @@ class PasscodeStore @Inject constructor(
         const val BIOMETRIC_KEY_ALIAS = "privnum_biometric_key"
         private const val BIOMETRIC_TOKEN_PREF = "biometric_token"
         private const val BIOMETRIC_HASH_PREF = "biometric_token_hash"
+        private const val KDF_PREF = "kdf"
     }
 
     private val prefs: SharedPreferences by lazy {
@@ -90,16 +93,26 @@ class PasscodeStore @Inject constructor(
         val salt = ByteArray(16).also { secureRandom.nextBytes(it) }
         prefs.edit()
             .putString("salt", salt.toHex())
-            .putString("hash", sha256(salt + pin.toByteArray()))
+            .putString(KDF_PREF, PIN_KDF)
+            .putString("hash", newPinHash(pin, salt))
             .apply()
         biometricEnabled = false
     }
 
     fun verifyPin(pin: String): Boolean {
         if (isLockedOut()) return false
-        val saltHex = prefs.getString("salt", null) ?: return false
+        val salt = runCatching { prefs.getString("salt", null)?.hexToBytes() }.getOrNull()
+            ?: return false
         val expected = prefs.getString("hash", null) ?: return false
-        return if (sha256(saltHex.hexToBytes() + pin.toByteArray()) == expected) {
+        val matched = pinMatches(pin, salt, expected, prefs.getString(KDF_PREF, null)) {
+            // Upgrade the legacy hash as soon as the owner proves the PIN, so
+            // the weak scheme only ever exists on installs that predate it.
+            prefs.edit()
+                .putString(KDF_PREF, PIN_KDF)
+                .putString("hash", newPinHash(pin, salt))
+                .apply()
+        }
+        return if (matched) {
             failedAttempts = 0
             forceLocked = false
             prefs.edit().remove("lockout_until").apply()
@@ -275,9 +288,46 @@ class PasscodeStore @Inject constructor(
         }
     }
 
-    private fun sha256(bytes: ByteArray): String =
-        MessageDigest.getInstance("SHA-256").digest(bytes).toHex()
+    private fun sha256(bytes: ByteArray): String = sha256Hex(bytes)
 }
+
+/** KDF identifier persisted next to the PIN hash. */
+internal const val PIN_KDF = "pbkdf2-hmac-sha256"
+
+/** High enough to make an offline guess of a short PIN costly. */
+private const val PIN_KDF_ITERATIONS = 120_000
+
+internal fun sha256Hex(bytes: ByteArray): String =
+    MessageDigest.getInstance("SHA-256").digest(bytes).toHex()
+
+/** Salted PBKDF2 hash of [pin]. */
+internal fun newPinHash(pin: String, salt: ByteArray): String =
+    SecretKeyFactory.getInstance("PBKDF2WithHmacSHA256")
+        .generateSecret(PBEKeySpec(pin.toCharArray(), salt, PIN_KDF_ITERATIONS, 256))
+        .encoded
+        .toHex()
+
+/**
+ * Verify [pin] against the stored hash. A null [kdf] means the legacy
+ * single-round SHA-256 scheme: it stays readable so installs that predate the
+ * KDF are not locked out, and [onLegacyMatch] lets the caller upgrade the hash.
+ */
+internal fun pinMatches(
+    pin: String,
+    salt: ByteArray,
+    expectedHashHex: String,
+    kdf: String?,
+    onLegacyMatch: () -> Unit = {}
+): Boolean = runCatching {
+    if (expectedHashHex.isBlank()) return@runCatching false
+    val expected = expectedHashHex.hexToBytes()
+    val candidate =
+        if (kdf == PIN_KDF) newPinHash(pin, salt) else sha256Hex(salt + pin.toByteArray())
+    // Constant-time: a short PIN is exactly where a timing leak pays off.
+    if (!MessageDigest.isEqual(candidate.hexToBytes(), expected)) return@runCatching false
+    if (kdf == null) onLegacyMatch()
+    true
+}.getOrDefault(false)
 
 /** Constant-time token check; pure, total, and JVM-testable. */
 internal fun biometricTokenMatches(decrypted: ByteArray?, expectedHashHex: String): Boolean =

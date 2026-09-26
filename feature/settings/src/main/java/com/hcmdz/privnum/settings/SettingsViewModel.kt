@@ -238,7 +238,11 @@ class SettingsViewModel @Inject constructor(
                 done(PinCheck.LOCKED_OUT)
                 return@launch
             }
-            done(if (passcode.verifyPin(pin)) PinCheck.OK else PinCheck.INVALID)
+            done(
+                if (withContext(Dispatchers.Default) { passcode.verifyPin(pin) })
+                    PinCheck.OK
+                else PinCheck.INVALID
+            )
         }
     }
 
@@ -248,7 +252,7 @@ class SettingsViewModel @Inject constructor(
                 done(PinCheck.LOCKED_OUT)
                 return@launch
             }
-            if (!passcode.verifyPin(pin)) {
+            if (!withContext(Dispatchers.Default) { passcode.verifyPin(pin) }) {
                 done(PinCheck.INVALID)
                 return@launch
             }

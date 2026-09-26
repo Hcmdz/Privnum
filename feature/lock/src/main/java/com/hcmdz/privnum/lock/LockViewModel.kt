@@ -9,11 +9,13 @@ import com.hcmdz.privnum.data.AutoLockTimeout
 import com.hcmdz.privnum.data.PasscodeStore
 import com.hcmdz.privnum.ui.UiText
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import javax.crypto.Cipher
 import javax.inject.Inject
 
@@ -84,7 +86,7 @@ class LockViewModel @Inject constructor(
                     return
                 }
                 viewModelScope.launch {
-                    if (store.verifyPin(pin)) {
+                    if (withContext(Dispatchers.Default) { store.verifyPin(pin) }) {
                         store.lastUnlockedAt = System.currentTimeMillis()
                         _state.update { it.copy(unlocked = true, pin = "") }
                     } else {
@@ -99,9 +101,11 @@ class LockViewModel @Inject constructor(
             LockMode.CONFIRM -> {
                 if (pin == firstPin) {
                     viewModelScope.launch {
-                        store.setPin(pin)
-                        store.passcodeEnabled = true
-                        store.lastUnlockedAt = System.currentTimeMillis()
+                        withContext(Dispatchers.Default) {
+                            store.setPin(pin)
+                            store.passcodeEnabled = true
+                            store.lastUnlockedAt = System.currentTimeMillis()
+                        }
                         _state.update {
                             it.copy(
                                 unlocked = true, pin = "", passcodeEnabled = true,
