@@ -20,6 +20,7 @@ import kotlinx.coroutines.runBlocking
 import java.io.File
 import java.io.FileOutputStream
 import java.io.IOException
+import java.util.concurrent.ConcurrentHashMap
 
 class CallDirectoryProvider : ContentProvider() {
 
@@ -37,8 +38,10 @@ class CallDirectoryProvider : ContentProvider() {
         @Volatile
         private var currentPhotoData: String = ""
 
-        // Cache for temporary photo files to avoid recreating the same image
-        private val photoFileCache = mutableMapOf<String, File>()
+        // Cache for temporary photo files to avoid recreating the same image.
+        // Provider methods run on binder threads, so a plain map can corrupt
+        // itself on concurrent resize; cleanupOldTempFiles keeps it bounded.
+        private val photoFileCache = ConcurrentHashMap<String, File>()
     }
 
     override fun onCreate(): Boolean {
