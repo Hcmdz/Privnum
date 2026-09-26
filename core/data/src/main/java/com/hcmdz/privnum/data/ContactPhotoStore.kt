@@ -132,8 +132,9 @@ class ContactPhotoStore @Inject constructor(
     fun importDataUri(dataUri: String): String? {
         if (!dataUri.startsWith("data:image/")) return null
         val bytes = readBytes(dataUri) ?: return null
-        val mime = dataUri.substringAfter("data:").substringBefore(";")
-        return savePhoto(bytes, mime)
+        // Re-encode like picked photos: imported images would otherwise keep
+        // their Exif/GPS and hand it back out on the next VCF export.
+        return savePhoto(processPicked(bytes), "image/jpeg")
     }
 
     fun deletePhoto(photo: String) {
