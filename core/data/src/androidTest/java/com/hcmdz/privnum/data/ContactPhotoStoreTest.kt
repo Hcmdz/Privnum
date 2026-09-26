@@ -6,6 +6,7 @@ import androidx.test.core.app.ApplicationProvider
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import org.junit.Assert.assertArrayEquals
 import org.junit.Assert.assertEquals
+import org.junit.Assert.assertFalse
 import org.junit.Assert.assertNotNull
 import org.junit.Assert.assertNull
 import org.junit.Assert.assertTrue
@@ -92,5 +93,34 @@ class ContactPhotoStoreTest {
     fun processPickedPassesThroughGarbage() {
         val garbage = byteArrayOf(1, 2, 3)
         assertArrayEquals(garbage, store.processPicked(garbage))
+    }
+
+    @Test
+    fun savedPhotoIsEncryptedOnDiskAndStillReadsBack() {
+        val marker = "PRIVNUM-CLEARTEXT-MARKER".toByteArray()
+        val path = store.savePhoto(marker, "image/jpeg")
+        val onDisk = java.io.File(path).readBytes()
+        assertFalse(
+            "photo must not be stored in clear",
+            String(onDisk, Charsets.ISO_8859_1).contains("PRIVNUM-CLEARTEXT-MARKER")
+        )
+        assertArrayEquals(marker, store.readBytes(path))
+        store.deletePhoto(path)
+    }
+
+    @Test
+    fun photoStoredBeforeEncryptionStaysReadable() {
+        val legacy = java.io.File(
+            java.io.File(
+                ApplicationProvider.getApplicationContext<android.content.Context>()
+                    .filesDir, "contact_photos"
+            ),
+            "legacy.jpg"
+        )
+        legacy.parentFile?.mkdirs()
+        val bytes = "PRIVNUM-LEGACY-MARKER".toByteArray()
+        legacy.writeBytes(bytes)
+        assertArrayEquals(bytes, store.readBytes(legacy.absolutePath))
+        legacy.delete()
     }
 }

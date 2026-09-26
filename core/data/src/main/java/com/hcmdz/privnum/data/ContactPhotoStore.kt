@@ -5,13 +5,20 @@ import android.graphics.Bitmap
 import android.graphics.BitmapFactory
 import android.graphics.Matrix
 import android.net.Uri
+import android.security.keystore.KeyGenParameterSpec
+import android.security.keystore.KeyProperties
 import android.util.Base64
 import androidx.exifinterface.media.ExifInterface
 import dagger.hilt.android.qualifiers.ApplicationContext
 import java.io.ByteArrayOutputStream
 import java.io.File
 import java.nio.ByteBuffer
+import java.security.KeyStore
 import java.util.UUID
+import javax.crypto.Cipher
+import javax.crypto.KeyGenerator
+import javax.crypto.SecretKey
+import javax.crypto.spec.GCMParameterSpec
 import javax.inject.Inject
 import javax.inject.Singleton
 
@@ -22,9 +29,16 @@ fun extForMime(mime: String?): String = when (mime?.lowercase()) {
     else -> "jpg"
 }
 
+private const val PHOTO_KEY_ALIAS = "privnum_photo_key"
+
 /**
  * Contact photos live as files under private storage; [Contact.photo] holds an
  * absolute path, a "data:" URI (VCF imports), or "". Never a remote URL.
+ *
+ * Files are written encrypted with a non-exportable Keystore key, so a copy of
+ * the app's data directory - from a backup, a rooted device or a stolen phone -
+ * does not hand over face images in clear. Files written before encryption
+ * existed stay readable and are encrypted again the next time they are written.
  */
 @Singleton
 class ContactPhotoStore @Inject constructor(
@@ -32,9 +46,60 @@ class ContactPhotoStore @Inject constructor(
 ) {
     private fun dir(): File = File(context.filesDir, "contact_photos").also { it.mkdirs() }
 
+    /**
+     * Header written in front of every encrypted photo: "PV" + format version +
+     * IV length. Its presence is what tells an encrypted file from a photo
+     * stored in clear by an earlier version.
+     */
+    private val header = byteArrayOf(0x50, 0x56, 0x01, 0x00)
+
+    private val photoKey: SecretKey by lazy {
+        val keyStore = KeyStore.getInstance("AndroidKeyStore").apply { load(null) }
+        (keyStore.getEntry(PHOTO_KEY_ALIAS, null) as? KeyStore.SecretKeyEntry)
+            ?.secretKey
+            ?: KeyGenerator.getInstance(KeyProperties.KEY_ALGORITHM_AES, "AndroidKeyStore")
+                .run {
+                    init(
+                        KeyGenParameterSpec.Builder(
+                            PHOTO_KEY_ALIAS,
+                            KeyProperties.PURPOSE_ENCRYPT or KeyProperties.PURPOSE_DECRYPT
+                        )
+                            .setBlockModes(KeyProperties.BLOCK_MODE_GCM)
+                            .setEncryptionPaddings(KeyProperties.ENCRYPTION_PADDING_NONE)
+                            .setKeySize(256)
+                            .build()
+                    )
+                    generateKey()
+                }
+    }
+
+    private fun encrypt(bytes: ByteArray): ByteArray {
+        val cipher = Cipher.getInstance("AES/GCM/NoPadding").apply {
+            init(Cipher.ENCRYPT_MODE, photoKey)
+        }
+        val ciphertext = cipher.doFinal(bytes)
+        return header + byteArrayOf(cipher.iv.size.toByte()) + cipher.iv + ciphertext
+    }
+
+    /** Null when [raw] is not in the encrypted format, so callers can fall back. */
+    private fun decrypt(raw: ByteArray): ByteArray? {
+        if (raw.size <= header.size || !raw.copyOfRange(0, header.size).contentEquals(header)) {
+            return null
+        }
+        return runCatching {
+            val ivLength = raw[header.size].toInt() and 0xFF
+            val iv = raw.copyOfRange(header.size + 1, header.size + 1 + ivLength)
+            val ciphertext = raw.copyOfRange(header.size + 1 + ivLength, raw.size)
+            Cipher.getInstance("AES/GCM/NoPadding").run {
+                init(Cipher.DECRYPT_MODE, photoKey, GCMParameterSpec(128, iv))
+                doFinal(ciphertext)
+            }
+        }.getOrNull()
+    }
+
     fun savePhoto(bytes: ByteArray, mime: String?): String {
         val file = File(dir(), "${UUID.randomUUID()}.${extForMime(mime)}")
-        file.writeBytes(bytes)
+        file.writeBytes(encrypt(bytes))
         return file.absolutePath
     }
 
@@ -97,7 +162,7 @@ class ContactPhotoStore @Inject constructor(
         } else {
             runCatching {
                 val file = File(photo)
-                if (file.exists()) file.readBytes() else null
+                if (!file.exists()) null else file.readBytes().let { decrypt(it) ?: it }
             }.getOrNull()
         }
     }
