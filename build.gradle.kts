@@ -12,9 +12,12 @@ tasks.register<Exec>("detekt") {
     group = "verification"
     workingDir = rootDir
     isIgnoreExitValue = true
+    val sourceRoots = subprojects
+        .map { "${it.projectDir}/src/main/java" }
+        .filter { file(it).isDirectory }
     commandLine(
         "java", "-jar", "${rootDir}/.detekt/detekt-cli-1.23.8-all.jar",
-        "--input", "app/src/main/java,core/src/main/java,feature/src/main/java",
+        "--input", sourceRoots.joinToString(","),
         "--config", "config/detekt/detekt.yml",
         "--jvm-target", "17",
         "--report", "html:${rootDir}/build/reports/detekt/detekt.html",
