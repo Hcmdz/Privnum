@@ -1,7 +1,9 @@
-# Strip debug/verbose logging in release builds (may carry phone numbers).
+# Strip debug/verbose/error logging in release builds (may carry phone numbers).
 -assumenosideeffects class android.util.Log {
     public static int d(...);
     public static int v(...);
+    public static int e(...);
+    public static int w(...);
 }
 
 # Tink (via androidx security-crypto) references error-prone annotations
