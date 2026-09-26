@@ -88,8 +88,8 @@ class ContactRepository @Inject constructor(
         // schema is unchanged, so this is a file rewrite and not a migration.
         // Both the keystore round trip and the rewrite are pushed off the
         // calling thread, which is main for the flows collected during startup.
-        // ponytail: a cold first launch after the update waits here for the copy
-        // to finish, bounded by the contact count; a visible wait would need the
+        // A cold first launch after the update waits here for the copy to
+        // finish, bounded by the contact count; a visible wait would need the
         // open to move behind a suspending gate in the callers.
         val passphrase = runBlocking(Dispatchers.IO) {
             DatabasePassphrase.get(context).also {
