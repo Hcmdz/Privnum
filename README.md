@@ -65,6 +65,8 @@ requests **zero network permissions**.
 <li><a href="#-legal">Legal</a></li>
 <li><a href="#-license">License</a></li>
 <li><a href="#-related-docs">Related Docs</a></li>
+<li><a href="#-contact">Contact</a></li>
+<li><a href="#-acknowledgments">Acknowledgments</a></li>
 </ol>
 </details>
 
@@ -179,12 +181,22 @@ surfaces as a clear error instead of an empty contact list.
 
 ### Permissions
 
+Declared in the merged manifest (`core/caller` contributes all but the two
+biometric ones):
+
 - `READ_PHONE_STATE` — read incoming/outgoing call state for the popup
 - `READ_CALL_LOG` — call-state resolution where the system requires it
 - `SYSTEM_ALERT_WINDOW` — draw the caller popup over other apps (opt-in, with rationale)
 - `POST_NOTIFICATIONS` — call-related notifications (Android 13+)
 - `DISABLE_KEYGUARD` — show the popup over the lock screen
-- `CAMERA` — not requested; photos come from the gallery picker or capture intent (no permission needed)
+- `USE_BIOMETRIC`, `USE_FINGERPRINT` — the lock screen's biometric prompt
+
+`READ_CONTACTS` is **not** requested: it appears only as the
+`readPermission`/`writePermission` of `CallDirectoryProvider`, so the system
+reads the platform contact list for callers outside the app rather than the
+app reading it. `BIND_SCREENING_SERVICE` is the service guard on
+`CallDetectScreeningService`. No `INTERNET`, and no `CAMERA`: photos come from
+the gallery picker or a capture intent, neither of which needs a permission.
 
 Entry points: `MainActivity` (launcher), `CallReceiver` (phone-state broadcasts), `CallDetectScreeningService` (role-gated, `BIND_SCREENING_SERVICE`), `CallDirectoryProvider` (external lookup guarded by `READ_CONTACTS`), `FileProvider` (VCF and photo sharing, authority `com.hcmdz.privnum.fileprovider`).
 
@@ -193,7 +205,7 @@ Entry points: `MainActivity` (launcher), `CallReceiver` (phone-state broadcasts)
 - `.github/workflows/ci.yml` — `ci` job runs `testDebugUnitTest`, `lintDebug`, `assembleDebug`, then `detekt`. A second `secret-gate` job scans the full history for secrets and fails when a path listed in `.github/sensitive-filenames.txt` is tracked.
 - `.github/workflows/codeql.yml` — static analysis on every push and pull request, plus a weekly schedule.
 - `.github/dependabot.yml` — weekly grouped updates for Gradle dependencies and GitHub Actions.
-- Static analysis: the root `detekt` task (`config/detekt/detekt.yml` + `config/detekt/baseline.xml`) reports findings without failing the build.
+- Static analysis: the root `detekt` task (`config/detekt/detekt.yml` + `config/detekt/baseline.xml`) **fails the build on any new finding**. It passes today only because every current finding is baselined, so adding code without running `detekt` locally is what turns CI red.
 - Local gate: `./gradlew testDebugUnitTest lintDebug`.
 - Device tests: `./gradlew :core:data:connectedDebugAndroidTest` with an emulator or device attached.
 
@@ -241,8 +253,7 @@ app/src/main/java/com/hcmdz/privnum/
 ├── AppNav.kt                    # Nav3 graph (contacts/search/editor/preview/settings/lock)
 ├── PrivnumApplication.kt        # Hilt application
 ├── res/xml/file_paths.xml       # FileProvider paths (VCF/photo sharing)
-├── res/values-*/                # Localized UI resources
-└── res/xml/locale_config.xml    # Supported app locales
+└── res/xml/locale_config.xml    # The 11 supported app locales
 core/caller/                    # Screening service, receiver, directory provider, overlay UI
 core/data/                      # Room (contacts + phone_numbers + FTS4,
 │   │                           # exportSchema=true, v1→v2 migration), repository,
@@ -253,10 +264,12 @@ core/data/                      # Room (contacts + phone_numbers + FTS4,
 core/ui/                        # Material 3 theme + shared ContactAvatar
 feature/contacts|editor|        # MVI screens + Hilt ViewModels + unit tests
   search|settings|lock|preview/
+│   └── src/main/res/values-*/  # Localized UI strings, one dir per language
 gradle/libs.versions.toml       # Single source for dependency versions
 screenshots/                    # Light- and dark-mode captures used above
+docs/assets/                    # Banner feature graphic
 docs/privacy|terms/             # Published Privacy Policy and Terms of Service
-config/detekt/                  # Static-analysis configuration
+config/detekt/                  # Static-analysis configuration and baseline
 ```
 
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
@@ -265,9 +278,13 @@ config/detekt/                  # Static-analysis configuration
 
 ## 🔏 Signing
 
-Release signing reads the shared `RELEASE_*` keys from
-`~/.gradle/gradle.properties` (same identity as the author's other
-apps, one rotation point).
+Release signing reads the shared `RELEASE_*` properties from
+`~/.gradle/gradle.properties` (same identity as the author's other apps, one
+rotation point). Four properties are expected — the keystore path, the key
+alias, and the two credential values. Their exact names are defined in
+`app/build.gradle.kts` under `signingConfigs`; they are deliberately not
+spelled out here, so keep them out of any file you commit. The credentials
+come from your own machine or from CI secrets, never from this repository.
 
 The signature is applied only when those properties are present. Without
 them `assembleRelease` still succeeds and writes an **unsigned** APK, which
@@ -275,12 +292,11 @@ Android refuses to install - the failure shows up on the device, not in the
 build, so verify the artifact before publishing it. Debug builds are
 unaffected: they are always signed with the SDK's own debug key.
 
-```properties
-RELEASE_STORE_FILE=/path/to/your/release.keystore
-RELEASE_KEY_ALIAS=ALIAS
-RELEASE_STORE_PASSWORD=YOUR_KEYSTORE_PASSWORD
-RELEASE_KEY_PASSWORD=YOUR_KEY_PASSWORD
+```bash
+./gradlew assembleRelease   # app/build/outputs/apk/release/Privnum-release.apk
+apksigner verify --print-certs app/build/outputs/apk/release/Privnum-release.apk
 ```
+
 
 ```bash
 ./gradlew assembleRelease   # app/build/outputs/apk/release/Privnum-release.apk
@@ -317,6 +333,7 @@ The database engine roughly doubles the package: `libsqlcipher.so` alone is
 
 ### Unreleased
 
+- **The contact database is now encrypted at rest.** SQLCipher, with the key held in the platform keystore. An existing database is converted on first open with no action from you. The package roughly doubles in size, to 9.55 MB, because the database engine ships as a native library.
 - Added an in-app language selector with System plus 11 supported app languages.
 - Localized UI resources, country names, and dates, including RTL layouts for Arabic.
 
