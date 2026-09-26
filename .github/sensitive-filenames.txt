@@ -1,0 +1,11 @@
+# Sensitive filenames (one ERE per line, #-comments ignored). Read by the
+# secret gate in .github/workflows, and by the local pre-push hook, so both
+# agree on what counts. These paths must never be committed, whatever they hold.
+(^|/)\.env(\.|$)
+^id_rsa$|^id_ed25519$|^id_ecdsa$
+\.pem$|\.key$|\.p12$|\.pfx$|\.jks$|\.keystore$|\.mobileprovision$
+google-services\.json$|GoogleService-Info\.plist$
+credentials$|kubeconfig$
+\.tfstate$|\.tfvars$|\.vault-token$|\.netrc$|\.pgpass$|\.my\.cnf$
+authorized_keys$|known_hosts$
+opencode-warden\.json$|opencode\.jsonc$

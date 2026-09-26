@@ -58,7 +58,11 @@ jobs:
           GITLEAKS_CONFIG: .gitleaks.toml
       - name: No sensitive filenames tracked
         run: |
+          # The list is the same file the generic gate and the audit engine read,
+          # so the verdict and this gate cannot disagree about a sensitive path.
+          NAMES=$(grep -v '^#' .github/sensitive-filenames.txt | grep -v '^$' | paste -sd'|')
+          test -n "$NAMES"
           ! git ls-files \
-            | grep -iE "(^|/)\.env(\.|$)|^id_rsa$|^id_ed25519$|^id_ecdsa$|\.pem$|\.key$|\.p12$|\.pfx$|\.jks$|\.keystore$|\.mobileprovision$|google-services\.json$|GoogleService-Info\.plist$" \
+            | grep -iE "$NAMES" \
             | grep -q .
           echo "filenames clean"
