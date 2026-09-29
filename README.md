@@ -297,12 +297,6 @@ unaffected: they are always signed with the SDK's own debug key.
 apksigner verify --print-certs app/build/outputs/apk/release/Privnum-release.apk
 ```
 
-
-```bash
-./gradlew assembleRelease   # app/build/outputs/apk/release/Privnum-release.apk
-apksigner verify --print-certs app/build/outputs/apk/release/Privnum-release.apk
-```
-
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
 
 ---
