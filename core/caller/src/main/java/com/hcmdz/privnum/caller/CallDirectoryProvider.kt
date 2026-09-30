@@ -235,7 +235,12 @@ class CallDirectoryProvider : ContentProvider() {
                             return null
                         }
 
-                        // Create temporary file with hash-based name for better caching
+                        // Create temporary file with hash-based name for better caching.
+                        // The system provider needs a file to hand out through the
+                        // AssetFileDescriptor, so a plaintext copy must exist
+                        // somewhere. It lives in the app-private cache dir and
+                        // cleanupOldTempFiles removes anything older than 30
+                        // seconds, bounding the exposure to that window.
                         val tempFile =
                             File(
                                 context?.cacheDir,
