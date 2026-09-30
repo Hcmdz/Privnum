@@ -47,7 +47,7 @@ touching the system contacts, WhatsApp, Telegram, or the network: the app
 requests **zero network permissions**.
 
 - **Package**: `com.hcmdz.privnum`
-- **Version**: 1.1.0 (versionCode 3)
+- **Version**: 1.2.0 (versionCode 4)
 - **Author**: HcmDZ &lt;[HcmDz.Dev@gmail.com]&gt;
 
 <details>
@@ -329,11 +329,13 @@ is 5,011,578 bytes (5.01 MB).
 
 ## 📝 Changelog
 
-### Unreleased
+### v1.2.0
 
 - **The contact database is now encrypted at rest.** SQLCipher, with the key held in the platform keystore. An existing database is converted on first open with no action from you. The package grows by about 2 MB, the database engine shipping as a native library.
 - Added an in-app language selector with System plus 11 supported app languages.
 - Localized UI resources, country names, and dates, including RTL layouts for Arabic.
+- vCard 2.1 backups now import in release builds.
+- Third-party licences are listed in-app under Settings → About → Open source notices.
 
 ### v1.1.0
 - Multiple phone numbers per contact (Room v1→v2 migration, primary flag, per-number actions, multi-TEL VCF)
