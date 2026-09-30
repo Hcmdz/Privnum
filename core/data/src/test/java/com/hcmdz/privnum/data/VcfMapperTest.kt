@@ -45,6 +45,15 @@ class VcfMapperTest {
     }
 
     @Test
+    fun `round trip preserves a non-first primary`() {
+        val numbers = sampleContact().numbers
+        val original = sampleContact().copy(numbers = listOf(numbers[1], numbers[0]))
+        val parsed = VcfMapper.parseVcf(VcfMapper.toVcf(original), "FR").single()
+        assertEquals(original.numbers, parsed.numbers)
+        assertEquals(original.primaryNumber()?.full, parsed.primaryNumber()?.full)
+    }
+
+    @Test
     fun `parses legacy TS-format VCF`() {
         val tsFormat = "BEGIN:VCARD\r\n" +
             "VERSION:2.1\r\n" +

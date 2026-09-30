@@ -33,10 +33,10 @@ object VcfMapper {
         }
 
         val numbers = contact.numbers.normalizePrimary()
-        numbers.forEachIndexed { index, number ->
+        numbers.forEach { number ->
             val tel = Telephone("+${number.full}")
             tel.types.add(TelephoneType.CELL)
-            if (index == 0) tel.pref = 1
+            if (number.primary) tel.pref = 1
             vcard.addTelephoneNumber(tel)
         }
 
@@ -121,7 +121,7 @@ object VcfMapper {
                     full = parsed.fullNumber,
                     national = parsed.nationalNumber,
                     country = parsed.countryIso,
-                    primary = (tel.pref ?: 0) > 0
+                    primary = (tel.pref ?: 0) > 0 || TelephoneType.PREF in tel.types
                 )
             }
         }
