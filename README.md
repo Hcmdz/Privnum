@@ -305,8 +305,8 @@ apksigner verify --print-certs app/build/outputs/apk/release/Privnum-release.apk
 
 ## 📏 APK Size
 
-Current release build (`versionCode 3`, `arm64-v8a` only, R8 + resource
-shrinking): **7,084,697 bytes** (6.76 MB).
+Current release build (`versionCode 4`, `arm64-v8a` only, R8 + resource
+shrinking): **7,084,773 bytes** (6.76 MB).
 
 Compressed sizes as stored in the APK:
 
@@ -338,6 +338,7 @@ is 5,011,578 bytes (5.01 MB).
 - Localized UI resources, country names, and dates, including RTL layouts for Arabic.
 - vCard 2.1 backups now import in release builds.
 - Third-party licences are listed in-app under Settings → About → Open source notices.
+- Build: Gradle 9.8.0, Kotlin 2.4.20
 
 ### v1.1.0
 - Multiple phone numbers per contact (Room v1→v2 migration, primary flag, per-number actions, multi-TEL VCF)
