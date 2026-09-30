@@ -1,14 +1,12 @@
 package com.hcmdz.privnum.caller
 
 import android.annotation.SuppressLint
-import android.app.KeyguardManager
 import android.content.BroadcastReceiver
 import android.content.Context
 import android.content.Intent
 import android.content.pm.PackageManager
 import android.graphics.BitmapFactory
 import android.graphics.PixelFormat
-import android.os.Build
 import android.os.Handler
 import android.os.Looper
 import android.os.PowerManager
@@ -152,41 +150,26 @@ class CallReceiver : BroadcastReceiver() {
         Handler(Looper.getMainLooper()).postDelayed({
             // Check if device is locked and wake it up if needed
             context.getSystemService(Context.POWER_SERVICE) as PowerManager
-            val keyguardManager =
-                context.getSystemService(Context.KEYGUARD_SERVICE) as KeyguardManager
 
             val windowManager = context.getSystemService(Context.WINDOW_SERVICE) as WindowManager
             if (overlay?.get() == null) {
                 val inflater = LayoutInflater.from(localizedContext)
                 val overlayView = inflater.inflate(R.layout.caller_info_dialog, null)
+                // Reject touches when another visible window covers the popup:
+                // without this, an overlay can steal taps meant for it. Known
+                // trade-off: users running screen-filter apps will see those
+                // touches dropped instead. Scanners treat a missing flag as
+                // hygiene, not a vulnerability.
+                overlayView.filterTouchesWhenObscured = true
                 overlay = WeakReference(overlayView)
             }
 
-            // Choose appropriate window type based on lock screen state and API level
-            val typeParam = when {
-                Build.VERSION.SDK_INT >= Build.VERSION_CODES.O -> {
-                    WindowManager.LayoutParams.TYPE_APPLICATION_OVERLAY
-                }
+            // minSdk 29 leaves no pre-O path: the overlay type is always this.
+            val typeParam = WindowManager.LayoutParams.TYPE_APPLICATION_OVERLAY
 
-                keyguardManager.isKeyguardLocked -> {
-                    @Suppress("DEPRECATION") WindowManager.LayoutParams.TYPE_SYSTEM_ALERT
-                }
-
-                else -> {
-                    @Suppress("DEPRECATION") WindowManager.LayoutParams.TYPE_PHONE
-                }
-            }
-
-            // Handle flags for lock screen display across different API levels
-            val flags = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O_MR1) {
-                // For API 27+, use combination of flags for lock screen display
-                @Suppress("DEPRECATION")
-                WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE or WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON or WindowManager.LayoutParams.FLAG_TURN_SCREEN_ON or WindowManager.LayoutParams.FLAG_SHOW_WHEN_LOCKED or WindowManager.LayoutParams.FLAG_DISMISS_KEYGUARD
-            } else {
-                // For older versions, use the deprecated flags with suppression
-                @Suppress("DEPRECATION")
-                WindowManager.LayoutParams.FLAG_SHOW_WHEN_LOCKED or WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE or WindowManager.LayoutParams.FLAG_TURN_SCREEN_ON or WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON or WindowManager.LayoutParams.FLAG_DISMISS_KEYGUARD
-            }
+            // minSdk 29 leaves no pre-O_MR1 path: this is the only flag set.
+            @Suppress("DEPRECATION")
+            val flags = WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE or WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON or WindowManager.LayoutParams.FLAG_TURN_SCREEN_ON or WindowManager.LayoutParams.FLAG_SHOW_WHEN_LOCKED or WindowManager.LayoutParams.FLAG_DISMISS_KEYGUARD
 
             val params = WindowManager.LayoutParams(
                 WindowManager.LayoutParams.MATCH_PARENT,
