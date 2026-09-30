@@ -74,10 +74,10 @@ requests **zero network permissions**.
 
 ## 📦 Downloads
 
-The latest GitHub release is **v1.1.0** (published September 24, 2026):
+The latest GitHub release is **v1.2.0** (published September 30, 2026):
 
-- [Download `Privnum-release.apk`](https://github.com/Hcmdz/Privnum/releases/download/v1.1.0/Privnum-release.apk) — 5,011,578 bytes (about 5.0 MB), `arm64-v8a`
-- [Download the SHA-256 checksum](https://github.com/Hcmdz/Privnum/releases/download/v1.1.0/Privnum-release.apk.sha256)
+- [Download `Privnum-release.apk`](https://github.com/Hcmdz/Privnum/releases/download/v1.2.0/Privnum-release.apk) — 7,084,773 bytes (about 6.8 MB), `arm64-v8a`
+- [Download the SHA-256 checksum](https://github.com/Hcmdz/Privnum/releases/download/v1.2.0/Privnum-release.apk.sha256)
 - [Install from Obtainium](https://apps.obtainium.imranr.dev/redirect?r=obtainium://add/https://github.com/Hcmdz/Privnum/) to track future GitHub releases.
 
 Install the APK on an Android device or emulator running Android 10 (API 29) or later. Android may ask you to allow installation from the browser or file manager.
@@ -158,7 +158,7 @@ network layer.
 | Camera metadata | Exifinterface | 1.4.2 |
 | Biometrics | AndroidX Biometric | 1.4.0-alpha07 |
 | JSON | kotlinx.serialization | 1.11.0 |
-| Build | AGP 9.4.1, Kotlin 2.4.10, KSP 2.3.12, compileSdk 37, minSdk 29 | — |
+| Build | AGP 9.4.1, Kotlin 2.4.20, KSP 2.3.12, compileSdk 37, minSdk 29 | — |
 
 ### Security Features
 
