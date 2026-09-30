@@ -5,6 +5,7 @@
     <ID>LateinitUsage:CallDirectoryProvider.kt$CallDirectoryProvider$private lateinit var authorityUri: Uri</ID>
     <ID>LateinitUsage:MainActivity.kt$MainActivity$@Inject lateinit var passcode: PasscodeStore</ID>
     <ID>LateinitUsage:MainActivity.kt$MainActivity$@Inject lateinit var settings: SettingsStore</ID>
+    <ID>LateinitUsage:MainActivity.kt$MainActivity$@Inject lateinit var repository: ContactRepository</ID>
     <ID>SpreadOperator:UiText.kt$(id, *args.toTypedArray())</ID>
     <ID>SpreadOperator:UiText.kt$(id, quantity, *args.toTypedArray())</ID>
   </CurrentIssues>

@@ -1,7 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <style name="Theme.Privnum" parent="Theme.AppCompat.DayNight.NoActionBar" />
-
     <style name="Theme.Privnum.Splash" parent="Theme.SplashScreen">
         <item name="postSplashScreenTheme">@style/Theme.Privnum</item>
         <item name="windowSplashScreenBackground">@color/caller_card_background</item>

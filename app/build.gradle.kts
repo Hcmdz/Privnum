@@ -153,6 +153,7 @@ dependencies {
 
     implementation(libs.activity.compose)
     implementation(libs.appcompat)
+    implementation(libs.core.splashscreen)
     implementation(libs.fragment.ktx)
     implementation(libs.lifecycle.runtime.compose)
     implementation(libs.lifecycle.runtime.ktx)
