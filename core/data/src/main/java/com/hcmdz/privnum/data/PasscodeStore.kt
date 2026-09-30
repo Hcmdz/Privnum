@@ -7,9 +7,8 @@ import android.security.keystore.KeyGenParameterSpec
 import android.security.keystore.KeyProperties
 import android.util.Base64
 import androidx.annotation.RequiresApi
-import androidx.security.crypto.EncryptedSharedPreferences
-import androidx.security.crypto.MasterKey
 import dagger.hilt.android.qualifiers.ApplicationContext
+import java.io.File
 import java.security.InvalidKeyException
 import java.security.KeyStore
 import java.security.MessageDigest
@@ -56,16 +55,15 @@ class PasscodeStore @Inject constructor(
     }
 
     private val prefs: SharedPreferences by lazy {
-        val masterKey = MasterKey.Builder(context)
-            .setKeyScheme(MasterKey.KeyScheme.AES256_GCM)
-            .build()
-        EncryptedSharedPreferences.create(
-            context,
-            "passcode_store",
-            masterKey,
-            EncryptedSharedPreferences.PrefKeyEncryptionScheme.AES256_SIV,
-            EncryptedSharedPreferences.PrefValueEncryptionScheme.AES256_GCM
-        )
+        // The previous store was EncryptedSharedPreferences, whose ciphertext
+        // this code can no longer read by design. A fresh file keeps stale
+        // entries out of the new store; the old file is removed best-effort.
+        runCatching {
+            File(File(context.applicationInfo.dataDir, "shared_prefs"), "passcode_store.xml")
+                .takeIf { it.exists() }
+                ?.delete()
+        }
+        context.getSharedPreferences("passcode_settings", Context.MODE_PRIVATE)
     }
 
     var passcodeEnabled: Boolean

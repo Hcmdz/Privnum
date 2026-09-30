@@ -43,8 +43,6 @@ dependencies {
     // with a key held in the platform keystore.
     implementation(libs.sqlcipher.android)
 
-    implementation(libs.security.crypto)
-
     implementation(libs.hilt.android)
     ksp(libs.hilt.compiler)
 

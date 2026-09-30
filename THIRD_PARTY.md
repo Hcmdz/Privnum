@@ -33,7 +33,7 @@ implementation), per Alternate's acknowledgments.
 | Vinnie (`com.github.mangstadt`) | 2.0.2 | MIT | MIME parsing, pulled in transitively by ez-vcard |
 | Coil 3 (`io.coil-kt.coil3:coil-compose`) | 3.6.3 | Apache-2.0 | Contact photo loading |
 | SQLCipher (`net.zetetic:sqlcipher-android`) | 4.19.0 | BSD-3-Clause | On-device database encryption; ships `libsqlcipher.so` (2.00 MB) per ABI. Full licence text in [NOTICE](NOTICE) |
-| AndroidX libraries (room, datastore, biometric, security-crypto, activity, lifecycle, navigation3, exifinterface, core) | catalog | Apache-2.0 | Persistence, settings, crypto, UI, camera metadata |
+| AndroidX libraries (room, datastore, biometric, activity, lifecycle, navigation3, exifinterface, core) | catalog | Apache-2.0 | Persistence, settings, UI, camera metadata |
 | AndroidX datastore protobuf (`androidx.datastore:datastore-preferences-external-protobuf`) | 1.1.3 | BSD-3-Clause | Protobuf runtime behind DataStore preferences |
 | Hilt / Dagger (`com.google.dagger`) | 2.60.1 | Apache-2.0 | Dependency injection |
 | kotlinx.coroutines / serialization / org.json | catalog | Apache-2.0 | Concurrency, JSON |
