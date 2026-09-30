@@ -32,6 +32,8 @@
 [![MinSDK](https://img.shields.io/badge/MinSDK-29-orange.svg)](#)
 [![TargetSDK](https://img.shields.io/badge/TargetSDK-36-blue.svg)](#)
 [![License: GPL v3](https://img.shields.io/badge/License-GPLv3-blue.svg)](https://www.gnu.org/licenses/gpl-3.0)
+[![Release](https://img.shields.io/github/v/release/Hcmdz/Privnum)](https://github.com/Hcmdz/Privnum/releases/latest)
+[![Downloads](https://img.shields.io/github/downloads/Hcmdz/Privnum/total)](https://github.com/Hcmdz/Privnum/releases)
 [![Stars](https://img.shields.io/github/stars/Hcmdz/Privnum)](https://github.com/Hcmdz/Privnum/stargazers)
 [![Forks](https://img.shields.io/github/forks/Hcmdz/Privnum)](https://github.com/Hcmdz/Privnum/network/members)
 [![Compose M3](https://img.shields.io/badge/Jetpack_Compose-Material_3-4285F4.svg?logo=jetpackcompose)](https://developer.android.com/jetpack/compose)
