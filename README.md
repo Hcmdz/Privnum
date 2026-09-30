@@ -304,13 +304,13 @@ apksigner verify --print-certs app/build/outputs/apk/release/Privnum-release.apk
 ## 📏 APK Size
 
 Current release build (`versionCode 3`, `arm64-v8a` only, R8 + resource
-shrinking): **7,002,777 bytes** (6.68 MB).
+shrinking): **7,084,697 bytes** (6.76 MB).
 
 Compressed sizes as stored in the APK:
 
 | Component | Size |
 |---|---|
-| Code (dex) | 3.80 MB |
+| Code (dex) | 3.86 MB |
 | Native libraries | 2.02 MB |
 | Everything else | 0.44 MB |
 | Resources | 0.23 MB |
