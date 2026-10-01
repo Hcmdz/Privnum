@@ -49,7 +49,7 @@ touching the system contacts, WhatsApp, Telegram, or the network: the app
 requests **zero network permissions**.
 
 - **Package**: `com.hcmdz.privnum`
-- **Version**: 1.2.0 (versionCode 4)
+- **Version**: 1.3.0 (versionCode 5)
 - **Author**: HcmDZ &lt;[HcmDz.Dev@gmail.com]&gt;
 
 <details>
@@ -76,10 +76,10 @@ requests **zero network permissions**.
 
 ## 📦 Downloads
 
-The latest GitHub release is **v1.2.0** (published September 30, 2026):
+The latest GitHub release is **v1.3.0**:
 
-- [Download `Privnum-release.apk`](https://github.com/Hcmdz/Privnum/releases/download/v1.2.0/Privnum-release.apk) — 7,084,773 bytes (about 6.8 MB), `arm64-v8a`
-- [Download the SHA-256 checksum](https://github.com/Hcmdz/Privnum/releases/download/v1.2.0/Privnum-release.apk.sha256)
+- [Download `Privnum-release.apk`](https://github.com/Hcmdz/Privnum/releases/download/v1.3.0/Privnum-release.apk) — `arm64-v8a`
+- [Download the SHA-256 checksum](https://github.com/Hcmdz/Privnum/releases/download/v1.3.0/Privnum-release.apk.sha256)
 - [Install from Obtainium](https://apps.obtainium.imranr.dev/redirect?r=obtainium://add/https://github.com/Hcmdz/Privnum/) to track future GitHub releases.
 
 Install the APK on an Android device or emulator running Android 10 (API 29) or later. Android may ask you to allow installation from the browser or file manager.
@@ -120,6 +120,10 @@ sha256sum -c Privnum-release.apk.sha256
   in Settings: English, French, Spanish, German, Brazilian Portuguese, Arabic,
   Hindi, Indonesian, Japanese, Korean, or Simplified Chinese. UI labels, country
   names, and dates follow the active locale, including RTL layouts.
+- **Turn a missed call into a contact.** Call history lists recent calls with
+  your own contact names resolved; an unknown number gets an add button that
+  opens the editor pre-filled. Read on demand from the system provider and
+  never copied into the app database.
 - **Lock it down.** Optional passcode (5-attempt lockout), biometrics,
   auto-lock timeouts, instant lock, encrypted storage.
 - **Yours to theme.** Dynamic (Material You) colors with toggle, pure-black
@@ -153,6 +157,7 @@ network layer.
 | DI | Hilt | 2.60.1 |
 | Database | Room (+FTS4) | 2.8.5 |
 | Database encryption | SQLCipher | 4.19.0 |
+| Splash screen | AndroidX Core Splashscreen | 1.2.0 |
 | Settings | DataStore Preferences | 1.1.3 |
 | Phone numbers | libphonenumber | 9.0.40 |
 | VCF | ez-vcard | 0.12.2 |
@@ -187,7 +192,7 @@ Declared in the merged manifest (`core/caller` contributes all but the two
 biometric ones):
 
 - `READ_PHONE_STATE` — read incoming/outgoing call state for the popup
-- `READ_CALL_LOG` — call-state resolution where the system requires it
+- `READ_CALL_LOG` — read the recent-call list behind the in-app call history, and resolve call state where the system requires it. Requested only from an explicit button, never on screen entry, and never copied into the app database
 - `SYSTEM_ALERT_WINDOW` — draw the caller popup over other apps (opt-in, with rationale)
 - `POST_NOTIFICATIONS` — call-related notifications (Android 13+)
 - `DISABLE_KEYGUARD` — show the popup over the lock screen
@@ -236,12 +241,13 @@ export JAVA_HOME=<jdk-17> ANDROID_HOME=<sdk>
 ### Testing
 
 ```bash
-./gradlew testDebugUnitTest   # VCF round-trip, phone utils, FTS, screening, countries
+./gradlew testDebugUnitTest   # VCF round-trip, phone utils, FTS, screening,
+                               # countries, call-history mapping, editor prefill
 ./gradlew lintDebug
 ```
 
-DAO/device tests run on demand against the emulator (caller overlay
-verified end to end with `adb emu gsm call`).
+DAO/device tests run on demand against the emulator (caller overlay and
+call-history permission flow verified end to end with `adb emu gsm call`).
 
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
 
@@ -251,12 +257,13 @@ verified end to end with `adb emu gsm call`).
 
 ```
 app/src/main/java/com/hcmdz/privnum/
-├── MainActivity.kt              # Entry point, lock gate, theme
-├── AppNav.kt                    # Nav3 graph (contacts/search/editor/preview/settings/lock)
+├── MainActivity.kt              # Entry point, lock gate, theme, platform splash
+├── AppNav.kt                    # Nav3 graph (contacts/history/search/editor/preview/settings/lock)
 ├── PrivnumApplication.kt        # Hilt application
 ├── res/xml/file_paths.xml       # FileProvider paths (VCF/photo sharing)
 └── res/xml/locale_config.xml    # The 11 supported app locales
 core/caller/                    # Screening service, receiver, directory provider, overlay UI
+│   │                           # + call-history source (system provider, read on demand)
 core/data/                      # Room (contacts + phone_numbers + FTS4,
 │   │                           # exportSchema=true, v1→v2 migration), repository,
 │   │                           # DataStore settings, encrypted passcode, VCF, photo store
@@ -265,7 +272,8 @@ core/data/                      # Room (contacts + phone_numbers + FTS4,
 │   └── schemas/                 # Exported Room JSON schemas
 core/ui/                        # Material 3 theme + shared ContactAvatar
 feature/contacts|editor|        # MVI screens + Hilt ViewModels + unit tests
-  search|settings|lock|preview/
+  search|settings|lock|preview|
+  calllog/                      # Call-history screen (permission rationale, add-to-contact)
 │   └── src/main/res/values-*/  # Localized UI strings, one dir per language
 gradle/libs.versions.toml       # Single source for dependency versions
 screenshots/                    # Light- and dark-mode captures used above
@@ -305,16 +313,16 @@ apksigner verify --print-certs app/build/outputs/apk/release/Privnum-release.apk
 
 ## 📏 APK Size
 
-Current release build (`versionCode 4`, `arm64-v8a` only, R8 + resource
-shrinking): **7,084,773 bytes** (6.76 MB).
+Current release build (`versionCode 5`, `arm64-v8a` only, R8 + resource
+shrinking): **6,899,655 bytes** (6.58 MB).
 
 Compressed sizes as stored in the APK:
 
 | Component | Size |
 |---|---|
-| Code (dex) | 3.86 MB |
+| Code (dex) | 3.68 MB |
 | Native libraries | 2.02 MB |
-| Everything else | 0.44 MB |
+| Everything else | 0.46 MB |
 | Resources | 0.23 MB |
 
 The database engine is the whole of the native line: `libsqlcipher.so` is
@@ -330,6 +338,13 @@ is 5,011,578 bytes (5.01 MB).
 ---
 
 ## 📝 Changelog
+
+### v1.3.0
+
+- **Call history**: recent calls now appear in the app, with private names resolved from your own contacts. Unknown numbers get an add button that opens the editor pre-filled. Access is requested explicitly, never on screen entry, and the history is read on demand — nothing is copied into the app database.
+- The app now opens straight into contacts, with the system splash held until your contacts finish loading, instead of a separate startup page.
+- The primary phone number now survives a vCard backup round trip. Previously the flag followed the first listed number, so a different primary could shift on restore.
+- Call popup ignores touches covered by another app's window.
 
 ### v1.2.0
 
