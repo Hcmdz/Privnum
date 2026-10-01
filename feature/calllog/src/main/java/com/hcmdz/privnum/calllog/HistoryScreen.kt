@@ -36,7 +36,6 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -90,10 +89,9 @@ fun HistoryScreen(
 
     // The permission is never requested on entry: the rationale state carries
     // an explicit grant button instead. The resume effect re-checks after a
-    // detour to system settings, which does not recreate this entry.
-    LaunchedEffect(Unit) {
-        viewModel.setPermission(CallerPermissions.hasCallLog(context))
-    }
+    // detour to system settings, which does not recreate this entry. It also
+    // covers the first composition, so it is the only trigger: adding a
+    // LaunchedEffect here too loaded the provider twice per visit.
     LifecycleEventEffect(Lifecycle.Event.ON_RESUME) {
         viewModel.setPermission(CallerPermissions.hasCallLog(context))
     }
