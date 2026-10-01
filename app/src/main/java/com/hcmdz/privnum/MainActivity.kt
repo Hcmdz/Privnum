@@ -1,6 +1,7 @@
 package com.hcmdz.privnum
 
 import android.os.Bundle
+import android.view.WindowManager
 import androidx.activity.compose.setContent
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.app.AppCompatDelegate
@@ -41,6 +42,10 @@ class MainActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         val splash = installSplashScreen()
         super.onCreate(savedInstanceState)
+        // Screenshots and screen sharing stay blocked for the whole app: every
+        // screen shows contact data, and toggling the flag per screen made
+        // WindowManager rebuild the surface on each navigation, which flickered.
+        window.addFlags(WindowManager.LayoutParams.FLAG_SECURE)
         val startLocked = passcode.shouldLock()
         lifecycleScope.launch {
             splashReady.value = awaitReady(repository.observeContacts())

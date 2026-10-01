@@ -20,7 +20,6 @@ import com.hcmdz.privnum.preview.PreviewScreen
 import com.hcmdz.privnum.search.SearchScreen
 import com.hcmdz.privnum.settings.SettingsScreen
 import com.hcmdz.privnum.ui.PrivnumTheme
-import com.hcmdz.privnum.ui.SecureScreen
 import kotlinx.serialization.Serializable
 
 @Serializable
@@ -85,7 +84,6 @@ fun AppNav(
             },
             entryProvider = entryProvider {
                 entry<Contacts> {
-                    SecureScreen()
                     ContactsScreen(
                         onAdd = {
                             newContactNonce++
@@ -102,7 +100,6 @@ fun AppNav(
                     )
                 }
                 entry<NewContact> { key ->
-                    SecureScreen()
                     EditorScreen(
                         contactId = null,
                         entryNonce = newContactNonce,
@@ -112,7 +109,6 @@ fun AppNav(
                     )
                 }
                 entry<EditContact> { key ->
-                    SecureScreen()
                     EditorScreen(
                         contactId = key.contactId,
                         entryNonce = 0,
@@ -125,13 +121,11 @@ fun AppNav(
                     )
                 }
                 entry<Search> {
-                    SecureScreen()
                     SearchScreen(
                         onPreview = { backStack.add(PreviewContact(it.id)) }
                     )
                 }
                 entry<History> {
-                    SecureScreen()
                     HistoryScreen(
                         onPreview = { backStack.add(PreviewContact(it)) },
                         onAddNumber = {
@@ -142,7 +136,6 @@ fun AppNav(
                     )
                 }
                 entry<PreviewContact> { key ->
-                    SecureScreen()
                     PreviewScreen(
                         contactId = key.contactId,
                         onBack = { backStack.removeLastOrNull() },
@@ -160,7 +153,6 @@ fun AppNav(
                     // Opened from Settings: always run the setup flow.
                     // (Cold-start gate only pushes LockSetup when locked,
                     // so reaching it fresh means setup was requested.)
-                    SecureScreen()
                     LockScreen(
                         startSetup = backStack.size > 1,
                         onUnlocked = {
@@ -175,7 +167,6 @@ fun AppNav(
                     )
                 }
                 entry<LockVerify> {
-                    SecureScreen()
                     LockScreen(
                         startSetup = false,
                         onUnlocked = {

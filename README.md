@@ -175,7 +175,7 @@ network layer.
 | Contact database at rest | SQLCipher, with a 32-byte key generated once and stored only wrapped under a non-exportable platform keystore key. A database written before encryption existed is converted on first open: rows are copied, the row count is verified, and only then does the plaintext file get replaced |
 | Contact photos at rest | AES-GCM per file under a non-exportable platform keystore key; photos written before encryption stay readable and are re-encrypted on their next write |
 | Backup and transfer | `allowBackup="false"` plus `dataExtractionRules` excluding every domain, so nothing leaves through a cloud backup or a device-to-device transfer |
-| Screenshot protection | `FLAG_SECURE` on every screen that shows contact data, search results or the passcode |
+| Screenshot protection | `FLAG_SECURE` on the single activity window, so it stays blocked across every navigation without the flag toggling |
 | Log hygiene | Release builds strip `Log.d/v/e/w` (R8 + shrink) |
 | No network | Zero network permissions declared or requested |
 
