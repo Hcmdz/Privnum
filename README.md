@@ -49,7 +49,7 @@ touching the system contacts, WhatsApp, Telegram, or the network: the app
 requests **zero network permissions**.
 
 - **Package**: `com.hcmdz.privnum`
-- **Version**: 1.3.0 (versionCode 5)
+- **Version**: 1.3.1 (versionCode 6)
 - **Author**: HcmDZ &lt;[HcmDz.Dev@gmail.com]&gt;
 
 <details>
@@ -76,10 +76,10 @@ requests **zero network permissions**.
 
 ## 📦 Downloads
 
-The latest GitHub release is **v1.3.0**:
+The latest GitHub release is **v1.3.1**:
 
-- [Download `Privnum-release.apk`](https://github.com/Hcmdz/Privnum/releases/download/v1.3.0/Privnum-release.apk) — 6,899,655 bytes (6.58 MB), `arm64-v8a`
-- [Download the SHA-256 checksum](https://github.com/Hcmdz/Privnum/releases/download/v1.3.0/Privnum-release.apk.sha256)
+- [Download `Privnum-release.apk`](https://github.com/Hcmdz/Privnum/releases/download/v1.3.1/Privnum-release.apk) — 6,899,446 bytes (6.58 MB), `arm64-v8a`
+- [Download the SHA-256 checksum](https://github.com/Hcmdz/Privnum/releases/download/v1.3.1/Privnum-release.apk.sha256)
 - [Install from Obtainium](https://apps.obtainium.imranr.dev/redirect?r=obtainium://add/https://github.com/Hcmdz/Privnum/) to track future GitHub releases.
 
 Install the APK on an Android device or emulator running Android 10 (API 29) or later. Android may ask you to allow installation from the browser or file manager.
@@ -313,16 +313,16 @@ apksigner verify --print-certs app/build/outputs/apk/release/Privnum-release.apk
 
 ## 📏 APK Size
 
-Current release build (`versionCode 5`, `arm64-v8a` only, R8 + resource
-shrinking): **6,899,655 bytes** (6.58 MB).
+Current release build (`versionCode 6`, `arm64-v8a` only, R8 + resource
+shrinking): **6,899,446 bytes** (6.58 MB).
 
 Compressed sizes as stored in the APK:
 
 | Component | Size |
 |---|---|
-| Code (dex) | 3.68 MB |
+| Code (dex) | 3.69 MB |
 | Native libraries | 2.02 MB |
-| Everything else | 0.46 MB |
+| Everything else | 0.45 MB |
 | Resources | 0.23 MB |
 
 The database engine is the whole of the native line: `libsqlcipher.so` is
@@ -338,6 +338,15 @@ is 5,011,578 bytes (5.01 MB).
 ---
 
 ## 📝 Changelog
+
+### v1.3.1
+
+- **The call popup shows the caller's name again.** Operators that report a number in national form were trimmed before lookup, so the number never matched your contacts and no popup appeared for callers you know. It is now normalised the same way the editor does, and an unknown caller is shown with their raw number instead of nothing. A withheld number shows nothing rather than a blank popup.
+- **No more flash between screens in dark mode.** The app's own background was being drawn from the default light scheme.
+- Search has a back arrow. The system back gesture used to leave the app from there.
+- Call history asks the system provider once per visit, and keeps the list when you come back rather than reloading it behind a spinner.
+- Contact numbers keep their country code in the details screen. A foreign number used to read like a national one, without its calling code.
+- Dependencies carrying known advisories pinned to their fixed versions. None of them ship in the APK.
 
 ### v1.3.0
 
