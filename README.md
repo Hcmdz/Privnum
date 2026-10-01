@@ -392,6 +392,22 @@ Copyright (c) 2026 Hcmdz. This project is licensed under the
 [GNU General Public License v3.0 or later](https://www.gnu.org/licenses/gpl-3.0) —
 see the [LICENSE](LICENSE) file for details.
 
+### Trademark Notice
+
+The application name **Privnum**, and the original branding shipped with
+it — the app icon (`assets/app-icon/icon.png`) and the launcher icons
+(`app/src/main/res/mipmap-*/ic_launcher*.png`) — are the exclusive
+intellectual property of the author. The GNU General Public License v3.0
+or later covers the source code only, and does not grant permission to
+use these brand assets in derivative works.
+
+A redistribution or a modified version may not use the name or these
+assets **as a mark**, and may not imply official endorsement. Describing
+where the work comes from — naming Privnum to state that a fork descends
+from it — is not restricted by this notice. Neither is the attribution
+owed to the MIT-licensed upstream code recorded in
+[`THIRD_PARTY.md`](THIRD_PARTY.md).
+
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
 
 ---

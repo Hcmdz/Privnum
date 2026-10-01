@@ -672,3 +672,21 @@ may consider it more useful to permit linking proprietary applications with
 the library.  If this is what you want to do, use the GNU Lesser General
 Public License instead of this License.  But first, please read
 <https://www.gnu.org/licenses/why-not-lgpl.html>.
+
+------------------------------------------------------------------------------
+
+ADDITIONAL TERMS: TRADEMARK
+
+These additional terms are not part of the GNU General Public License.
+The licence text above is reproduced verbatim and unmodified.
+
+The application name "Privnum", and the original branding shipped with it
+- the app icon and the launcher icons - are the exclusive intellectual
+property of the author. The GNU General Public License v3.0 or later covers
+the source code only, and does not grant permission to use these brand assets
+in derivative works.
+
+A redistribution or a modified version may not use the name or these assets as
+a mark, and may not imply official endorsement. Describing where the work comes
+from is not restricted by this notice, and neither is the attribution owed to
+the MIT-licensed upstream code recorded in THIRD_PARTY.md.
