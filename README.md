@@ -9,9 +9,9 @@
 </a>
 <br />
 <br />
-    <a href="https://github.com/Hcmdz/Privnum/issues">Report Bug</a>
+    <a href="https://github.com/Hcmdz/Privnum/issues/new?template=bug_report.yml">Report Bug</a>
     ·
-    <a href="https://github.com/Hcmdz/Privnum/issues">Request Feature</a>
+    <a href="https://github.com/Hcmdz/Privnum/issues/new?template=feature_request.yml">Request Feature</a>
     <br />
     <br />
 </div>
@@ -151,7 +151,7 @@ network layer.
 |---|---|---|
 | UI | Jetpack Compose + Material 3 | BOM 2026.09.00 |
 | App language | AndroidX AppCompat | 1.8.0 |
-| AndroidX Core | core-ktx | 1.18.0 |
+| AndroidX Core | core-ktx | 1.19.1 |
 | Navigation | Navigation 3 | 1.1.7 |
 | Async | Kotlin Coroutines & Flow | 1.11.0 |
 | DI | Hilt | 2.60.1 |
@@ -225,7 +225,7 @@ Entry points: `MainActivity` (launcher), `CallReceiver` (phone-state broadcasts)
 ### Prerequisites
 
 - **Android Studio** (Ladybug or newer) — IDE ([doc](https://developer.android.com/studio))
-- **JDK 17** — Gradle toolchain ([doc](https://docs.gradle.org/current/userguide/build_java_projects.html))
+- **JDK 17 or newer** — the Android Gradle Plugin sets the minimum; the build itself is verified on JDK 25 ([doc](https://docs.gradle.org/current/userguide/build_java_projects.html)). Bytecode targets 17 (`sourceCompatibility` / `jvmTarget`), not the JDK that runs Gradle
 - **Android SDK** with compileSdk 37; emulator or device on API 29+
 
 ### Installation
@@ -257,8 +257,9 @@ call-history permission flow verified end to end with `adb emu gsm call`).
 
 ```
 app/src/main/java/com/hcmdz/privnum/
-├── MainActivity.kt              # Entry point, lock gate, theme, platform splash
+├── MainActivity.kt              # Entry point, lock gate, theme, platform splash, FLAG_SECURE
 ├── AppNav.kt                    # Nav3 graph (contacts/history/search/editor/preview/settings/lock)
+├── AppInfo.kt                   # Injected holder exposing applicationId
 ├── PrivnumApplication.kt        # Hilt application
 ├── res/xml/file_paths.xml       # FileProvider paths (VCF/photo sharing)
 └── res/xml/locale_config.xml    # The 11 supported app locales
