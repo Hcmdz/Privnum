@@ -17,6 +17,7 @@
     <string name="contacts_delete_selected_description">حذف المحدد</string>
     <string name="contacts_lock_now_description">قفل الآن</string>
     <string name="contacts_search_description">بحث</string>
+    <string name="contacts_history_description">سجل المكالمات</string>
     <string name="contacts_settings_description">الإعدادات</string>
     <string name="contacts_add_contact_description">إضافة جهة اتصال</string>
     <string name="contacts_empty_title">لم يتم العثور على جهات الاتصال</string>

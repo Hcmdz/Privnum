@@ -10,6 +10,7 @@ import androidx.navigation3.runtime.NavKey
 import androidx.navigation3.runtime.entryProvider
 import androidx.navigation3.runtime.rememberNavBackStack
 import androidx.navigation3.ui.NavDisplay
+import com.hcmdz.privnum.calllog.HistoryScreen
 import com.hcmdz.privnum.contacts.ContactsScreen
 import com.hcmdz.privnum.data.PasscodeStore
 import com.hcmdz.privnum.data.ThemeMode
@@ -26,7 +27,10 @@ import kotlinx.serialization.Serializable
 data object Contacts : NavKey
 
 @Serializable
-data object NewContact : NavKey
+data class NewContact(val prefillNumber: String? = null) : NavKey
+
+@Serializable
+data object History : NavKey
 
 @Serializable
 data class EditContact(val contactId: Long) : NavKey
@@ -85,10 +89,11 @@ fun AppNav(
                     ContactsScreen(
                         onAdd = {
                             newContactNonce++
-                            backStack.add(NewContact)
+                            backStack.add(NewContact())
                         },
                         onPreview = { backStack.add(PreviewContact(it.id)) },
                         onOpenSearch = { backStack.add(Search) },
+                        onOpenHistory = { backStack.add(History) },
                         onOpenSettings = { backStack.add(Settings) },
                         onLockNow = {
                             passcode.lockNow()
@@ -96,13 +101,14 @@ fun AppNav(
                         }
                     )
                 }
-                entry<NewContact> {
+                entry<NewContact> { key ->
                     SecureScreen()
                     EditorScreen(
                         contactId = null,
                         entryNonce = newContactNonce,
                         onSaved = { backStack.removeLastOrNull() },
-                        onBack = { backStack.removeLastOrNull() }
+                        onBack = { backStack.removeLastOrNull() },
+                        initialNumber = key.prefillNumber
                     )
                 }
                 entry<EditContact> { key ->
@@ -122,6 +128,17 @@ fun AppNav(
                     SecureScreen()
                     SearchScreen(
                         onPreview = { backStack.add(PreviewContact(it.id)) }
+                    )
+                }
+                entry<History> {
+                    SecureScreen()
+                    HistoryScreen(
+                        onPreview = { backStack.add(PreviewContact(it)) },
+                        onAddNumber = {
+                            newContactNonce++
+                            backStack.add(NewContact(prefillNumber = it))
+                        },
+                        onBack = { backStack.removeLastOrNull() }
                     )
                 }
                 entry<PreviewContact> { key ->

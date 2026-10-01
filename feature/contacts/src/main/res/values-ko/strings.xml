@@ -13,6 +13,7 @@
     <string name="contacts_delete_selected_description">선택 항목 삭제</string>
     <string name="contacts_lock_now_description">지금 잠금</string>
     <string name="contacts_search_description">검색</string>
+    <string name="contacts_history_description">통화 기록</string>
     <string name="contacts_settings_description">설정</string>
     <string name="contacts_add_contact_description">연락처 추가</string>
     <string name="contacts_empty_title">연락처를 찾을 수 없음</string>

@@ -22,6 +22,28 @@ object PhoneNumberUtils {
         return if (raw.startsWith("+") && digits.isNotEmpty()) "+$digits" else digits
     }
 
+    /**
+     * ASCII-fold a dial string: locale decimal digits (full-width,
+     * Arabic-Indic, …) become 0-9, "+" survives, the rest is dropped.
+     * System providers may store numbers in locale digits, which neither
+     * libphonenumber nor exact matching can consume.
+     */
+    fun asciiDigits(rawInput: String): String {
+        val out = StringBuilder()
+        for (c in rawInput) {
+            when {
+                c == '+' -> out.append(c)
+                c.isDigit() -> {
+                    // No digit-range literal here by design: the persisted
+                    // bytes of such a literal do not survive the tool chain.
+                    val value = Character.getNumericValue(c)
+                    if (value in 0..9) out.append((48 + value).toChar())
+                }
+            }
+        }
+        return out.toString()
+    }
+
     fun parse(phoneStr: String, defaultRegion: String): ParsedNumber? {
         return try {
             val proto = phoneUtil.parse(phoneStr, defaultRegion)

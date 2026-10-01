@@ -60,6 +60,24 @@ data class EditorUiState(
 )
 
 /** User setting wins over SIM; "DZ" preserves the historical default. */
+internal fun String.toPrefillRow(defaultCountry: Country): NumberRow {
+    // History numbers parse into country + national digits; unparseable
+    // ones (short codes, masked) stay editable as raw text.
+    val parsed = PhoneNumberUtils.parseForSave(
+        PhoneNumberUtils.asciiDigits(this),
+        defaultCountry.code
+    )
+    return if (parsed != null) {
+        NumberRow(
+            nationalNumber = parsed.nationalNumber,
+            country = Countries.getByCode(parsed.countryIso) ?: defaultCountry,
+            primary = true
+        )
+    } else {
+        NumberRow(nationalNumber = this, country = defaultCountry)
+    }
+}
+
 fun resolveDefaultCountry(setting: String?, simIso: String): Country =
     setting?.let { Countries.getByCode(it) }
         ?: Countries.getByCode(simIso)
@@ -145,7 +163,7 @@ class EditorViewModel @Inject constructor(
      * originalId is always reset first: load() refuses to run twice, which
      * would otherwise show the previous contact when editing another one.
      */
-    fun enter(contactId: Long?) {
+    fun enter(contactId: Long?, prefillNumber: String? = null) {
         originalId = null
         // Synchronous: LaunchedEffect(saved) fires on first composition, before
         // the async load() below completes. A stale true would pop instantly.
@@ -153,8 +171,13 @@ class EditorViewModel @Inject constructor(
         if (contactId == null) {
             countryTouched = false
             val fresh = freshState()
-            _state.value = fresh
-            pristine = fresh
+            val seeded = if (prefillNumber != null) {
+                fresh.copy(numbers = listOf(prefillNumber.toPrefillRow(initialCountry)))
+            } else {
+                fresh
+            }
+            _state.value = seeded
+            pristine = seeded
         } else {
             load(contactId)
         }

@@ -88,7 +88,8 @@ fun EditorScreen(
     entryNonce: Int,
     onSaved: () -> Unit,
     onBack: () -> Unit,
-    viewModel: EditorViewModel = hiltViewModel()
+    viewModel: EditorViewModel = hiltViewModel(),
+    initialNumber: String? = null
 ) {
     val state by viewModel.state.collectAsStateWithLifecycle()
     val context = LocalContext.current
@@ -109,7 +110,7 @@ fun EditorScreen(
     BackHandler(enabled = dirty && !state.saved) { abandonConfirm = true }
 
     LaunchedEffect(entryNonce, contactId) {
-        viewModel.enter(contactId)
+        viewModel.enter(contactId, initialNumber)
     }
     LaunchedEffect(state.saved) {
         if (state.saved) onSaved()

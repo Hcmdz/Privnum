@@ -27,6 +27,7 @@ dependencies {
 
     implementation(libs.room.runtime)
     implementation(libs.room.ktx)
+    implementation(libs.coroutines.android)
 
     implementation(libs.hilt.android)
     ksp(libs.hilt.compiler)

@@ -119,6 +119,17 @@ class ContactRepository @Inject constructor(
         return dao.getById(id)?.toContact()
     }
 
+    /**
+     * Same as [findByNumber] but also tries the "+"-prefixed form: the store
+     * keeps whichever form the editor produced, so a digit string matches
+     * both "digits" and "+digits" rows.
+     */
+    suspend fun findByNumberAnyForm(full: String): Contact? {
+        val id = dao.findContactIdsByFulls(listOf(full, "+$full")).firstOrNull()
+            ?: return null
+        return dao.getById(id)?.toContact()
+    }
+
     fun findByNumberSync(full: String): Contact? {
         return try {
             kotlinx.coroutines.runBlocking { findByNumber(full) }

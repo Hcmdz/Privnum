@@ -13,6 +13,7 @@
     <string name="contacts_delete_selected_description">Supprimer la sélection</string>
     <string name="contacts_lock_now_description">Verrouiller maintenant</string>
     <string name="contacts_search_description">Rechercher</string>
+    <string name="contacts_history_description">Historique d\'appels</string>
     <string name="contacts_settings_description">Paramètres</string>
     <string name="contacts_add_contact_description">Ajouter un contact</string>
     <string name="contacts_empty_title">Aucun contact trouvé</string>

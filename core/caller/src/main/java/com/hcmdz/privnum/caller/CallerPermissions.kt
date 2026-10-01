@@ -24,6 +24,12 @@ object CallerPermissions {
     fun hasOverlay(context: Context): Boolean =
         Settings.canDrawOverlays(context)
 
+    fun hasCallLog(context: Context): Boolean =
+        ContextCompat.checkSelfPermission(
+            context,
+            Manifest.permission.READ_CALL_LOG
+        ) == PackageManager.PERMISSION_GRANTED
+
     fun overlaySettingsIntent(): Intent =
         Intent(
             Settings.ACTION_MANAGE_OVERLAY_PERMISSION,

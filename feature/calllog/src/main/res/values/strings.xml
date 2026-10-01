@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="history_title">Call history</string>
+    <string name="history_back_description">Back</string>
+    <string name="history_grant_rationale">Call history shows your recent calls so you can add unknown numbers as contacts. Your call history never leaves this device.</string>
+    <string name="history_grant">Allow access</string>
+    <string name="history_open_settings">Open settings</string>
+    <string name="history_unavailable">Call history is unavailable on this device.</string>
+    <string name="history_retry">Retry</string>
+    <string name="history_empty">No recent calls</string>
+    <string name="history_add_description">Add as contact</string>
+    <string name="history_direction_incoming">Incoming call</string>
+    <string name="history_direction_outgoing">Outgoing call</string>
+    <string name="history_direction_missed">Missed call</string>
+    <string name="history_direction_other">Call</string>
+</resources>

@@ -13,6 +13,7 @@
     <string name="contacts_delete_selected_description">選択項目を削除</string>
     <string name="contacts_lock_now_description">今すぐロック</string>
     <string name="contacts_search_description">検索</string>
+    <string name="contacts_history_description">通話履歴</string>
     <string name="contacts_settings_description">設定</string>
     <string name="contacts_add_contact_description">連絡先を追加</string>
     <string name="contacts_empty_title">連絡先が見つかりません</string>

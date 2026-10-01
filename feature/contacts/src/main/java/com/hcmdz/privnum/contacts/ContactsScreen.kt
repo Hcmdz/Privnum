@@ -18,6 +18,7 @@ import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.ContentCopy
 import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material.icons.filled.Lock
+import androidx.compose.material.icons.filled.Phone
 import androidx.compose.material.icons.filled.Search
 import androidx.compose.material.icons.filled.Settings
 import androidx.compose.material.icons.filled.Share
@@ -67,6 +68,7 @@ fun ContactsScreen(
     onPreview: (Contact) -> Unit,
     onOpenSearch: () -> Unit,
     onOpenSettings: () -> Unit,
+    onOpenHistory: () -> Unit,
     onLockNow: () -> Unit,
     viewModel: ContactsViewModel = hiltViewModel()
 ) {
@@ -175,6 +177,9 @@ fun ContactsScreen(
                         }
                         IconButton(onClick = onOpenSearch) {
                             Icon(Icons.Default.Search, contentDescription = stringResource(R.string.contacts_search_description))
+                        }
+                        IconButton(onClick = onOpenHistory) {
+                            Icon(Icons.Filled.Phone, contentDescription = stringResource(R.string.contacts_history_description))
                         }
                         IconButton(onClick = onOpenSettings) {
                             Icon(Icons.Default.Settings, contentDescription = stringResource(R.string.contacts_settings_description))

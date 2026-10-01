@@ -13,6 +13,7 @@
     <string name="contacts_delete_selected_description">删除所选联系人</string>
     <string name="contacts_lock_now_description">立即锁定</string>
     <string name="contacts_search_description">搜索</string>
+    <string name="contacts_history_description">通话记录</string>
     <string name="contacts_settings_description">设置</string>
     <string name="contacts_add_contact_description">添加联系人</string>
     <string name="contacts_empty_title">未找到联系人</string>

@@ -143,6 +143,7 @@ dependencies {
     implementation(project(":feature:settings"))
     implementation(project(":feature:lock"))
     implementation(project(":feature:preview"))
+    implementation(project(":feature:calllog"))
 
     val composeBom = platform(libs.compose.bom)
     implementation(composeBom)
