@@ -78,14 +78,15 @@ requests **zero network permissions**.
 
 The latest GitHub release is **v1.3.1**:
 
-- [Download `Privnum-release.apk`](https://github.com/Hcmdz/Privnum/releases/download/v1.3.1/Privnum-release.apk) — 6,899,446 bytes (6.58 MB), `arm64-v8a`
-- [Download the SHA-256 checksum](https://github.com/Hcmdz/Privnum/releases/download/v1.3.1/Privnum-release.apk.sha256)
+- [Download `Privnum-release.v1.3.1.apk`](https://github.com/Hcmdz/Privnum/releases/download/v1.3.1/Privnum-release.v1.3.1.apk) — 6,899,446 bytes (6.58 MB), `arm64-v8a`, versionCode 6
+- [Download the SHA-256 checksum](https://github.com/Hcmdz/Privnum/releases/download/v1.3.1/Privnum-release.v1.3.1.apk.sha256)
+- [Download `version_info.json`](https://github.com/Hcmdz/Privnum/releases/download/v1.3.1/version_info.json) — machine-readable `version_number` / `version_name` for updaters
 - [Install from Obtainium](https://apps.obtainium.imranr.dev/redirect?r=obtainium://add/https://github.com/Hcmdz/Privnum/) to track future GitHub releases.
 
 Install the APK on an Android device or emulator running Android 10 (API 29) or later. Android may ask you to allow installation from the browser or file manager.
 
 ```bash
-sha256sum -c Privnum-release.apk.sha256
+sha256sum -c Privnum-release.v1.3.1.apk.sha256
 ```
 
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
