@@ -5,6 +5,7 @@ import android.view.WindowManager
 import androidx.activity.compose.setContent
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.app.AppCompatDelegate
+import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
@@ -17,6 +18,7 @@ import com.hcmdz.privnum.data.ContactRepository
 import com.hcmdz.privnum.data.PasscodeStore
 import com.hcmdz.privnum.data.SettingsStore
 import com.hcmdz.privnum.data.ThemeMode
+import com.hcmdz.privnum.ui.PrivnumTheme
 import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.flow.Flow
@@ -63,23 +65,35 @@ class MainActivity : AppCompatActivity() {
             val amoledBlack by settings.amoledBlack.collectAsStateWithLifecycle(
                 initialValue = false
             )
-            Surface(
-                modifier = Modifier.fillMaxSize(),
-                color = MaterialTheme.colorScheme.background
+            val darkTheme = when (themeMode) {
+                ThemeMode.LIGHT -> false
+                ThemeMode.DARK -> true
+                ThemeMode.SYSTEM -> isSystemInDarkTheme()
+            }
+            // The theme lives above the Surface: reading the color scheme from
+            // inside AppNav left the root surface on the default light scheme,
+            // which flashed on every navigation in dark mode.
+            PrivnumTheme(
+                darkTheme = darkTheme,
+                dynamicColor = dynamicColor,
+                amoledBlack = amoledBlack
             ) {
-                AppNav(
-                    startLocked = startLocked,
-                    themeMode = themeMode,
-                    dynamicColor = dynamicColor,
-                    amoledBlack = amoledBlack,
-                    passcode = passcode,
-                    onUnlocked = {},
-                    onLanguageSelected = { languageTag ->
-                        val locales = languageTag?.let { LocaleListCompat.forLanguageTags(it) }
-                            ?: LocaleListCompat.getEmptyLocaleList()
-                        AppCompatDelegate.setApplicationLocales(locales)
-                    }
-                )
+                Surface(
+                    modifier = Modifier.fillMaxSize(),
+                    color = MaterialTheme.colorScheme.background
+                ) {
+                    AppNav(
+                        startLocked = startLocked,
+                        darkTheme = darkTheme,
+                        passcode = passcode,
+                        onUnlocked = {},
+                        onLanguageSelected = { languageTag ->
+                            val locales = languageTag?.let { LocaleListCompat.forLanguageTags(it) }
+                                ?: LocaleListCompat.getEmptyLocaleList()
+                            AppCompatDelegate.setApplicationLocales(locales)
+                        }
+                    )
+                }
             }
         }
     }
