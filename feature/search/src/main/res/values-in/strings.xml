@@ -1,5 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
+    <string name="search_title">Cari</string>
+    <string name="search_back">Kembali</string>
     <string name="search_field_label">Cari kontak</string>
     <string name="search_empty_prompt">Ketik nama atau email untuk mencari</string>
     <string name="search_no_results">Kontak tidak ditemukan</string>

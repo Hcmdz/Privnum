@@ -107,7 +107,8 @@ fun AppNav(
             }
             entry<Search> {
                 SearchScreen(
-                    onPreview = { backStack.add(PreviewContact(it.id)) }
+                    onPreview = { backStack.add(PreviewContact(it.id)) },
+                    onBack = { backStack.removeLastOrNull() }
                 )
             }
             entry<History> {
