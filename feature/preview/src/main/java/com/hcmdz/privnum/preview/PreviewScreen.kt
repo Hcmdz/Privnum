@@ -114,6 +114,7 @@ fun PreviewScreen(
     viewModel: PreviewViewModel = hiltViewModel()
 ) {
     val state by viewModel.state.collectAsStateWithLifecycle()
+    val userRegion by viewModel.userRegion.collectAsStateWithLifecycle()
     val context = LocalContext.current
     val locale = LocalLocale.current.platformLocale
     val snackbar = remember { SnackbarHostState() }
@@ -196,6 +197,7 @@ fun PreviewScreen(
                 ContactDetails(
                     contact = contact,
                     locale = locale,
+                    userRegion = userRegion,
                     photoModel = viewModel.photoModel(contact.photo),
                     modifier = Modifier
                         .fillMaxSize()
@@ -266,6 +268,7 @@ fun PreviewScreen(
 private fun ContactDetails(
     contact: Contact,
     locale: Locale,
+    userRegion: String?,
     photoModel: Any?,
     modifier: Modifier = Modifier,
     onCall: () -> Unit,
@@ -360,9 +363,10 @@ private fun ContactDetails(
                     modifier = Modifier.padding(16.dp)
                 )
                 contact.numbers.forEachIndexed { index, number ->
-                    val formatted = "+" + PhoneNumberUtils.formatNational(
+                    val formatted = PhoneNumberUtils.formatDisplay(
                         number.full,
-                        number.country
+                        number.country,
+                        userRegion
                     )
                     ListItem(
                         headlineContent = { Text(formatted) },

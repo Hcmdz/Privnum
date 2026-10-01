@@ -2,6 +2,7 @@ package com.hcmdz.privnum.data
 
 import com.google.i18n.phonenumbers.NumberParseException
 import com.google.i18n.phonenumbers.PhoneNumberUtil
+import com.google.i18n.phonenumbers.PhoneNumberUtil.PhoneNumberFormat
 
 data class ParsedNumber(
     val countryIso: String,
@@ -68,12 +69,30 @@ object PhoneNumberUtils {
         }
     }
 
-    fun formatNational(fullNumber: String, region: String): String {
-        return try {
-            val proto = phoneUtil.parse("+$fullNumber", region)
-            phoneUtil.formatInOriginalFormat(proto, region)
+    /**
+     * Display form of a stored number for the reader: the national format when
+     * the number belongs to their own country, the international one otherwise.
+     * The choice is made explicitly here rather than through
+     * formatInOriginalFormat, whose result follows the region passed to the
+     * parser and can drop the country code of a foreign number. Callers must
+     * not prepend a "+" to the result: the national form carries none, and the
+     * international form already carries it.
+     */
+    fun formatDisplay(fullNumber: String, numberRegion: String, userRegion: String?): String {
+        val proto = try {
+            phoneUtil.parse("+$fullNumber", numberRegion)
         } catch (e: NumberParseException) {
-            fullNumber
+            return "+$fullNumber"
+        }
+        val iso = phoneUtil.getRegionCodeForNumber(proto)
+        val homeCountry = userRegion != null && iso != null && iso.equals(userRegion, true)
+        return try {
+            phoneUtil.format(
+                proto,
+                if (homeCountry) PhoneNumberFormat.NATIONAL else PhoneNumberFormat.INTERNATIONAL
+            )
+        } catch (e: NumberParseException) {
+            "+$fullNumber"
         }
     }
 

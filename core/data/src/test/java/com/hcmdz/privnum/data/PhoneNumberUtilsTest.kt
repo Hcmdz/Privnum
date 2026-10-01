@@ -42,11 +42,6 @@ class PhoneNumberUtilsTest {
     }
 
     @Test
-    fun `formatNational falls back to input on garbage`() {
-        assertEquals("xyz", PhoneNumberUtils.formatNational("xyz", "FR"))
-    }
-
-    @Test
     fun `parseForSave keeps plus-prefixed country over selected region`() {
         val parsed = PhoneNumberUtils.parseForSave(frIntl, "DZ")
         assertNotNull(parsed)

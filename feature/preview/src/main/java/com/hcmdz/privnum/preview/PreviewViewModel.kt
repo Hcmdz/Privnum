@@ -7,7 +7,9 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.hcmdz.privnum.data.Contact
 import com.hcmdz.privnum.data.ContactPhotoStore
+import com.hcmdz.privnum.data.Countries
 import com.hcmdz.privnum.data.ContactRepository
+import com.hcmdz.privnum.data.SettingsStore
 import com.hcmdz.privnum.data.VcfMapper
 import com.hcmdz.privnum.data.shareFile
 import com.hcmdz.privnum.ui.UiText
@@ -15,8 +17,11 @@ import dagger.hilt.android.lifecycle.HiltViewModel
 import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
@@ -68,10 +73,16 @@ fun avatarRoleIndex(letter: Char): Int =
 class PreviewViewModel @Inject constructor(
     private val repository: ContactRepository,
     private val photos: ContactPhotoStore,
+    private val settings: SettingsStore,
     @ApplicationContext private val context: Context
 ) : ViewModel() {
     private val _state = MutableStateFlow(PreviewUiState())
     val state: StateFlow<PreviewUiState> = _state.asStateFlow()
+
+    /** Region the reader is in, so a number can be shown in national format. */
+    val userRegion: StateFlow<String> = settings.defaultRegion
+        .map { it ?: Countries.simRegion(context) }
+        .stateIn(viewModelScope, SharingStarted.Eagerly, Countries.simRegion(context))
 
     private var loadedId: Long? = null
 
