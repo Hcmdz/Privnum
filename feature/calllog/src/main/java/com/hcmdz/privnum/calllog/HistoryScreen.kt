@@ -88,10 +88,10 @@ fun HistoryScreen(
         )
 
     // The permission is never requested on entry: the rationale state carries
-    // an explicit grant button instead. The resume effect re-checks after a
-    // detour to system settings, which does not recreate this entry. It also
-    // covers the first composition, so it is the only trigger: adding a
-    // LaunchedEffect here too loaded the provider twice per visit.
+    // an explicit grant button instead. The resume effect still re-checks after
+    // a detour to system settings, which does not recreate this entry, and it
+    // covers the first composition. The ViewModel decides whether that check
+    // costs a provider read; a second visit reuses the entries it already has.
     LifecycleEventEffect(Lifecycle.Event.ON_RESUME) {
         viewModel.setPermission(CallerPermissions.hasCallLog(context))
     }

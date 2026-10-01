@@ -21,7 +21,8 @@ data class HistoryUiState(
     val isLoading: Boolean = true,
     val entries: List<HistoryEntry> = emptyList(),
     val hasPermission: Boolean = false,
-    val unavailable: Boolean = false
+    val unavailable: Boolean = false,
+    val loadedOnce: Boolean = false
 )
 
 fun formatHistoryDuration(totalSeconds: Long): String {
@@ -49,28 +50,46 @@ class HistoryViewModel @Inject constructor(
     private val _uiState = MutableStateFlow(HistoryUiState())
     val uiState: StateFlow<HistoryUiState> = _uiState.asStateFlow()
 
+    /**
+     * The entry re-composes on every visit, so this runs more than once per
+     * screen. Re-reading the provider each time showed a spinner and dropped
+     * the visible list, so the read only happens while there is nothing to
+     * show. The ViewModel is scoped to the activity, so the entries survive
+     * leaving the screen; a revoked permission still clears the view.
+     */
     fun setPermission(granted: Boolean) {
         if (granted) {
-            refresh()
+            // loadedOnce also covers the unavailable case: an empty list is
+            // not proof that nothing has been read yet.
+            if (!_uiState.value.loadedOnce) refresh()
         } else {
-            _uiState.update { it.copy(isLoading = false, hasPermission = false) }
+            _uiState.value = HistoryUiState(isLoading = false, hasPermission = false)
         }
     }
 
     fun refresh() {
+        // Keep the current list visible while re-reading: only a first load
+        // has nothing to fall back on.
+        val silent = _uiState.value.entries.isNotEmpty()
         viewModelScope.launch {
-            _uiState.update { it.copy(isLoading = true, unavailable = false) }
+            if (!silent) _uiState.update { it.copy(isLoading = true, unavailable = false) }
             when (val result = history.getRecent(100)) {
                 is HistoryResult.Available -> _uiState.update {
                     it.copy(
                         isLoading = false,
                         entries = result.entries,
                         hasPermission = true,
-                        unavailable = false
+                        unavailable = false,
+                        loadedOnce = true
                     )
                 }
                 HistoryResult.Unavailable -> _uiState.update {
-                    it.copy(isLoading = false, hasPermission = true, unavailable = true)
+                    it.copy(
+                        isLoading = false,
+                        hasPermission = true,
+                        unavailable = true,
+                        loadedOnce = true
+                    )
                 }
             }
         }
