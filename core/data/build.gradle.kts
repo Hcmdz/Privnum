@@ -38,6 +38,18 @@ dependencies {
     implementation(libs.ez.vcard)
     implementation(libs.exifinterface)
 
+    // ez-vcard declares jsoup, FreeMarker and Jackson as optional, for hCard,
+    // jCard and templating, which this app never uses. Its 0.12.2 POM still
+    // pins versions carrying known advisories, and no newer release exists yet:
+    // upstream has open pull requests for Jackson (#161) and FreeMarker (#163).
+    // Pinning the fixed versions keeps the advisory out of the graph without
+    // touching behaviour, since R8 already strips these classes from the APK.
+    constraints {
+        implementation(libs.jsoup)
+        implementation(libs.freemarker)
+        implementation(libs.jackson.core)
+    }
+
     implementation(libs.datastore.preferences)
     // Contacts are the app's whole value: the database is encrypted at rest
     // with a key held in the platform keystore.

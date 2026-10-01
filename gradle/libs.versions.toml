@@ -24,6 +24,9 @@ fragment = "1.8.9"
 exifinterface = "1.4.2"
 coil3 = "3.6.3"
 serialization = "1.11.0"
+jsoup = "1.23.1"
+freemarker = "2.3.35"
+jackson = "2.21.4"
 
 [libraries]
 compose-bom = { group = "androidx.compose", name = "compose-bom", version.ref = "composeBom" }
@@ -55,6 +58,9 @@ room-testing = { group = "androidx.room", name = "room-testing", version.ref = "
 sqlcipher-android = { group = "net.zetetic", name = "sqlcipher-android", version.ref = "sqlcipher" }
 libphonenumber = { group = "com.googlecode.libphonenumber", name = "libphonenumber", version = "9.0.40" }
 ez-vcard = { group = "com.googlecode.ez-vcard", name = "ez-vcard", version = "0.12.2" }
+jsoup = { group = "org.jsoup", name = "jsoup", version.ref = "jsoup" }
+freemarker = { group = "org.freemarker", name = "freemarker", version.ref = "freemarker" }
+jackson-core = { group = "com.fasterxml.jackson.core", name = "jackson-core", version.ref = "jackson" }
 androidx-test-ext-junit = { group = "androidx.test.ext", name = "junit", version.ref = "androidxTestExtJunit" }
 androidx-test-runner = { group = "androidx.test", name = "runner", version.ref = "androidxTestRunner" }
 androidx-test-core = { group = "androidx.test", name = "core", version = "1.7.0" }
