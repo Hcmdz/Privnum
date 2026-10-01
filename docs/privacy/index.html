@@ -27,7 +27,7 @@
 <body>
     <header>
         <h1>Privacy Policy</h1>
-        <p>Effective: September 2026 &middot; for App: Privnum</p>
+        <p>Effective: October 2026 &middot; for App: Privnum</p>
     </header>
     <main>
         <div class="container">
@@ -41,11 +41,11 @@
                 <h2>Data Stored on Your Device</h2>
                 <p>Privnum stores the following data locally in app-private storage:</p>
                 <ul>
-                    <li><strong>Contacts</strong> &mdash; names, phone numbers, emails, notes and other fields you enter</li>
-                    <li><strong>Contact photos</strong> &mdash; pictures you attach, stored as files next to the database</li>
-                    <li><strong>Settings</strong> &mdash; theme, popup toggles, default region, passcode data (salted SHA-256 hash, encrypted preferences)</li>
+                    <li><strong>Contacts</strong> &mdash; names, phone numbers, emails, notes and other fields you enter, held in an encrypted database</li>
+                    <li><strong>Contact photos</strong> &mdash; pictures you attach, stored as individually encrypted files next to the database</li>
+                    <li><strong>Settings</strong> &mdash; theme, popup toggles, default region, passcode data (salted PBKDF2-HMAC-SHA256 hash, encrypted preferences)</li>
                 </ul>
-                <p>System backups of app data are disabled. Uninstalling the app deletes everything.</p>
+                <p>The contact database and every contact photo are encrypted on the device with keys held in the platform keystore. System backup of app data is disabled, and data-extraction rules exclude everything from both cloud backup and device-to-device transfer. Uninstalling the app deletes everything.</p>
             </section>
             <section>
                 <h2>Backup and Restore</h2>
@@ -58,8 +58,11 @@
                     <li><strong>Call log</strong> &mdash; read your recent calls when you open the in-app call history, and resolve call state where the system requires it. Requested only from an explicit button you tap, never automatically; the list is read on demand and is never stored in the app database or sent anywhere</li>
                     <li><strong>Display over other apps</strong> &mdash; show the caller popup during calls (optional, with in-app rationale)</li>
                     <li><strong>Notifications</strong> &mdash; call-related notifications on Android 13+</li>
+                    <li><strong>Disable keyguard</strong> &mdash; let the caller popup appear over the lock screen during a call</li>
+                    <li><strong>Biometrics</strong> &mdash; use fingerprint or face unlock for the app's passcode screen, if you enable it</li>
                 </ul>
                 <p>The app does not request camera, microphone, location, or network access. Photos come from the system gallery picker or capture intent.</p>
+                <p>The app does not read your address book. It registers a caller-lookup provider guarded by the <code>READ_CONTACTS</code> permission, which lets the <em>system</em> resolve a caller for the dialer using numbers you have entered in Privnum &mdash; the app never reads the platform contact list itself. Biometric hardware is used only for the local unlock check: nothing biometric is stored or exported, and a biometric match releases a token kept on the device under a keystore-bound key.</p>
             </section>
             <section>
                 <h2>Third Parties</h2>
@@ -72,10 +75,13 @@
             <section>
                 <h2>Security</h2>
                 <ul>
-                    <li>Passcode verified as salted SHA-256 with 5-attempt lockout; storage encrypted (AES-256-GCM, Keystore-backed key)</li>
-                    <li>All data in app-private storage; system backup disabled</li>
+                    <li>Contact database and contact photos encrypted at rest; keys generated on the device and held only in the platform keystore, never exportable</li>
+                    <li>Passcode verified with a salted PBKDF2-HMAC-SHA256 derivation, compared in constant time, with a 5-attempt lockout; biometric unlock kept AES-GCM-wrapped under an authentication-bound keystore key</li>
+                    <li>Screenshots and screen recording blocked across the whole app</li>
+                    <li>All data in app-private storage; cloud backup and device-to-device transfer both disabled</li>
                     <li>Release builds strip debug logs</li>
                 </ul>
+                <p><strong>Encryption has no recovery path.</strong> The key exists only in the platform keystore and there is no cloud copy to restore from, so a lost key means unrecoverable contacts &mdash; you would have to import a VCF backup. Events that destroy the key (uninstall, factory reset, wiping the device) also erase the app data holding the contacts, so the practical exposure is limited to keystore corruption.</p>
             </section>
             <section>
                 <h2>Your Rights</h2>
