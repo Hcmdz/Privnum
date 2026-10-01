@@ -24,6 +24,7 @@ import android.widget.ImageView
 import android.widget.TextView
 import com.hcmdz.privnum.data.ContactPhotoStore
 import com.hcmdz.privnum.data.ContactRepository
+import com.hcmdz.privnum.data.PhoneNumberUtils
 import java.lang.ref.WeakReference
 
 data class CallerInfo(
@@ -34,6 +35,31 @@ data class CallerInfo(
     val suffix: String = "",
     val photo: String = ""
 )
+
+/**
+ * Brings a number reported by the network to the shape the database stores.
+ *
+ * Contacts are saved through PhoneNumberUtils, so [full] holds E.164 digits
+ * with the country code and no "+" (33612345678). The number carried by the
+ * phone-state broadcast arrives in whatever form the operator used: often the
+ * national one, with its national prefix, which shares no digits with the
+ * stored value once truncated, so the lookup silently failed and no popup
+ * appeared.
+ *
+ * Region comes from the network, so a national number received while roaming
+ * parses against the wrong country and falls back to raw digits; the popup
+ * then shows the number instead of the name.
+ */
+internal fun normalizeIncomingNumber(raw: String, region: String?): String {
+    // The platform reports a withheld or unavailable caller with a negative
+    // marker (-1 withheld, -2 not provided, -3 not available) or with nothing.
+    // Folding those to digits would leave "1" and open a popup showing "1".
+    if (raw.trim().startsWith("-")) return ""
+    val digits = PhoneNumberUtils.asciiDigits(raw)
+    if (digits.length < PhoneNumberUtils.MIN_PHONE_DIGITS) return ""
+    val parsed = PhoneNumberUtils.parseForSave(digits, region ?: "")
+    return parsed?.fullNumber ?: digits
+}
 
 interface GetCallerHandler {
     fun onGetCaller(callerInfo: CallerInfo?)
@@ -107,19 +133,22 @@ class CallReceiver : BroadcastReceiver() {
 
     // Helper function to avoid code duplication
     private fun showCallerInfoForNumber(context: Context, phoneNumber: String) {
+        // A withheld or malformed caller arrives with an empty number. There is
+        // nothing to show, and an empty popup would flash on every such call.
+        if (phoneNumber.isBlank()) return
         getCallerName(context, phoneNumber, object : GetCallerHandler {
             override fun onGetCaller(callerInfo: CallerInfo?) {
-                callerInfo?.let {
-                    showCallerInfo(
-                        context,
-                        it.name,
-                        it.appointment,
-                        it.location,
-                        it.prefix,
-                        it.suffix,
-                        it.photo
-                    )
-                }
+                // Unknown caller: still show the number, it is the only clue.
+                val shown = callerInfo ?: CallerInfo(name = phoneNumber)
+                showCallerInfo(
+                    context,
+                    shown.name,
+                    shown.appointment,
+                    shown.location,
+                    shown.prefix,
+                    shown.suffix,
+                    shown.photo
+                )
             }
         })
     }
@@ -461,20 +490,12 @@ class CallReceiver : BroadcastReceiver() {
         return try {
             val telephonyManager =
                 context.getSystemService(Context.TELEPHONY_SERVICE) as? TelephonyManager
-            val countryISO = telephonyManager?.networkCountryIso?.uppercase()
+            val region = telephonyManager?.networkCountryIso?.uppercase()
                 ?: telephonyManager?.simCountryIso?.uppercase()
-                ?: return phoneNumber
-            // val correctedPhoneNumber = PhoneNumberUtils.formatNumberToE164(phoneNumber, countryISO)
-
-            when {
-                phoneNumber.startsWith("+") -> phoneNumber.removePrefix("+")
-                phoneNumber.startsWith("0") && countryISO != "IT" -> phoneNumber.removePrefix("0")
-                else -> phoneNumber
-            }
-
+            normalizeIncomingNumber(phoneNumber, region)
         } catch (e: Exception) {
-            Log.e("CallReceiver", "Error getting corrected phone number", e)
-            return phoneNumber
+            Log.e("CallReceiver", "Error normalizing incoming number", e)
+            normalizeIncomingNumber(phoneNumber, null)
         }
     }
 
@@ -496,7 +517,9 @@ class CallReceiver : BroadcastReceiver() {
                 context,
                 ContactPhotoStore(context)
             )
-            val callerEntity = callerRepository.findByNumberSync(correctedPhoneNumber)
+            // Any-form: a stored row may carry the "+" the editor produced, so an
+            // exact digit match would miss contacts imported from a vCard.
+            val callerEntity = callerRepository.findByNumberSyncAnyForm(correctedPhoneNumber)
 
             if (callerEntity != null) {
                 val callerInfo = CallerInfo(
@@ -512,7 +535,7 @@ class CallReceiver : BroadcastReceiver() {
                 callback.onGetCaller(null)
             }
         } catch (e: Exception) {
-            Log.e("CallReceiver", "Error getting caller name", e)
+            Log.e("CallReceiver", "Error resolving caller name for a masked number", e)
             callback.onGetCaller(null)
         }
     }

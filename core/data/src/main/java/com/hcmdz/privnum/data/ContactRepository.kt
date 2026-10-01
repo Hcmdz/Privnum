@@ -138,6 +138,15 @@ class ContactRepository @Inject constructor(
         }
     }
 
+    /** Blocking [findByNumberAnyForm], for the call receiver's lookup. */
+    fun findByNumberSyncAnyForm(full: String): Contact? {
+        return try {
+            kotlinx.coroutines.runBlocking { findByNumberAnyForm(full) }
+        } catch (e: Exception) {
+            null
+        }
+    }
+
     suspend fun search(rawQuery: String): List<Contact> {
         val (textQuery, digitPrefixes) = splitSearchTokens(rawQuery)
         if (textQuery.isEmpty() && digitPrefixes.isEmpty()) return emptyList()
