@@ -78,7 +78,7 @@ requests **zero network permissions**.
 
 The latest GitHub release is **v1.3.0**:
 
-- [Download `Privnum-release.apk`](https://github.com/Hcmdz/Privnum/releases/download/v1.3.0/Privnum-release.apk) — `arm64-v8a`
+- [Download `Privnum-release.apk`](https://github.com/Hcmdz/Privnum/releases/download/v1.3.0/Privnum-release.apk) — 6,899,655 bytes (6.58 MB), `arm64-v8a`
 - [Download the SHA-256 checksum](https://github.com/Hcmdz/Privnum/releases/download/v1.3.0/Privnum-release.apk.sha256)
 - [Install from Obtainium](https://apps.obtainium.imranr.dev/redirect?r=obtainium://add/https://github.com/Hcmdz/Privnum/) to track future GitHub releases.
 
