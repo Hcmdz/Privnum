@@ -2,17 +2,16 @@
 
 ## Reporting a vulnerability
 
-Do not open a public issue for security reports. Use
-**GitHub Security Advisories** (repo Security tab → Report a vulnerability)
-so the report stays private until a fix ships.
+If you discover a security vulnerability in ElecPilot, please report it responsibly:
 
-What to include: affected version or tag, steps to reproduce, and an
-assessment of the impact. Expect an acknowledgement within 7 days and
-coordinated disclosure once a fix is released.
+    Do NOT open a public GitHub issue for security vulnerabilities
+    Email: HcmDz.Dev@gmail.com
+    Include:
+        Description of the vulnerability
+        Steps to reproduce
+        Potential impact
+        Suggested fix (if any)
 
-Reports against a build made from source are as welcome as reports
-against a released APK: state which one you mean, since the build classpath
-and the shipped artifact do not contain the same code.
 
 ## Supported versions
 
