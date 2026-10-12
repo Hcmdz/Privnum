@@ -157,7 +157,7 @@ network layer.
 | Async | Kotlin Coroutines & Flow | 1.11.0 |
 | DI | Hilt | 2.60.1 |
 | Database | Room (+FTS4) | 2.8.5 |
-| Database encryption | SQLCipher | 4.19.0 |
+| Database encryption | SQLCipher | 4.19.1 |
 | Splash screen | AndroidX Core Splashscreen | 1.2.0 |
 | Settings | DataStore Preferences | 1.1.3 |
 | Phone numbers | libphonenumber | 9.0.40 |

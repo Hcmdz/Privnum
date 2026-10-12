@@ -28,13 +28,13 @@ implementation), per Alternate's acknowledgments.
 |---|---|---|---|
 | libphonenumber (`com.googlecode.libphonenumber`) | 9.0.40 | Apache-2.0 | Number parsing, validation, formatting |
 | ez-vcard (`com.googlecode.ez-vcard`) | 0.12.2 | BSD-2-Clause | VCF import/export. Also vendors Apache Commons Codec, Apache-2.0, under `ezvcard/commons-codec.license`, and pulls in jsoup, FreeMarker, Jackson core, Jakarta Inject and Vinnie |
-| jsoup (`org.jsoup`) | 1.23.1 | MIT | HTML sanitising, pulled in transitively by ez-vcard |
+| jsoup (`org.jsoup`) | 1.23.2 | MIT | HTML sanitising, pulled in transitively by ez-vcard |
 | FreeMarker (`org.freemarker`) | 2.3.35 | Apache-2.0 | Templating, pulled in transitively by ez-vcard |
 | Jackson core (`com.fasterxml.jackson.core`) | 2.22.3 | Apache-2.0 | JSON processing, pulled in transitively by ez-vcard. Ships a `NOTICE`, reproduced in [NOTICE](NOTICE) |
 | Jakarta Dependency Injection (`jakarta.inject`) | 2.0.1 | Apache-2.0 | DI annotations, pulled in transitively by ez-vcard. Ships a `NOTICE`, reproduced in [NOTICE](NOTICE) |
 | Vinnie (`com.github.mangstadt`) | 2.0.2 | MIT | MIME parsing, pulled in transitively by ez-vcard |
 | Coil 3 (`io.coil-kt.coil3:coil-compose`) | 3.6.3 | Apache-2.0 | Contact photo loading |
-| SQLCipher (`net.zetetic:sqlcipher-android`) | 4.19.0 | BSD-3-Clause | On-device database encryption; ships `libsqlcipher.so` (2.00 MB) per ABI. Full licence text in [NOTICE](NOTICE) |
+| SQLCipher (`net.zetetic:sqlcipher-android`) | 4.19.1 | BSD-3-Clause | On-device database encryption; ships `libsqlcipher.so` (2.00 MB) per ABI. Full licence text in [NOTICE](NOTICE) |
 | AndroidX libraries (room, datastore, biometric, activity, lifecycle, navigation3, exifinterface, core, appcompat, fragment) | catalog | Apache-2.0 | Persistence, settings, UI, per-app locales, camera metadata |
 | AndroidX datastore protobuf (`androidx.datastore:datastore-preferences-external-protobuf`) | 1.1.3 | BSD-3-Clause | Protobuf runtime behind DataStore preferences |
 | Hilt / Dagger (`com.google.dagger`) | 2.60.1 | Apache-2.0 | Dependency injection |

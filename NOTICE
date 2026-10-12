@@ -12,7 +12,7 @@ where users can find them.
 
 ## SQLCipher for Android
 
-`net.zetetic:sqlcipher-android` 4.19.0 — BSD-3-Clause.
+`net.zetetic:sqlcipher-android` 4.19.1 — BSD-3-Clause.
 Source: https://github.com/sqlcipher/sqlcipher-android
 
 SQLCipher encrypts the contact database at rest. The licence requires the
