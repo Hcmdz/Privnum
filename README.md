@@ -99,25 +99,37 @@ sha256sum -c Privnum-release.v1.3.1.apk.sha256
 
 Contact list with search.
 
+<div align="center">
+
 | Light Mode | Dark Mode |
 |---|---|
 | <a href="screenshots/contacts-light.png"><img src="screenshots/contacts-light.png" width="270" alt="Contacts light"></a> | <a href="screenshots/contacts-dark.png"><img src="screenshots/contacts-dark.png" width="270" alt="Contacts dark"></a> |
+
+</div>
 
 ### Editor
 
 Contact editor.
 
+<div align="center">
+
 | Light Mode | Dark Mode |
 |---|---|
 | <a href="screenshots/editor-light.png"><img src="screenshots/editor-light.png" width="270" alt="Editor light"></a> | <a href="screenshots/editor-dark.png"><img src="screenshots/editor-dark.png" width="270" alt="Editor dark"></a> |
+
+</div>
 
 ### Details
 
 Contact details.
 
+<div align="center">
+
 | Light Mode | Dark Mode |
 |---|---|
 | <a href="screenshots/preview-light.png"><img src="screenshots/preview-light.png" width="270" alt="Details light"></a> | <a href="screenshots/preview-dark.png"><img src="screenshots/preview-dark.png" width="270" alt="Details dark"></a> |
+
+</div>
 
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
 
