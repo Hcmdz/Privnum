@@ -95,10 +95,29 @@ sha256sum -c Privnum-release.v1.3.1.apk.sha256
 
 ## 📸 Screenshots
 
-| Contacts | Editor | Details |
-|---|---|---|
-| [![Contacts light](screenshots/contacts-light.png?v=2)](screenshots/contacts-light.png?v=2) | [![Editor light](screenshots/editor-light.png?v=2)](screenshots/editor-light.png?v=2) | [![Details light](screenshots/preview-light.png?v=2)](screenshots/preview-light.png?v=2) |
-| [![Contacts dark](screenshots/contacts-dark.png?v=2)](screenshots/contacts-dark.png?v=2) | [![Editor dark](screenshots/editor-dark.png?v=2)](screenshots/editor-dark.png?v=2) | [![Details dark](screenshots/preview-dark.png?v=2)](screenshots/preview-dark.png?v=2) |
+### Contacts
+
+Contact list with search.
+
+| Light Mode | Dark Mode |
+|---|---|
+| <a href="screenshots/contacts-light.png"><img src="screenshots/contacts-light.png" width="270" alt="Contacts light"></a> | <a href="screenshots/contacts-dark.png"><img src="screenshots/contacts-dark.png" width="270" alt="Contacts dark"></a> |
+
+### Editor
+
+Contact editor.
+
+| Light Mode | Dark Mode |
+|---|---|
+| <a href="screenshots/editor-light.png"><img src="screenshots/editor-light.png" width="270" alt="Editor light"></a> | <a href="screenshots/editor-dark.png"><img src="screenshots/editor-dark.png" width="270" alt="Editor dark"></a> |
+
+### Details
+
+Contact details.
+
+| Light Mode | Dark Mode |
+|---|---|
+| <a href="screenshots/preview-light.png"><img src="screenshots/preview-light.png" width="270" alt="Details light"></a> | <a href="screenshots/preview-dark.png"><img src="screenshots/preview-dark.png" width="270" alt="Details dark"></a> |
 
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
 
