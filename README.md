@@ -18,10 +18,10 @@
 
 <div align="center">
    <a href="https://github.com/Hcmdz/Privnum/releases">
-      <img src="get-it-on-github.png" width="170">
+      <img src="get-it-on-github.png" width="168" height="50" alt="Get it on GitHub">
    </a>
    <a href="https://apps.obtainium.imranr.dev/redirect?r=obtainium://add/https://github.com/Hcmdz/Privnum/">
-      <img src="get-it-on-obtainium.png" width="170">
+      <img src="get-it-on-obtainium.png" width="168" height="50" alt="Get it on Obtainium">
    </a>
 </div>
 
