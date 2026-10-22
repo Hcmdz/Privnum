@@ -30,3 +30,6 @@ keystore.properties
 /AGENTS.md
 .opencode/
 *.log
+
+# App icons (local assets)
+AppIcons/
