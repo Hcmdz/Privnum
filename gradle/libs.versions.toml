@@ -14,6 +14,7 @@ lifecycleRuntimeCompose = "2.11.0"
 coroutinesTest = "1.11.0"
 coreTesting = "2.2.0"
 junit = "4.13.2"
+mockk = "1.14.11"
 json = "20260814"
 androidxTestExtJunit = "1.3.0"
 androidxTestRunner = "1.7.0"
@@ -53,6 +54,7 @@ coroutines-test = { group = "org.jetbrains.kotlinx", name = "kotlinx-coroutines-
 coroutines-android = { group = "org.jetbrains.kotlinx", name = "kotlinx-coroutines-android", version.ref = "coroutinesTest" }
 core-testing = { group = "androidx.arch.core", name = "core-testing", version.ref = "coreTesting" }
 junit = { group = "junit", name = "junit", version.ref = "junit" }
+mockk = { group = "io.mockk", name = "mockk", version.ref = "mockk" }
 json = { group = "org.json", name = "json", version.ref = "json" }
 room-testing = { group = "androidx.room", name = "room-testing", version.ref = "room" }
 sqlcipher-android = { group = "net.zetetic", name = "sqlcipher-android", version.ref = "sqlcipher" }
