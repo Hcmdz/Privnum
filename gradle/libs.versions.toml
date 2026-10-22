@@ -26,7 +26,7 @@ coil3 = "3.6.3"
 serialization = "1.11.0"
 jsoup = "1.23.2"
 freemarker = "2.3.35"
-jackson = "2.22.3"
+jackson = "2.22.4"
 
 [libraries]
 compose-bom = { group = "androidx.compose", name = "compose-bom", version.ref = "composeBom" }
