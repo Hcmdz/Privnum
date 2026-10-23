@@ -33,6 +33,7 @@
             android:authorities="@string/callerid_authority"
             android:readPermission="android.permission.READ_CONTACTS"
             android:writePermission="android.permission.READ_CONTACTS"
+            android:grantUriPermissions="true"
             android:enabled="true"
             android:exported="true">
             <meta-data

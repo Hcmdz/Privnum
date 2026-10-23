@@ -3,6 +3,11 @@
 All released versions of Privnum, newest first. Releases are published on
 [GitHub](https://github.com/Hcmdz/Privnum/releases).
 
+## v1.3.2
+
+- **Security hardening** — Caller overlay window now protected by `FLAG_SECURE` (prevents screenshots/recording of caller PII); `CallDirectoryProvider` declares `grantUriPermissions` for defense-in-depth; main Activity excluded from recents to remove task thumbnail leakage.
+- Backup exclusion verified: `allowBackup="false"` + full data-extraction rules block both cloud backup and device-to-device transfer.
+
 ## v1.3.1
 
 - **The call popup shows the caller's name again.** Operators that report a number in national form were trimmed before lookup, so the number never matched your contacts and no popup appeared for callers you know. It is now normalised the same way the editor does, and an unknown caller is shown with their raw number instead of nothing. A withheld number shows nothing rather than a blank popup.
