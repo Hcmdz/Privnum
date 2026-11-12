@@ -1,20 +1,20 @@
 [versions]
-agp = "9.5.0"
+agp = "9.5.1"
 kotlin = "2.4.21"
-ksp = "2.3.12"
+ksp = "2.3.13"
 detekt = "1.23.8"
 hilt = "2.60.1"
 composeBom = "2026.09.00"
 activityCompose = "1.13.0"
 room = "2.8.5"
-sqlcipher = "4.19.1"
+sqlcipher = "4.20.0"
 datastore = "1.3.0"
-biometric = "1.4.0-alpha07"
+biometric = "1.4.0-beta01"
 lifecycleRuntimeCompose = "2.11.0"
 coroutinesTest = "1.11.0"
 coreTesting = "2.2.0"
 junit = "4.13.2"
-mockk = "1.14.11"
+mockk = "1.14.12"
 json = "20260814"
 androidxTestExtJunit = "1.3.0"
 androidxTestRunner = "1.7.0"
@@ -25,9 +25,9 @@ fragment = "1.9.1"
 exifinterface = "1.4.2"
 coil3 = "3.6.3"
 serialization = "1.12.0"
-jsoup = "1.23.2"
+jsoup = "1.24.1"
 freemarker = "2.3.35"
-jackson = "2.22.4"
+jackson = "2.23.0"
 
 [libraries]
 compose-bom = { group = "androidx.compose", name = "compose-bom", version.ref = "composeBom" }
@@ -58,7 +58,7 @@ mockk = { group = "io.mockk", name = "mockk", version.ref = "mockk" }
 json = { group = "org.json", name = "json", version.ref = "json" }
 room-testing = { group = "androidx.room", name = "room-testing", version.ref = "room" }
 sqlcipher-android = { group = "net.zetetic", name = "sqlcipher-android", version.ref = "sqlcipher" }
-libphonenumber = { group = "com.googlecode.libphonenumber", name = "libphonenumber", version = "9.0.42" }
+libphonenumber = { group = "com.googlecode.libphonenumber", name = "libphonenumber", version = "9.0.43" }
 ez-vcard = { group = "com.googlecode.ez-vcard", name = "ez-vcard", version = "0.12.2" }
 jsoup = { group = "org.jsoup", name = "jsoup", version.ref = "jsoup" }
 freemarker = { group = "org.freemarker", name = "freemarker", version.ref = "freemarker" }
