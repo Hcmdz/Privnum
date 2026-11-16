@@ -3,6 +3,11 @@
 All released versions of Privnum, newest first. Releases are published on
 [GitHub](https://github.com/Hcmdz/Privnum/releases).
 
+## Unreleased
+
+- Dependency refresh: AGP 9.5.1, Kotlin 2.4.21, KSP 2.3.13, Room 2.8.5, Compose BOM 2026.09.00, SQLCipher 4.20.0, kotlinx-serialization 1.13.0, exifinterface 1.5.0-beta01, activity 1.14.0-alpha03, navigation3 1.3.0-alpha04, lifecycle 2.12.0-alpha05, test libs 1.4.0/1.8.0-alpha04, jsoup 1.24.1, Jackson 2.23.0, libphonenumber 9.0.43, DataStore 1.3.0, Biometric 1.4.0-beta01.
+- CI actions: setup-java 6.2.0, setup-gradle 6.4.1, codeql-action 4.39.3, Gradle wrapper 9.9.0.
+
 ## v1.3.2
 
 - **Security hardening** — Caller overlay window now protected by `FLAG_SECURE` (prevents screenshots/recording of caller PII); `CallDirectoryProvider` declares `grantUriPermissions` for defense-in-depth; main Activity excluded from recents to remove task thumbnail leakage.

@@ -2,7 +2,7 @@
 
 ## Reporting a vulnerability
 
-If you discover a security vulnerability in ElecPilot, please report it responsibly:
+If you discover a security vulnerability in Privnum, please report it responsibly:
 
     Do NOT open a public GitHub issue for security vulnerabilities
     Email: HcmDz.Dev@gmail.com
@@ -19,7 +19,7 @@ Only the current release receives security fixes.
 
 | Version | Security fixes |
 |---|---|
-| 1.3.1 | yes |
+| 1.3.2 | yes |
 | 1.2.0 and earlier | no — please upgrade |
 
 ## What the app protects
