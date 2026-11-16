@@ -421,6 +421,8 @@ owed to the MIT-licensed upstream code recorded in
 
 Hcmdz — [@Hcmdz](https://github.com/Hcmdz)
 
+Email: [HcmDz.Dev@gmail.com](mailto:HcmDz.Dev@gmail.com)
+
 Project link: [https://github.com/Hcmdz/Privnum](https://github.com/Hcmdz/Privnum)
 
 ## 🙏 Acknowledgments
