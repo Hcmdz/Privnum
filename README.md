@@ -197,7 +197,7 @@ network layer.
 | Camera metadata | Exifinterface | 1.5.0-beta01 |
 | Biometrics | AndroidX Biometric | 1.4.0-beta01 |
 | JSON | kotlinx.serialization | 1.13.0 |
-| Build | AGP 9.5.1, Kotlin 2.4.21, KSP 2.3.13, compileSdk 37, minSdk 29 | — |
+| Build | AGP 9.5.1, Kotlin 2.4.21, KSP 2.3.14, compileSdk 37, minSdk 29 | — |
 
 ### Security Features
 
@@ -346,8 +346,8 @@ apksigner verify --print-certs app/build/outputs/apk/release/Privnum-release.apk
 
 ## 📏 APK Size
 
-Current release build (`versionCode 6`, `arm64-v8a` only, R8 + resource
-shrinking): **6,899,446 bytes** (6.58 MB).
+Current release build (`versionCode 7`, `arm64-v8a` only, R8 + resource
+shrinking): **6,899,195 bytes** (6.58 MB).
 
 Compressed sizes as stored in the APK:
 
