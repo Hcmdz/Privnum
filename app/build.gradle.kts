@@ -43,6 +43,7 @@ extensions.configure<app.cash.licensee.LicenseeExtension> {
 android {
     namespace = "com.hcmdz.privnum"
     compileSdk = 37
+    compileSdkMinor = 2
     base.archivesName = "Privnum"
     buildToolsVersion = "37.0.0"
 

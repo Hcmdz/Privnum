@@ -7,6 +7,7 @@ plugins {
 android {
     namespace = "com.hcmdz.privnum.data"
     compileSdk = 37
+    compileSdkMinor = 2
     buildToolsVersion = "37.0.0"
 
     defaultConfig {
